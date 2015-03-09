@@ -1,0 +1,11 @@
+C:\git\LeagueSharp\JayceSharpV2\bin\Release\JayceSharpV2.exe.config
+C:\git\LeagueSharp\JayceSharpV2\bin\Release\JayceSharpV2.exe
+C:\git\LeagueSharp\JayceSharpV2\bin\Release\JayceSharpV2.pdb
+C:\git\LeagueSharp\JayceSharpV2\bin\Release\LeagueSharp.Common.dll
+C:\git\LeagueSharp\JayceSharpV2\bin\Release\LeagueSharp.dll
+C:\git\LeagueSharp\JayceSharpV2\bin\Release\SharpDX.Direct3D9.dll
+C:\git\LeagueSharp\JayceSharpV2\bin\Release\SharpDX.dll
+C:\git\LeagueSharp\JayceSharpV2\bin\Release\LeagueSharp.xml
+C:\git\LeagueSharp\JayceSharpV2\obj\Debug\JayceSharpV2.csprojResolveAssemblyReference.cache
+C:\git\LeagueSharp\JayceSharpV2\obj\Debug\JayceSharpV2.exe
+C:\git\LeagueSharp\JayceSharpV2\obj\Debug\JayceSharpV2.pdb

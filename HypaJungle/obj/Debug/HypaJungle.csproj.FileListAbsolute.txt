@@ -1,0 +1,17 @@
+C:\git\LeagueSharp\HypaJungle\bin\Release\HypaJungle.exe.config
+C:\git\LeagueSharp\HypaJungle\bin\Release\HypaJungle.exe
+C:\git\LeagueSharp\HypaJungle\bin\Release\HypaJungle.pdb
+C:\git\LeagueSharp\HypaJungle\bin\Release\LeagueSharp.Common.dll
+C:\git\LeagueSharp\HypaJungle\bin\Release\LeagueSharp.dll
+C:\git\LeagueSharp\HypaJungle\bin\Release\SharpDX.Direct3D9.dll
+C:\git\LeagueSharp\HypaJungle\bin\Release\SharpDX.dll
+C:\git\LeagueSharp\HypaJungle\bin\Release\SharpDX.Toolkit.dll
+C:\git\LeagueSharp\HypaJungle\bin\Release\SharpDX.Toolkit.Graphics.dll
+C:\git\LeagueSharp\HypaJungle\bin\Release\LeagueSharp.xml
+C:\git\LeagueSharp\HypaJungle\bin\Release\SharpDX.Toolkit.xml
+C:\git\LeagueSharp\HypaJungle\bin\Release\SharpDX.Toolkit.Graphics.xml
+C:\git\LeagueSharp\HypaJungle\obj\Debug\HypaJungle.csprojResolveAssemblyReference.cache
+C:\git\LeagueSharp\HypaJungle\obj\Debug\HypaJungle.Properties.Resources.resources
+C:\git\LeagueSharp\HypaJungle\obj\Debug\HypaJungle.csproj.GenerateResource.Cache
+C:\git\LeagueSharp\HypaJungle\obj\Debug\HypaJungle.exe
+C:\git\LeagueSharp\HypaJungle\obj\Debug\HypaJungle.pdb

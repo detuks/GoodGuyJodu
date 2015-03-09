@@ -1,0 +1,2 @@
++added a lot of shit
+04.09.2014- Added last hit to use skills- made W block better targeted skills- Flee away will now run to mouse
