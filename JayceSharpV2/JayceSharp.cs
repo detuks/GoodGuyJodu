@@ -36,6 +36,7 @@ namespace JayceSharpV2
 
         public static HpBarIndicator hpi = new HpBarIndicator();
 
+
         public JayceSharp()
         {
             /* CallBAcks */
@@ -89,11 +90,12 @@ namespace JayceSharpV2
                 Drawing.OnDraw += onDraw;
                 Drawing.OnEndScene += OnEndScene;
 
-                Game.OnGameUpdate += OnGameUpdate;
+                Game.OnUpdate += OnGameUpdate;
 
                 Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
                 AntiGapcloser.OnEnemyGapcloser += OnEnemyGapcloser;
                 Interrupter.OnPossibleToInterrupt += OnPosibleToInterrupt;
+                SmoothMouse.start();
 
             }
             catch
@@ -172,13 +174,13 @@ namespace JayceSharpV2
                 Jayce.lockedTarg = null;
             }
 
-            if (Jayce.castEonQ != null && (Jayce.castEonQ.TimeSpellEnd - 2) > Game.Time)
-                Jayce.castEonQ = null;
+           // if (Jayce.castEonQ != null && (Jayce.castEonQ. - 2) > Game.Time)
+            //    Jayce.castEonQ = null;
 
             if (Jayce.orbwalker.ActiveMode.ToString() == "Combo")
             {
                 Jayce.activateMura();
-                Obj_AI_Hero target = TargetSelector.GetTarget(Jayce.getBestRange(), TargetSelector.DamageType.Physical);
+                Obj_AI_Hero target = TargetSelector.GetTarget(123, TargetSelector.DamageType.Physical);
                 Jayce.doCombo(target);
             }
 

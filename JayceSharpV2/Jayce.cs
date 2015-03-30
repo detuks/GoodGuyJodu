@@ -36,6 +36,7 @@ namespace JayceSharpV2
         public static Spell R2 = new Spell(SpellSlot.R, 0);
 
         public static GameObjectProcessSpellCastEventArgs castEonQ = null;
+        public static int castedTimeUnreach = 0;
 
         public static Obj_SpellMissile myCastedQ = null;
 
@@ -72,6 +73,8 @@ namespace JayceSharpV2
 
         public static void doCombo(Obj_AI_Hero target)
         {
+            if (target == null)
+                return;
             castOmen(target);
             if (!isHammer)
             {
@@ -328,7 +331,7 @@ namespace JayceSharpV2
 
         public static float getBestRange()
         {
-            float range;
+            float range = 0;
             if (!isHammer)
             {
                 if (Q1.IsReady() && E1.IsReady() && gotManaFor(true, false, true))
@@ -377,9 +380,11 @@ namespace JayceSharpV2
                 {
                     Vector3 bPos = Player.ServerPosition - Vector3.Normalize(pos - Player.ServerPosition)*50;
 
+                    SmoothMouse.addMouseEvent(bPos, true);
                     Player.IssueOrder(GameObjectOrder.MoveTo, bPos);
+                    SmoothMouse.addMouseEvent(pos);
                     Q1.Cast(pos);
-
+                    SmoothMouse.addMouseEvent(getParalelVec(pos).To3D());
                     E1.Cast(getParalelVec(pos));
                 }
 
