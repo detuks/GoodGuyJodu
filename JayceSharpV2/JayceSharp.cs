@@ -94,15 +94,23 @@ namespace JayceSharpV2
 
                 Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
                 AntiGapcloser.OnEnemyGapcloser += OnEnemyGapcloser;
-                Interrupter.OnPossibleToInterrupt += OnPosibleToInterrupt;
-                SmoothMouse.start();
+                Interrupter2.OnInterruptableTarget += OnPosibleToInterrupt;
+                //SmoothMouse.start();
 
             }
-            catch
+            catch(Exception ex)
             {
+                Console.WriteLine(ex);
                 Game.PrintChat("Oops. Something went wrong with Jayce - Sharp");
             }
 
+        }
+
+        private static void OnPosibleToInterrupt(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
+        {
+
+            if (Config.Item("autoInter").GetValue<bool>() && (int)args.DangerLevel > 0)
+                Jayce.knockAway(sender);
         }
 
         private static void OnEndScene(EventArgs args)
@@ -125,11 +133,6 @@ namespace JayceSharpV2
         {
             if (Config.Item("gapClose").GetValue<bool>())
                 Jayce.knockAway(gapcloser.Sender);
-        }
-        public static void OnPosibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
-        {
-            if (Config.Item("autoInter").GetValue<bool>() && (int)spell.DangerLevel > 0)
-                Jayce.knockAway(unit);
         }
 
         private static void OnGameUpdate(EventArgs args)
@@ -180,7 +183,7 @@ namespace JayceSharpV2
             if (Jayce.orbwalker.ActiveMode.ToString() == "Combo")
             {
                 Jayce.activateMura();
-                Obj_AI_Hero target = TargetSelector.GetTarget(123, TargetSelector.DamageType.Physical);
+                Obj_AI_Hero target = TargetSelector.GetTarget(Jayce.getBestRange(), TargetSelector.DamageType.Physical);
                 Jayce.doCombo(target);
             }
 

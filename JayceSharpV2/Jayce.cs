@@ -281,14 +281,14 @@ namespace JayceSharpV2
             PredictionOutput po = QEmp1.GetPrediction(target);
             if (po.Hitchance >= HitChance.Low && Player.Distance(po.UnitPosition) < (QEmp1.Range + target.BoundingRadius))
             {
-                castQon = po.CastPosition;
+                shootQE(po.CastPosition);
             }
             else if (po.Hitchance == HitChance.Collision && JayceSharp.Config.Item("useMunions").GetValue<bool>())
             {
                 Obj_AI_Base fistCol = po.CollisionObjects.OrderBy(unit => unit.Distance(Player.ServerPosition)).First();
                 if (fistCol.Distance(po.UnitPosition) < (180 - fistCol.BoundingRadius / 2) && fistCol.Distance(target.ServerPosition) < (180 - fistCol.BoundingRadius / 2))
                 {
-                    castQon = po.CastPosition;
+                    shootQE(po.CastPosition);
                 }
             }
         }
@@ -380,11 +380,8 @@ namespace JayceSharpV2
                 {
                     Vector3 bPos = Player.ServerPosition - Vector3.Normalize(pos - Player.ServerPosition)*50;
 
-                    SmoothMouse.addMouseEvent(bPos, true);
                     Player.IssueOrder(GameObjectOrder.MoveTo, bPos);
-                    SmoothMouse.addMouseEvent(pos);
                     Q1.Cast(pos);
-                    SmoothMouse.addMouseEvent(getParalelVec(pos).To3D());
                     E1.Cast(getParalelVec(pos));
                 }
 
@@ -467,6 +464,8 @@ namespace JayceSharpV2
 
         public static bool targetInRange(Obj_AI_Base target, float range)
         {
+            if (target == null)
+                return false;
             float dist2 = Vector2.DistanceSquared(target.ServerPosition.To2D(), Player.ServerPosition.To2D());
             float range2 = range * range + target.BoundingRadius * target.BoundingRadius;
             return dist2 < range2;
@@ -628,7 +627,7 @@ namespace JayceSharpV2
 
         public static bool hammerWillKill(Obj_AI_Base target)
         {
-            if (!JayceSharp.Config.Item("hammerKill").GetValue<bool>())
+            if (!JayceSharp.Config.Item("hammerKill").GetValue<bool>() || target == null)
                 return false;
             float damage = (float)Player.GetAutoAttackDamage(target) + 50;
             damage += getJayceEHamDmg(target);
@@ -640,6 +639,8 @@ namespace JayceSharpV2
 
         public static float getJayceFullComoDmg(Obj_AI_Base target)
         {
+            if (target == null)
+                return 0f;
             float dmg = 0;
             //Ranged
             if (!isHammer || R1.IsReady())
