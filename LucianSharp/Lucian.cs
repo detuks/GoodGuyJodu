@@ -51,8 +51,8 @@ namespace LucianSharp
             if (LXOrbwalker.ForcedTarget != null && LXOrbwalker.ForcedTarget is Obj_AI_Hero)
                 target = (Obj_AI_Hero)LXOrbwalker.ForcedTarget;
             useItems(target);
-            if(!LXOrbwalker.InAutoAttackRange(target,true) && !player.IsDashing() && LucianSharp.Config.Item("useQ").GetValue<bool>())
-                useQonTarg(target,QhitChance.medium);
+            //if(!LXOrbwalker.InAutoAttackRange(target,true) && !player.IsDashing() && LucianSharp.Config.Item("useQ").GetValue<bool>())
+            //    useQonTarg(target,QhitChance.medium);
                 //if(W.IsReady())
             }
             catch (Exception ex)
@@ -133,14 +133,16 @@ namespace LucianSharp
             if (Q.IsReady())
             {
                 useQonTarg((Obj_AI_Hero)target, QhitChance.medium);
+                return;
             }
 
             if (W.IsReady() && !Q.IsReady() && player.Mana>=120 && !tooEasyKill(hero) && LucianSharp.Config.Item("useW").GetValue<bool>())
             {
                 W.Cast(hero.Position);
+                return;
             }
 
-            if (!useQonTarg(hero, QhitChance.hard) && LucianSharp.Config.Item("useE").GetValue<bool>());
+            if (!useQonTarg(hero, QhitChance.hard) && LucianSharp.Config.Item("useE").GetValue<bool>())
                 eAwayFrom();
         }
 

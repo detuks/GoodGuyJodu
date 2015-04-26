@@ -51,8 +51,6 @@ namespace LucianSharp
         private static bool _movement = true;
         private static bool _disableNextAttack;
         private const float LaneClearWaitTimeMod = 2f;
-
-        public static bool _attackMade = false;
         public static int _lastAATick;
         private static Obj_AI_Base _lastTarget;
         private static Spell _movementPrediction;
@@ -153,11 +151,7 @@ namespace LucianSharp
                 return;
             var missile = (Obj_SpellMissile)sender;
             if (missile.SpellCaster is Obj_AI_Hero && missile.SpellCaster.IsValid && IsAutoAttack(missile.SData.Name))
-            {
-                ResetAutoAttackTimer();
-                _attackMade = true;
                 FireAfterAttack(missile.SpellCaster, _lastTarget);
-            }
         }
 
         private static void OnUpdate(EventArgs args)
@@ -185,11 +179,8 @@ namespace LucianSharp
                 FireBeforeAttack(target);
                 if (!_disableNextAttack)
                 {
-                    if (MyHero.IssueOrder(GameObjectOrder.AttackUnit, target))
-                    {
-                        _attackMade = false;
-                        _lastAATick = Environment.TickCount;
-                    }
+                    if(MyHero.IssueOrder(GameObjectOrder.AttackUnit, target));
+                        _lastAATick = Environment.TickCount + Game.Ping / 2;
                 }
             }
             if (!CanMove() || !IsAllowedToMove())
@@ -399,9 +390,9 @@ namespace LucianSharp
                             MinionManager.GetMinions(MyHero.Position, 1000, MinionTypes.All, MinionTeam.NotAlly).Where(minion => minion.IsValidTarget() && InAutoAttackRange(minion))
                         let t = (int)(MyHero.AttackCastDelay * 1000) - 100 + Game.Ping / 2 +
                                 1000 * (int)MyHero.Distance(minion) / (int)MyProjectileSpeed()
-                        let predHealth =10+ DamagePrediction.getPred(minion,DamagePrediction.PredType.PRED_LAST_HIT)
+                        let predHealth =DamagePrediction.getPred(minion,DamagePrediction.PredType.PRED_LAST_HIT)
                         where minion.Team != GameObjectTeam.Neutral && predHealth > -10 &&
-                              predHealth <= ((Lucian.gotPassiveRdy()) ? MyHero.GetAutoAttackDamage(minion)*2 : MyHero.GetAutoAttackDamage(minion))
+                              predHealth <= ((Lucian.gotPassiveRdy()) ? MyHero.GetAutoAttackDamage(minion)*1.6f : MyHero.GetAutoAttackDamage(minion))
                         select minion)
                     return minion;
             }
@@ -456,7 +447,7 @@ namespace LucianSharp
                 .Where(minion => minion.IsValidTarget(GetAutoAttackRange(MyHero, minion)))
                                    let predHealth = DtsHealthPrediction.LaneClearHealthPrediction(minion, (int)((MyHero.AttackDelay * 1000) * LaneClearWaitTimeMod), FarmDelay())
                                    where predHealth >= 
-                                         ( ((Lucian.gotPassiveRdy()) ? MyHero.GetAutoAttackDamage(minion)*3 : MyHero.GetAutoAttackDamage(minion)*2)) ||
+                                         ( ((Lucian.gotPassiveRdy()) ? MyHero.GetAutoAttackDamage(minion)*2.6f : MyHero.GetAutoAttackDamage(minion)*1.6f)) ||
                                          Math.Abs(predHealth - minion.Health) < float.Epsilon
                                    where minion.Health >= maxhealth[0] || Math.Abs(maxhealth[0] - float.MaxValue) < float.Epsilon
                                    select minion)
@@ -503,7 +494,7 @@ namespace LucianSharp
         {
             if (_lastAATick <= Environment.TickCount)
             {
-                return Environment.TickCount + Game.Ping / 2 + 25 >= _lastAATick + MyHero.AttackDelay * 800 && _attack;
+                return Environment.TickCount + Game.Ping / 2 + 25 >= _lastAATick + MyHero.AttackDelay * 1000 && _attack;
             }
             return false;
         }
@@ -517,7 +508,7 @@ namespace LucianSharp
         {
             var extraWindup = Menu.Item("lxOrbwalker_Misc_ExtraWindUp").GetValue<Slider>().Value;
             if (_lastAATick <= Environment.TickCount && cantMoveTill < Environment.TickCount)
-                return Environment.TickCount + Game.Ping / 2 >= _lastAATick + MyHero.AttackCastDelay * 800 + extraWindup && _movement;
+                return Environment.TickCount + Game.Ping / 2 >= _lastAATick + MyHero.AttackCastDelay * 1000 + extraWindup && _movement;
             return false;
         }
 
