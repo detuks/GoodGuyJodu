@@ -11,6 +11,77 @@ namespace LucianSharp
 {
     class LucianMath
     {
+
+        public class CircInter
+        {
+            public bool none;
+            public bool one;
+            public Vector2 inter1;
+            public Vector2 inter2;
+
+            public CircInter()
+            {
+                one = false;
+                none = false;
+                inter1 = new Vector2();
+                inter2 = new Vector2();
+            }
+
+            public Vector2 getBestInter(Obj_AI_Base target)
+            {
+                if(none)
+                    return new Vector2(0,0);
+                if (one)
+                    return inter1;
+                var dist1 = target.Distance(inter1, true);
+                var dist2 = target.Distance(inter2, true);
+
+                return dist1 > dist2 ? inter2 : inter1;
+            }
+        }
+
+        public static CircInter getCicleLineInteraction(Vector2 from, Vector2 to, Vector2 cPos, float radius)
+        {
+            var res = new CircInter();
+
+            var dx = from.X - to.X;
+            var dy = from.Y - to.Y;
+
+            var A = dx * dx + dy * dy;
+            var B = 2 * (dx * (to.X - cPos.X) + dy * (to.Y - cPos.Y));
+            var C = (to.X - cPos.X) * (to.X - cPos.X) +
+                (to.Y - cPos.Y) * (to.Y - cPos.Y) -
+                radius * radius;
+
+            var det = B * B - 4 * A * C;
+            if ((A <= 0.0000001) || (det < 0))
+            {
+                res.none = true;
+                // No real solutions.
+            }
+            else if (det == 0)
+            {
+                res.one = true;
+                // One solution.
+                var t = -B / (2 * A);
+                res.inter1 =
+                    new Vector2(to.X + t * dx, to.Y + t * dy);
+            }
+            else
+            {
+                // Two solutions.
+                var t = (float)((-B + Math.Sqrt(det)) / (2 * A));
+                res.inter1 =
+                    new Vector2(to.X + t * dx, to.Y + t * dy);
+                t = (float)((-B - Math.Sqrt(det)) / (2 * A));
+                res.inter2 =
+                    new Vector2(to.X + t * dx, to.Y + t * dy);
+            }
+
+
+            return res;
+        }
+
         internal class Polygon
         {
             public List<Vector2> Points = new List<Vector2>();
@@ -104,6 +175,9 @@ namespace LucianSharp
                 }
                 return result;
             }
+
+
+
         }
        
     }

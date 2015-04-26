@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,8 +52,8 @@ namespace LucianSharp
             if (LXOrbwalker.ForcedTarget != null && LXOrbwalker.ForcedTarget is Obj_AI_Hero)
                 target = (Obj_AI_Hero)LXOrbwalker.ForcedTarget;
             useItems(target);
-            //if(!LXOrbwalker.InAutoAttackRange(target,true) && !player.IsDashing() && LucianSharp.Config.Item("useQ").GetValue<bool>())
-            //    useQonTarg(target,QhitChance.medium);
+            if(target.Distance(player)>750 && !player.IsDashing() && LucianSharp.Config.Item("useQ").GetValue<bool>())
+                useQonTarg(target,QhitChance.medium);
                 //if(W.IsReady())
             }
             catch (Exception ex)
@@ -97,7 +98,7 @@ namespace LucianSharp
             }
         }
 
-        public static bool useQonTarg(Obj_AI_Hero target, QhitChance hitChance)
+        public static bool useQonTarg(Obj_AI_Base target, QhitChance hitChance)
         {
             if (!Q.IsReady() ||  !LucianSharp.Config.Item("useQ").GetValue<bool>())
                 return false;
@@ -130,6 +131,9 @@ namespace LucianSharp
             var hero = target as Obj_AI_Hero;
             if (hero == null || LXOrbwalker.CurrentMode != LXOrbwalker.Mode.Combo) return;
 
+            if (!useQonTarg(hero, QhitChance.hard) && LucianSharp.Config.Item("useE").GetValue<bool>())
+                eAwayFrom();
+
             if (Q.IsReady())
             {
                 useQonTarg((Obj_AI_Hero)target, QhitChance.medium);
@@ -141,12 +145,9 @@ namespace LucianSharp
                 W.Cast(hero.Position);
                 return;
             }
-
-            if (!useQonTarg(hero, QhitChance.hard) && LucianSharp.Config.Item("useE").GetValue<bool>())
-                eAwayFrom();
         }
 
-        public static QhitChance hitChOnTarg(Obj_AI_Hero target, Obj_AI_Base onTarg)
+        public static QhitChance hitChOnTarg(Obj_AI_Base target, Obj_AI_Base onTarg)
         {
             if(target.NetworkId == onTarg.NetworkId)
                 return QhitChance.himself;
@@ -252,6 +253,93 @@ namespace LucianSharp
                     return true;
             }
             return false;
+        }
+
+        public static void doKillSteal()
+        {
+            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(ene => ene.IsEnemy && ene.IsValidTarget(1500)))
+            {
+                killIfPossible(enemy);
+            }
+        }
+
+        public static void killIfPossible(Obj_AI_Base target)
+        {
+            try
+            {
+
+                var useQ = LucianSharp.Config.Item("ksOnQ").GetValue<bool>();
+                var useW = LucianSharp.Config.Item("ksOnW").GetValue<bool>();
+                var useE = LucianSharp.Config.Item("ksOnE").GetValue<bool>();
+
+                var dist = target.Distance(player)-target.BoundingRadius+10;
+                var tHP = target.Health;
+                var qDmg = Q.GetDamage(target);
+                //Console.WriteLine(tHP+" - "+qDmg);
+                var wDmg = W.GetDamage(target);
+                var passive = player.GetAutoAttackDamage(target)*1.45f;
+
+
+
+                if (useE && qDmg - 20 > tHP && E.IsReady() && Q.IsReady() && dist < 1100 + E.Range && dist > Q.Range + 100)
+                {
+                    doProKillSteal(target);
+                    LXOrbwalker.Orbwalk(Game.CursorPos, target);
+                }
+
+                if (useQ && qDmg > tHP && Q.IsReady() && dist < 1150)
+                {
+                    useQonTarg(target,QhitChance.medium);
+                    return;
+                }
+
+
+                if (useW && wDmg > tHP && W.IsReady() && dist < W.Range)
+                {
+                    W.CastIfHitchanceEquals(target, HitChance.Medium);
+                    return;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
+
+        public static Vector3 getQpredictionWithDelay(Obj_AI_Base target, float delay)
+        {
+            var res = Q.GetPrediction(target);
+            var del = Prediction.GetPrediction(target, delay);
+
+            var dif = del.UnitPosition - target.Position;
+            return res.CastPosition + dif;
+        }
+
+        public static void doProKillSteal(Obj_AI_Base target)
+        {
+            var dashSpeed = E.Range/(700 + player.MoveSpeed);
+            var targetPred = getQpredictionWithDelay(target, dashSpeed).To2D();
+            var mins =
+                MinionManager.GetMinions(player.Position, 1000)
+                    .Where(min => min.Distance(targetPred, true) < 900*900)
+                    .OrderByDescending(min => min.Distance(targetPred, true));
+            Console.WriteLine(mins.Count());
+            foreach (var min in mins)
+            {
+
+                var minPred = Prediction.GetPrediction(min, dashSpeed);
+
+                var inter = LucianMath.getCicleLineInteraction(minPred.UnitPosition.To2D(), targetPred, player.Position.To2D(), E.Range);
+
+                var best = inter.getBestInter(target);
+                if (best.X == 0)
+                    return;
+
+                E.Cast(best);
+
+            }
         }
 
         public static bool targValidForQ(Obj_AI_Base targ)

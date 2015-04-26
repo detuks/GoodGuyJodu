@@ -59,6 +59,13 @@ namespace LucianSharp
                
                 //Harass
                 Config.AddSubMenu(new Menu("Harass Sharp", "harass"));
+
+                //KillSteal
+                Config.AddSubMenu(new Menu("KillSteal Sharp", "killsteal"));
+                Config.SubMenu("killsteal").AddItem(new MenuItem("ksOn", "do KillSteal")).SetValue(true);
+                Config.SubMenu("killsteal").AddItem(new MenuItem("ksOnQ", "use Q")).SetValue(true);
+                Config.SubMenu("killsteal").AddItem(new MenuItem("ksOnW", "use W")).SetValue(true);
+                Config.SubMenu("killsteal").AddItem(new MenuItem("ksOnE", "use E")).SetValue(true);
                
                 //Extra
                 Config.AddSubMenu(new Menu("Draw Sharp", "draw"));
@@ -94,19 +101,20 @@ namespace LucianSharp
 
         private static void AfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
         {
-            Lucian.onAfterAttack(target);
+            if(unit.IsMe)
+                Lucian.onAfterAttack(target);
         }
 
         private static void OnGameUpdate(EventArgs args)
         {
             if (Config.Item("debugOn").GetValue<KeyBind>().Active) //fullDMG
             {
-                Console.WriteLine(DtsHealthPrediction.ActiveAttacksTower.Count);
+                /*Console.WriteLine(DtsHealthPrediction.ActiveAttacksTower.Count);
                 foreach (var buf in Lucian.player.Buffs)
                 {
                     Console.WriteLine(buf.Name);
                 }
-                Console.WriteLine(Lucian.gotPassiveRdy());
+                Console.WriteLine(Lucian.gotPassiveRdy());*/
             }
 
             if (LXOrbwalker.CurrentMode == LXOrbwalker.Mode.Combo)
@@ -121,6 +129,9 @@ namespace LucianSharp
                 Lucian.doHarass(target);
             }
 
+            if (Config.Item("ksOn").GetValue<bool>()) //fullDMG
+                Lucian.doKillSteal();
+
         }
 
         private static void onDraw(EventArgs args)
@@ -130,7 +141,6 @@ namespace LucianSharp
                 Lucian.getPolygonOn(target,target.BoundingRadius).Draw(Color.Red,2);
             }*/
 
-            Drawing.DrawCircle(Lucian.player.Position, 1000, LXOrbwalker.CanAttack()?Color.Blue:Color.Red);
             if (Config.Item("drawQ").GetValue<bool>())
             {
                 Drawing.DrawCircle(Lucian.player.Position, Lucian.Q.Range + 100, Color.Blue);
