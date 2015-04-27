@@ -72,6 +72,7 @@ namespace LucianSharp
                 Config.SubMenu("draw").AddItem(new MenuItem("drawQ", "draw Q")).SetValue(true);
                 Config.SubMenu("draw").AddItem(new MenuItem("drawW", "draw W")).SetValue(true);
                 Config.SubMenu("draw").AddItem(new MenuItem("drawE", "draw E")).SetValue(true);
+                Config.SubMenu("draw").AddItem(new MenuItem("drawR", "draw R")).SetValue(true);
                 
 
                 //Debug
@@ -82,12 +83,15 @@ namespace LucianSharp
                 Config.AddToMainMenu();
                 Drawing.OnDraw += onDraw;
                 Game.OnUpdate += OnGameUpdate;
+                
 
                 GameObject.OnCreate += OnCreateObject;
                 GameObject.OnDelete += OnDeleteObject;
                 Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
 
                 LXOrbwalker.AfterAttack += AfterAttack;
+
+                AttackableUnit.OnDamage += onDamage;
 
                 Lucian.setSkillShots();
 
@@ -97,6 +101,11 @@ namespace LucianSharp
                 Console.WriteLine(ex);
                 Game.PrintChat("Oops. Something went wrong with LucianSharp");
             }
+        }
+
+        private static void onDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
+        {
+
         }
 
         private static void AfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
@@ -143,13 +152,17 @@ namespace LucianSharp
 
             if (Config.Item("drawQ").GetValue<bool>())
             {
-                Drawing.DrawCircle(Lucian.player.Position, Lucian.Q.Range + 100, Color.Blue);
-                Drawing.DrawCircle(Lucian.player.Position, 1100, Color.Blue);
+                Render.Circle.DrawCircle(Lucian.player.Position, Lucian.Q.Range, Color.Yellow);
+                Render.Circle.DrawCircle(Lucian.player.Position, 1100, Color.Yellow);
             }
             if (Config.Item("drawW").GetValue<bool>())
-                Drawing.DrawCircle(Lucian.player.Position, Lucian.W.Range, Color.Yellow);
+                Render.Circle.DrawCircle(Lucian.player.Position, Lucian.W.Range, Color.Yellow);
             if (Config.Item("drawE").GetValue<bool>())
-                Drawing.DrawCircle(Lucian.player.Position, Lucian.E.Range, Color.Green);
+                Render.Circle.DrawCircle(Lucian.player.Position, Lucian.E.Range, Color.Yellow);
+            if (Config.Item("drawR").GetValue<bool>())
+                Render.Circle.DrawCircle(Lucian.player.Position, Lucian.R.Range, Color.Yellow);
+
+            
 
         }
 
