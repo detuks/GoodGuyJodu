@@ -138,7 +138,7 @@ namespace RivenSharp
                 return;
             //Game.PrintChat("dmg: " + args.Damage + " type " + args.Type + " dmg type: " + args.HitType + " pred dmg: "+ Riven.Player.GetAutoAttackDamage(targ));
 
-            if (args.Type == DamageType.Physcial && args.HitType == DamageHitType.Normal)
+            if (args.Type == DamageType.Physcial && (args.HitType == DamageHitType.Normal || args.HitType == DamageHitType.Dodge))
             {
 
                 Riven.Player.IssueOrder(GameObjectOrder.MoveTo, targ.Position);
@@ -297,7 +297,7 @@ namespace RivenSharp
              }
 
             if (arg.SData.Name.Contains("RivenFeint") || arg.SData.Name.Contains("TriCleave") || arg.SData.Name.Contains("RivenFMartyr"))
-                Utility.DelayAction.Add(Game.Ping+LXOrbwalker.GetCurrentWindupTime()+50, delegate { Riven.cancelAnim(); });
+                Utility.DelayAction.Add(Game.Ping+LXOrbwalker.GetCurrentWindupTime()+50, delegate { Riven.cancelAnim(true); });
 
              if (arg.SData.Name.Contains("RivenFeint") && Riven.R.IsReady() && Config.Item("useR").GetValue<bool>())
              {
