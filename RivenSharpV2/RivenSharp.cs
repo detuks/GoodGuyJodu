@@ -32,7 +32,6 @@ using LeagueSharp.Common;
  */
 using Rive;
 using SharpDX;
-using SharpDX.Direct3D9;
 using Color = System.Drawing.Color;
 
 namespace RivenSharp
@@ -105,17 +104,18 @@ namespace RivenSharp
 
             Drawing.OnDraw += onDraw;
             Drawing.OnEndScene += OnEndScene;
-            Game.OnGameUpdate += OnGameUpdate;
+            Game.OnUpdate += OnGameUpdate;
 
             GameObject.OnCreate += OnCreateObject;
             GameObject.OnDelete += OnDeleteObject;
-            GameObject.OnPropertyChange += OnPropertyChange;
             Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
             Obj_AI_Base.OnNewPath += OnNewPath;
             Obj_AI_Base.OnPlayAnimation += OnPlayAnimation;
 
-            Game.OnGameSendPacket += OnGameSendPacket;
-            Game.OnGameProcessPacket += OnGameProcessPacket;
+            AttackableUnit.OnDamage += onDamage;
+
+            Game.OnSendPacket += OnGameSendPacket;
+            Game.OnProcessPacket += OnGameProcessPacket;
 
             Riven.setSkillshots();
 
@@ -123,6 +123,24 @@ namespace RivenSharp
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        private static void onDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
+        {
+            if (args.SourceNetworkId != Riven.Player.NetworkId || !isComboing() || LXOrbwalker.CanAttack())
+                return;
+
+
+            Obj_AI_Base targ = ObjectManager.GetUnitByNetworkId<Obj_AI_Base>(args.TargetNetworkId);
+            if (targ == null)
+                return;
+            //Game.PrintChat("dmg: " + args.Damage + " type " + args.Type + " dmg type: " + args.HitType + " pred dmg: "+ Riven.Player.GetAutoAttackDamage(targ));
+
+            if (args.Type == DamageType.Physcial && args.HitType == DamageHitType.Normal)
+            {
+                //if (targ is Obj_AI_Hero)
+                    Riven.Q.Cast(targ.Position);
             }
         }
 
@@ -263,6 +281,11 @@ namespace RivenSharp
 
         public static void OnProcessSpell(LeagueSharp.Obj_AI_Base sender, LeagueSharp.GameObjectProcessSpellCastEventArgs arg)
         {
+            if (!sender.IsMe)
+                return;
+
+           // Game.PrintChat(arg.SData.Name);
+
             if (Config.Item("forceQE").GetValue<bool>() && sender.IsMe && arg.SData.Name.Contains("RivenFeint") && Riven.Q.IsReady() && LXOrbwalker.GetPossibleTarget() != null)
              {
                 Console.WriteLine("force q");
@@ -270,18 +293,23 @@ namespace RivenSharp
                  Riven.forceQ = true;
                  // Riven.timer = new System.Threading.Timer(obj => { Riven.Player.IssueOrder(GameObjectOrder.MoveTo, Riven.difPos()); }, null, (long)100, System.Threading.Timeout.Infinite);
              }
+
+            if (arg.SData.Name.Contains("RivenFeint") || arg.SData.Name.Contains("TriCleave") || arg.SData.Name.Contains("RivenFMartyr"))
+                Utility.DelayAction.Add(Game.Ping+LXOrbwalker.GetCurrentWindupTime()+50, delegate { Riven.cancelAnim(true); });
+
+             if (arg.SData.Name.Contains("RivenFeint") && Riven.R.IsReady() && Config.Item("useR").GetValue<bool>())
+             {
+                 Utility.DelayAction.Add(Game.Ping + 50, delegate { Riven.useRSmart(LXOrbwalker.GetPossibleTarget()); });
+             }
         }
 
-        public static void OnPropertyChange(LeagueSharp.GameObject obj, LeagueSharp.GameObjectPropertyChangeEventArgs prop)
-        {
-           // Console.WriteLine("obj: " + obj.Name + " - " + prop.NewValue);
-        }
 
 
         public static int lastTargetId = 0;
 
         public static void OnGameProcessPacket(GamePacketEventArgs args)
         {
+            return;
             try
             {
                 
@@ -377,6 +405,7 @@ namespace RivenSharp
 
         public static void OnGameSendPacket(GamePacketEventArgs args)
         {
+            return;
             try
             {
                 if (args.PacketData[0] == 119)

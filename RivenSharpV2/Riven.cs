@@ -108,7 +108,7 @@ namespace RivenSharp
             {   
                // Player.IssueOrder(GameObjectOrder.AttackUnit, target);
 
-                if (!Player.IsChanneling && Q.IsReady() && dist > Player.AttackRange+Player.BoundingRadius/* && (getQJumpCount()*175 + target.BoundingRadius + 100) < dist*/)
+                if (!Player.IsChannelingImportantSpell() && Q.IsReady() && dist > Player.AttackRange+Player.BoundingRadius/* && (getQJumpCount()*175 + target.BoundingRadius + 100) < dist*/)
                 {
                     Q.Cast(target.Position);
                 }
@@ -144,7 +144,7 @@ namespace RivenSharp
             {
                 Player.IssueOrder(GameObjectOrder.AttackUnit, target);
 
-                if (!Player.IsChanneling && Q.IsReady() && dist > Player.AttackRange + Player.BoundingRadius/* && (getQJumpCount()*175 + target.BoundingRadius + 100) < dist*/)
+                if (!Player.IsChannelingImportantSpell() && Q.IsReady() && dist > Player.AttackRange + Player.BoundingRadius/* && (getQJumpCount()*175 + target.BoundingRadius + 100) < dist*/)
                 {
                     Q.Cast(target.Position);
                 }
@@ -349,7 +349,6 @@ namespace RivenSharp
 
             }
             moveTo(Game.CursorPos);
-            //Game.Say("/l");
 
 
            //  Packet.C2S.Cast.Encoded(new Packet.C2S.Cast.Struct(fill iterator up)).Send();
