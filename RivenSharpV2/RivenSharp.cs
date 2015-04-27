@@ -269,8 +269,7 @@ namespace RivenSharp
         {
             if (Config.Item("doHarasE").GetValue<KeyBind>().Active ||
                 Config.Item("doHarasQ").GetValue<KeyBind>().Active
-                || LXOrbwalker.CurrentMode == LXOrbwalker.Mode.Combo || 
-                LXOrbwalker.CurrentMode == LXOrbwalker.Mode.LaneClear)
+                || LXOrbwalker.CurrentMode == LXOrbwalker.Mode.Combo)
             {
                 return true;
             }
@@ -295,7 +294,7 @@ namespace RivenSharp
              }
 
             if (arg.SData.Name.Contains("RivenFeint") || arg.SData.Name.Contains("TriCleave") || arg.SData.Name.Contains("RivenFMartyr"))
-                Utility.DelayAction.Add(Game.Ping+LXOrbwalker.GetCurrentWindupTime()+50, delegate { Riven.cancelAnim(true); });
+                Utility.DelayAction.Add(Game.Ping+LXOrbwalker.GetCurrentWindupTime()+50, delegate { Riven.cancelAnim(); });
 
              if (arg.SData.Name.Contains("RivenFeint") && Riven.R.IsReady() && Config.Item("useR").GetValue<bool>())
              {
