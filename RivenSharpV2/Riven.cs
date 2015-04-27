@@ -78,7 +78,7 @@ namespace RivenSharp
             }
 
             igniteIfKIllable(target);
-            rushDownQ = rushDmgBasedOnDist(target) * 0.7f > target.Health;
+            rushDownQ =  RivenSharp.Config.Item("rush").GetValue<bool>() && rushDmgBasedOnDist(target) * 0.7f > target.Health;
             rushDown = rushDmgBasedOnDist(target)*1.1f > target.Health;
             if (RivenSharp.Config.Item("useR").GetValue<bool>())
                 useRSmart(target);
@@ -166,7 +166,7 @@ namespace RivenSharp
 
         public static void gapWithQ(Obj_AI_Base target)
         {
-            if ((E.IsReady() || !Q.IsReady()) && ! rushDownQ)
+            if ((E.IsReady() || !Q.IsReady()) && ! rushDownQ || Player.IsDashing())
                 return;
             reachWithQ(target);
         }

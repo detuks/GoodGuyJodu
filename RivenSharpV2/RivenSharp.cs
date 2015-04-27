@@ -85,6 +85,7 @@ namespace RivenSharp
            Config.SubMenu("combo").AddItem(new MenuItem("useR", "Use R on combo (Shuld be on)")).SetValue(true);
             Config.SubMenu("combo").AddItem(new MenuItem("forceQE", "Use Q after E")).SetValue(true);
             Config.SubMenu("combo").AddItem(new MenuItem("packets", "Use packet cast")).SetValue(true);
+            Config.SubMenu("combo").AddItem(new MenuItem("rush", "Rush with Q")).SetValue(true);
 
             //Haras
             Config.AddSubMenu(new Menu("Harass Sharp", "haras"));
@@ -139,6 +140,8 @@ namespace RivenSharp
 
             if (args.Type == DamageType.Physcial && args.HitType == DamageHitType.Normal)
             {
+
+                Riven.Player.IssueOrder(GameObjectOrder.MoveTo, targ.Position);
                 //if (targ is Obj_AI_Hero)
                     Riven.Q.Cast(targ.Position);
             }
