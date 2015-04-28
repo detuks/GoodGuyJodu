@@ -129,7 +129,7 @@ namespace RivenSharp
 
         private static void onDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
         {
-            if (args.SourceNetworkId != Riven.Player.NetworkId || !isComboing() || LXOrbwalker.CanAttack())
+            if (args.SourceNetworkId != Riven.Player.NetworkId || !isComboing() || LXOrbwalker.CanAttack() || !Riven.Q.IsReady())
                 return;
 
 
