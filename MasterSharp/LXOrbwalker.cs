@@ -132,7 +132,7 @@ namespace MasterSharp
 
 
             Drawing.OnDraw += OnDraw;
-            Game.OnGameUpdate += OnUpdate;
+            Game.OnUpdate += OnUpdate;
             Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
             GameObject.OnCreate += Obj_SpellMissile_OnCreate;
         }
@@ -158,7 +158,7 @@ namespace MasterSharp
             if (CurrentMode == Mode.None  || MenuGUI.IsChatOpen)
                 return;
             var target = GetPossibleTarget();
-            if (Menu.Item("Move_target").GetValue<bool>() && target != null)
+            if (Menu.Item("Move_target").GetValue<bool>() && target != null && target is Obj_AI_Hero)
             {
                 if(target.Path.Count()==0)
                     Orbwalk(target.Position.To2D().Extend(target.Direction.To2D(), 140).To3D(), target);

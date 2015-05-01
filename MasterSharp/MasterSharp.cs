@@ -98,20 +98,57 @@ namespace MasterSharp
                 Config.AddToMainMenu();
                 Drawing.OnDraw += onDraw;
 
-                Game.OnGameUpdate += OnGameUpdate;
+                Game.OnUpdate += OnGameUpdate;
 
                 Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
 
+                AttackableUnit.OnDamage += onDamage;
+
                 SkillshotDetector.OnDetectSkillshot += OnDetectSkillshot;
                 SkillshotDetector.OnDeleteMissile += OnDeleteMissile;
-                Game.OnGameProcessPacket += OnGameProcessPacket;
+                //Game.OnProcessPacket += OnGameProcessPacket;
                 CustomEvents.Unit.OnDash += onDash;
+                LXOrbwalker.AfterAttack += afterAttack;
             }
             catch
             {
                 Game.PrintChat("Oops. Something went wrong with Jayce - Sharp");
             }
 
+        }
+
+        private static void onDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
+        {
+            try
+            {
+                if (args.SourceNetworkId != MasterYi.player.NetworkId || !MasterYi.W.IsReady() || LXOrbwalker.CanAttack())
+                    return;
+
+
+                GameObject targ = ObjectManager.GetUnitByNetworkId<GameObject>(args.TargetNetworkId);
+                
+                if (targ == null)
+                    return;
+               // Console.WriteLine("dmg: " + args.Damage + " type " + args.Type + " dmg type: " + args.HitType + " pred dmg: "+ MasterYi.player.GetAutoAttackDamage(targ));
+
+               // if (args.Type == DamageType.Physical)
+               // {
+                if (targ is Obj_AI_Hero)
+                {
+                    MasterYi.W.Cast();
+                    LXOrbwalker.ResetAutoAttackTimer();
+                }
+                // }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
+        private static void afterAttack(Obj_AI_Base unit, Obj_AI_Base target)
+        {
         }
 
         private static void onDash(Obj_AI_Base sender, Dash.DashItem args)
@@ -124,6 +161,7 @@ namespace MasterSharp
 
         public static void OnGameProcessPacket(GamePacketEventArgs args)
         {
+            return;
 
             if (Config.Item("comboWreset").GetValue<bool>() && args.PacketData[0] == 0x65 && MasterYi.W.IsReady() && LXOrbwalker.CurrentMode == LXOrbwalker.Mode.Combo)
             {

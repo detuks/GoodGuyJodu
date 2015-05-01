@@ -188,8 +188,8 @@ namespace MasterSharp
             }
             else if (useW != 0 && W.IsReady())
             {
-                var dontMove = (psCast.TimeCast > 2) ? 2000 : psCast.TimeCast*1000;
-                LXOrbwalker.cantMoveTill = Environment.TickCount +(int) dontMove;
+                //var dontMove = (psCast.TimeCast > 2) ? 2000 : psCast.TimeCast*1000;
+                LXOrbwalker.cantMoveTill = Environment.TickCount +(int) 500;
                 W.Cast();
             }
 
