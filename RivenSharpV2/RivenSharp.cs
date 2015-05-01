@@ -138,7 +138,7 @@ namespace RivenSharp
                 return;
             //Game.PrintChat("dmg: " + args.Damage + " type " + args.Type + " dmg type: " + args.HitType + " pred dmg: "+ Riven.Player.GetAutoAttackDamage(targ));
 
-            if (args.Type == DamageType.Physcial && (args.HitType == DamageHitType.Normal || args.HitType == DamageHitType.Dodge))
+            if (args.Type == DamageType.Physical && (args.HitType == DamageHitType.Normal || args.HitType == DamageHitType.Dodge))
             {
 
                 Riven.Player.IssueOrder(GameObjectOrder.MoveTo, targ.Position);
