@@ -109,6 +109,8 @@ namespace MasterSharp
                 //Game.OnProcessPacket += OnGameProcessPacket;
                 CustomEvents.Unit.OnDash += onDash;
                 LXOrbwalker.AfterAttack += afterAttack;
+
+
             }
             catch
             {
@@ -135,7 +137,8 @@ namespace MasterSharp
                // {
                 if (targ is Obj_AI_Hero)
                 {
-                    MasterYi.W.Cast();
+                    if (Config.Item("comboWreset").GetValue<bool>())
+                        MasterYi.W.Cast();
                     LXOrbwalker.ResetAutoAttackTimer();
                 }
                 // }
