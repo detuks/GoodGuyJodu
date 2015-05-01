@@ -338,8 +338,8 @@ namespace RivenSharp
 
         public static void cancelAnim(bool aaToo=false)
         {
-            
-            if (false)
+
+            if (aaToo)
             {
                 LXOrbwalker.ResetAutoAttackTimer();
             }

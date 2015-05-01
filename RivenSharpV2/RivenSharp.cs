@@ -151,13 +151,14 @@ namespace RivenSharp
         {
             if (sender.IsMe && args.Animation.Contains("Spell") && isComboing())
             {
-                Riven.cancelAnim();
+
+                Utility.DelayAction.Add(Game.Ping + 50, delegate { Riven.cancelAnim(); });
             }
         }
 
         private static void OnNewPath(Obj_AI_Base sender, GameObjectNewPathEventArgs args)
         {
-            if (sender.IsMe)
+            if (sender.IsMe && Riven.Q.IsReady(500))
             {
                 LXOrbwalker.ResetAutoAttackTimer();
             }
@@ -297,7 +298,7 @@ namespace RivenSharp
              }
 
             if (arg.SData.Name.Contains("RivenFeint") || arg.SData.Name.Contains("TriCleave") || arg.SData.Name.Contains("RivenFMartyr"))
-                Utility.DelayAction.Add(Game.Ping+LXOrbwalker.GetCurrentWindupTime()+50, delegate { Riven.cancelAnim(true); });
+                Utility.DelayAction.Add(Game.Ping+LXOrbwalker.GetCurrentWindupTime()+50, delegate { Riven.cancelAnim(); });
 
              if (arg.SData.Name.Contains("RivenFeint") && Riven.R.IsReady() && Config.Item("useR").GetValue<bool>())
              {
