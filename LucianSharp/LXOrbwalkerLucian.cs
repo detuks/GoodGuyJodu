@@ -147,6 +147,8 @@ namespace LucianSharp
                 if (obj.IsMelee())
                     return;
             }
+
+            //Console.WriteLine(sender.Name+" : "+sender.GetType());
             if (!(sender is Obj_SpellMissile) || !sender.IsValid)
                 return;
             var missile = (Obj_SpellMissile)sender;
@@ -351,7 +353,7 @@ namespace LucianSharp
                     FireOnTargetSwitch((Obj_AI_Base)spell.Target);
                     _lastTarget = (Obj_AI_Base)spell.Target;
                 }
-                if (unit.IsMelee())
+                //if (unit.IsMelee())
                     Utility.DelayAction.Add(
                         (int)(unit.AttackCastDelay * 1000 + Game.Ping * 0.5) + 50, () => FireAfterAttack(unit, _lastTarget));
             }
