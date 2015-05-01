@@ -136,11 +136,11 @@ namespace LucianSharp
 
             if (Q.IsReady())
             {
-                useQonTarg((Obj_AI_Hero)target, QhitChance.medium);
-                return;
+                if(useQonTarg((Obj_AI_Hero)target, QhitChance.medium))
+                    return;
             }
 
-            if (W.IsReady() && !Q.IsReady() && player.Mana>=120 && !tooEasyKill(hero) && LucianSharp.Config.Item("useW").GetValue<bool>())
+            if (W.IsReady() && player.Mana>=120 && !tooEasyKill(hero) && LucianSharp.Config.Item("useW").GetValue<bool>())
             {
                 W.Cast(hero.Position);
                 return;
