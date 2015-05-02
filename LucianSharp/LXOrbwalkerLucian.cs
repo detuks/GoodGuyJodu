@@ -14,7 +14,7 @@ namespace LucianSharp
     {
 
         private static readonly string[] AttackResets = { "lucianw", "meditate", "dariusnoxiantacticsonh", "fioraflurry", "garenq", "hecarimrapidslash", "jaxempowertwo", "jaycehypercharge", "leonashieldofdaybreak", "luciane", "monkeykingdoubleattack", "mordekaisermaceofspades", "nasusq", "nautiluspiercinggaze", "netherblade", "parley", "poppydevastatingblow", "powerfist", "renektonpreexecute", "rengarq", "shyvanadoubleattack", "sivirw", "takedown", "talonnoxiandiplomacy", "trundletrollsmash", "vaynetumble", "vie", "volibearq", "xenzhaocombotarget", "yorickspectral" };
-        private static readonly string[] NoAttacks = {  "jarvanivcataclysmattack", "monkeykingdoubleattack", "shyvanadoubleattack", "shyvanadoubleattackdragon", "zyragraspingplantattack", "zyragraspingplantattack2", "zyragraspingplantattackfire", "zyragraspingplantattack2fire" };
+        private static readonly string[] NoAttacks = { "lucianq", "jarvanivcataclysmattack", "monkeykingdoubleattack", "shyvanadoubleattack", "shyvanadoubleattackdragon", "zyragraspingplantattack", "zyragraspingplantattack2", "zyragraspingplantattackfire", "zyragraspingplantattack2fire" };
         private static readonly string[] Attacks = { "caitlynheadshotmissile", "frostarrow", "garenslash2", "kennenmegaproc", "lucianpassiveattack", "masteryidoublestrike", "quinnwenhanced", "renektonexecute", "renektonsuperexecute", "rengarnewpassivebuffdash", "trundleq", "xenzhaothrust", "viktorqbuff", "xenzhaothrust2", "xenzhaothrust3" };
 
 
@@ -149,9 +149,9 @@ namespace LucianSharp
             }
 
             //Console.WriteLine(sender.Name+" : "+sender.GetType());
-            if (!(sender is Obj_SpellMissile) || !sender.IsValid)
+            if (!(sender is MissileClient) || !sender.IsValid)
                 return;
-            var missile = (Obj_SpellMissile)sender;
+            var missile = (MissileClient)sender;
             if (missile.SpellCaster is Obj_AI_Hero && missile.SpellCaster.IsValid && IsAutoAttack(missile.SData.Name))
                 FireAfterAttack(missile.SpellCaster, _lastTarget);
         }
@@ -353,7 +353,7 @@ namespace LucianSharp
                     FireOnTargetSwitch((Obj_AI_Base)spell.Target);
                     _lastTarget = (Obj_AI_Base)spell.Target;
                 }
-                //if (unit.IsMelee())
+                if (unit.IsMelee())
                     Utility.DelayAction.Add(
                         (int)(unit.AttackCastDelay * 1000 + Game.Ping * 0.5) + 50, () => FireAfterAttack(unit, _lastTarget));
             }
