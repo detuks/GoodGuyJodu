@@ -133,7 +133,7 @@ namespace DetuksSharp.Prediction
                 if (attacks.target == null || attacks.target.NetworkId != unit.NetworkId || (ignoreAlmostDead && almostDead(attacks.source)))
                     continue;
                 int hitOn = 0;
-                if (attacks.missle == null)
+                if (attacks.missle == null || attacks.sData.MissileSpeed == 0)
                 {
                     hitOn = (int)(attacks.createdTick + attacks.source.AttackCastDelay*1000);
                 }
@@ -158,7 +158,7 @@ namespace DetuksSharp.Prediction
                 if (attacks.target == null || attacks.target.NetworkId != unit.NetworkId || (ignoreAlmostDead && almostDead(attacks.source)))
                     continue;
                 int hitOn = 0;
-                if (attacks.missle == null)
+                if (attacks.missle == null || attacks.sData.MissileSpeed == 0)
                 {
                     hitOn = (int)(attacks.createdTick + attacks.source.AttackCastDelay * 1000);
                 }
