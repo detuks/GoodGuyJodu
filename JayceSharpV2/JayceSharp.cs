@@ -48,7 +48,7 @@ namespace JayceSharpV2
             if (ObjectManager.Player.ChampionName != CharName)
                 return;
 
-            Game.PrintChat("Jayce - SharpV2 by DeTuKs");
+            Console.WriteLine("Jayce - SharpV2 by DeTuKs");
             Jayce.setSkillShots();
             try
             {
@@ -92,6 +92,9 @@ namespace JayceSharpV2
 
                 Game.OnUpdate += OnGameUpdate;
 
+                GameObject.OnCreate += onCreate;
+                GameObject.OnDelete += onDelete;
+
                 Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
                 AntiGapcloser.OnEnemyGapcloser += OnEnemyGapcloser;
                 Interrupter2.OnInterruptableTarget += OnPosibleToInterrupt;
@@ -104,6 +107,23 @@ namespace JayceSharpV2
                 Game.PrintChat("Oops. Something went wrong with Jayce - Sharp");
             }
 
+        }
+
+        private static void onDelete(GameObject sender, EventArgs args)
+        {
+            if (Jayce.myCastedQ != null && Jayce.myCastedQ.NetworkId == sender.NetworkId)
+                Jayce.myCastedQ = null;
+        }
+
+        private static void onCreate(GameObject sender, EventArgs args)
+        {
+            if (sender is Obj_SpellLineMissile)
+            {
+                var mis = (Obj_SpellLineMissile)sender;
+                if (mis.SpellCaster.IsMe)
+                    Jayce.myCastedQ = mis;
+
+            }
         }
 
         private static void OnPosibleToInterrupt(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
@@ -137,6 +157,7 @@ namespace JayceSharpV2
 
         private static void OnGameUpdate(EventArgs args)
         {
+
             Jayce.checkForm();
             Jayce.processCDs();
             if (Config.Item("shoot").GetValue<KeyBind>().Active)

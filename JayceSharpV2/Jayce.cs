@@ -38,7 +38,7 @@ namespace JayceSharpV2
         public static GameObjectProcessSpellCastEventArgs castEonQ = null;
         public static int castedTimeUnreach = 0;
 
-        public static Obj_SpellMissile myCastedQ = null;
+        public static Obj_SpellLineMissile myCastedQ = null;
 
         public static Obj_AI_Hero lockedTarg = null;
 
