@@ -169,7 +169,7 @@ namespace DetuksSharp.Prediction
 
                 int timeTo = now + msTime;
 
-                int hits = (int)((timeTo - hitOn)/attacks.cycle) +1;
+                int hits = (attacks.cycle == 0 )?0:(int)((timeTo - hitOn)/attacks.cycle) +1;
 
                 if (now < hitOn && hitOn < now + msTime)
                 {
