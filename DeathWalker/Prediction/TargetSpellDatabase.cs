@@ -447,6 +447,7 @@ namespace DetuksSharp.Prediction
                 #endregion Lissandra
 
                 #region Lucian
+                new TargetSpellData("lucian", "lucianpassiveshot", SpellSlot.Unknown, SpellType.Targeted, CcType.No, 550, 500, 500),
                 new TargetSpellData("lucian", "lucianq", SpellSlot.Q, SpellType.Targeted, CcType.No, 550, 500, 500),
                 new TargetSpellData("lucian", "lucianw", SpellSlot.W, SpellType.Skillshot, CcType.No, 1000, 500, 500),
                 new TargetSpellData("lucian", "luciane", SpellSlot.E, SpellType.Skillshot, CcType.No, 650, 500, float.MaxValue),
