@@ -279,6 +279,31 @@ namespace DetuksSharp
                     return best;
             }
 
+            /* turrets / inhibitors / nexus */
+            if (CurrentMode == Mode.LaneClear)
+            {
+                /* turrets */
+                foreach (var turret in
+                    ObjectManager.Get<Obj_AI_Turret>().Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
+                {
+                    return turret;
+                }
+
+                /* inhibitor */
+                foreach (var turret in
+                    ObjectManager.Get<Obj_BarracksDampener>().Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
+                {
+                    return turret;
+                }
+
+                /* nexus */
+                foreach (var nexus in
+                    ObjectManager.Get<Obj_HQ>().Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
+                {
+                    return nexus;
+                }
+            }
+
             var hero = GetBestHeroTarget();
 
             if (hero != null)
