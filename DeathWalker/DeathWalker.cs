@@ -13,7 +13,7 @@ using Color = System.Drawing.Color;
 
 namespace DeathWalker
 {
-    class DeathWalker
+    public class DeathWalker
     {
         public static int now
         {
