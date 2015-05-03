@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -20,7 +21,7 @@ namespace DetuksSharp
         private static readonly string[] AttackResets =
         {
             "dariusnoxiantacticsonh", "fioraflurry", "garenq",
-            "hecarimrapidslash", "jaxempowertwo", "jaycehypercharge", "leonashieldofdaybreak", "luciane", "lucianq",
+            "hecarimrapidslash", "jaxempowertwo", "jaycehypercharge", "leonashieldofdaybreak", "luciane", "lucianw",
             "monkeykingdoubleattack", "mordekaisermaceofspades", "nasusq", "nautiluspiercinggaze", "netherblade",
             "parley", "poppydevastatingblow", "powerfist", "renektonpreexecute", "rengarq", "shyvanadoubleattack",
             "sivirw", "takedown", "talonnoxiandiplomacy", "trundletrollsmash", "vaynetumble", "vie", "volibearq",
@@ -113,7 +114,7 @@ namespace DetuksSharp
 
         }
 
-        private static void onLoad(EventArgs args)
+        private void onLoad(EventArgs args)
         {
             /*Config = new Menu("DeathWalker", "dWalk", true);
 
@@ -125,10 +126,26 @@ namespace DetuksSharp
             Obj_AI_Base.OnProcessSpellCast += onStartAutoAttack;
             Spellbook.OnStopCast += onStopAutoAttack;
 
+
             Obj_AI_Base.OnDamage += onDamage;
 
             Game.OnUpdate += OnUpdate;
 
+        }
+
+        private static void onCreate(GameObject sender, EventArgs args)
+        {
+            //Console.WriteLine("sender: "+sender.Name+" type: "+sender.Type);
+
+            if (sender is MissileClient)
+            {
+                var mis = (MissileClient) sender;
+
+                if (mis.SpellCaster.IsMe && IsAutoAttack(mis.SData.Name))
+                {
+                    FireAfterAttack(player,(AttackableUnit) mis.Target);
+                }
+            }
         }
 
         private static void onStopAutoAttack(Spellbook sender, SpellbookStopCastEventArgs args)
@@ -144,10 +161,22 @@ namespace DetuksSharp
         {
             if(!sender.IsMe)
                 return;
+            /*foreach (PropertyDescriptor descriptor in TypeDescriptor.GetProperties(args.SData))
+            {
+                string name = descriptor.Name;
+                object value = descriptor.GetValue(args.SData);
+                Console.WriteLine("{0}={1}", name, value);
+            }*/
             if (isAutoAttackReset(args.SData.Name) && sender.IsMe)
-                Utility.DelayAction.Add(250, resetAutoAttackTimer);
-            if (args.SData.IsAutoAttack() && args.Target is AttackableUnit)
-                FireAfterAttack(sender, (AttackableUnit)args.Target);
+            {
+                
+                Utility.DelayAction.Add((int)250, resetAutoAttackTimer);
+            }
+            if (IsAutoAttack(args.SData.Name))
+            {
+                lastAutoAttack = now;
+                lastAutoAttackMove = now;
+            }
             //Fire after attack!
         }
 
@@ -362,6 +391,13 @@ namespace DetuksSharp
             return AttackResets.Contains(name.ToLower());
         }
 
+        public static bool IsAutoAttack(string name)
+        {
+            Console.WriteLine(name);
+            return (name.ToLower().Contains("attack") && !NoAttacks.Contains(name.ToLower())) ||
+            Attacks.Contains(name.ToLower());
+        }
+
         public static bool inAutoAttackRange(AttackableUnit unit, Vector2 pos)
         {
             if (!unit.IsValidTarget())
@@ -427,6 +463,7 @@ namespace DetuksSharp
 
         public static void resetAutoAttackTimer()
         {
+            Console.WriteLine("Reset AA");
             lastAutoAttack = 0;
             lastAutoAttackMove = 0;
         }
@@ -484,6 +521,7 @@ namespace DetuksSharp
         {
             lastAutoAttackMove = 0;
             //set can move
+            Console.WriteLine("after attack");
             if (AfterAttack != null)
             {
                 AfterAttack(unit, target);
@@ -519,6 +557,8 @@ namespace DetuksSharp
             Spellbook.OnStopCast += onStopAutoAttack;
 
             Obj_AI_Base.OnDamage += onDamage;
+
+            GameObject.OnCreate += onCreate;
 
             Game.OnUpdate += OnUpdate;
         }
