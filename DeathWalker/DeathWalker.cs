@@ -21,7 +21,6 @@ namespace DetuksSharp
         }
 
         public static Menu menu;
-        public static Menu Config;//while testing
         public enum Mode
         {
             Combo,
@@ -270,7 +269,7 @@ namespace DetuksSharp
             minion.IsValidTarget() && minion.Team != GameObjectTeam.Neutral &&
             inAutoAttackRange(minion) &&
             HealthPrediction.LaneClearHealthPrediction(
-            minion, (int)((player.AttackDelay * 1000) * 2), Config.Item("farmDelay").GetValue<Slider>().Value) <= player.GetAutoAttackDamage(minion));
+            minion, (int)((player.AttackDelay * 1000) * 2), menu.Item("farmDelay").GetValue<Slider>().Value) <= player.GetAutoAttackDamage(minion));
             return minDeadSoon;
         }
 
@@ -284,13 +283,13 @@ namespace DetuksSharp
 
         public static float getTargetSearchDist()
         {
-            return player.AttackRange + player.BoundingRadius + Config.Item("runCS").GetValue<Slider>().Value;
+            return player.AttackRange + player.BoundingRadius + menu.Item("runCS").GetValue<Slider>().Value;
         }
 
         public static int timeTillDamageOn(Obj_AI_Base unit)
         {
             var dist = unit.ServerPosition.Distance(player.ServerPosition);
-            int addTime = -Config.Item("farmDelay").GetValue<Slider>().Value;//some farm delay
+            int addTime = -menu.Item("farmDelay").GetValue<Slider>().Value;//some farm delay
             if (!inAutoAttackRange(unit))//+ check if want to move to killabel minion and range it wants to
             {
                 var realDist = realDistanceTill(unit);
@@ -382,7 +381,7 @@ namespace DetuksSharp
 
         public static int canMoveAfter()
         {
-            var after = lastAutoAttack + player.AttackCastDelay * 1000 - now + Game.Ping + Config.Item("WindUp").GetValue<Slider>().Value;
+            var after = lastAutoAttack + player.AttackCastDelay * 1000 - now + Game.Ping + menu.Item("WindUp").GetValue<Slider>().Value;
             return (int)(after > 0 ? after : 0);
         }
 
@@ -457,7 +456,6 @@ namespace DetuksSharp
 
         public static void AddToMenu(Menu menuIn)
         {
-            menu = menuIn;
             menu.AddItem(new MenuItem("Combo_Key", "Combo Key").SetValue(new KeyBind(32, KeyBindType.Press)));
             menu.AddItem(new MenuItem("Harass_Key", "harass Key").SetValue(new KeyBind('C', KeyBindType.Press)));
             menu.AddItem(new MenuItem("LaneClear_Key", "LaneClear Key").SetValue(new KeyBind('V', KeyBindType.Press)));
@@ -465,6 +463,8 @@ namespace DetuksSharp
             menu.AddItem(new MenuItem("WindUp", "WindUp").SetValue(new Slider(60, 0, 250)));
             menu.AddItem(new MenuItem("farmDelay", "Farm delay").SetValue(new Slider(60, 0, 250)));
             menu.AddItem(new MenuItem("runCS", "Run CS distance").SetValue(new Slider(60, 0, 500)));
+
+            menu = menuIn;
 
             Drawing.OnDraw += onDraw;
 
