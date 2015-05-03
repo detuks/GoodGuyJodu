@@ -77,18 +77,17 @@ namespace DetuksSharp
 
         public DeathWalker()
         {
-            CustomEvents.Game.OnGameLoad += onLoad;
             //While testing menu
           
 
         }
 
-        private void onLoad(EventArgs args)
+        private static void onLoad(EventArgs args)
         {
             /*Config = new Menu("DeathWalker", "dWalk", true);
 
-            AddToMenu(Config);*/
-            Config.AddToMainMenu();
+            AddToMenu(Config);
+            Config.AddToMainMenu();*/
             Drawing.OnDraw += onDraw;
 
 
@@ -101,7 +100,7 @@ namespace DetuksSharp
 
         }
 
-        private void onStopAutoAttack(Spellbook sender, SpellbookStopCastEventArgs args)
+        private static void onStopAutoAttack(Spellbook sender, SpellbookStopCastEventArgs args)
         {
             if (sender.Owner.IsMe && args.DestroyMissile)
             {
@@ -110,7 +109,7 @@ namespace DetuksSharp
             }
         }
 
-        private void onStartAutoAttack(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        private static void onStartAutoAttack(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
             if(!sender.IsMe || !args.SData.IsAutoAttack())
                 return;
@@ -120,7 +119,7 @@ namespace DetuksSharp
         }
 
 
-        private void onDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
+        private static void onDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
         {
             if (args.SourceNetworkId != player.NetworkId)
                 return;
@@ -128,7 +127,7 @@ namespace DetuksSharp
 
         }
 
-        private void onDraw(EventArgs args)
+        private static void onDraw(EventArgs args)
         {
             Utility.DrawCircle(player.Position, player.AttackRange+player.BoundingRadius, Color.Green);
 
@@ -146,7 +145,7 @@ namespace DetuksSharp
 
         }
 
-        private void OnUpdate(EventArgs args)
+        private static void OnUpdate(EventArgs args)
         {
             try
             {
@@ -466,6 +465,16 @@ namespace DetuksSharp
             menu.AddItem(new MenuItem("WindUp", "WindUp").SetValue(new Slider(60, 0, 250)));
             menu.AddItem(new MenuItem("farmDelay", "Farm delay").SetValue(new Slider(60, 0, 250)));
             menu.AddItem(new MenuItem("runCS", "Run CS distance").SetValue(new Slider(60, 0, 500)));
+
+            Drawing.OnDraw += onDraw;
+
+
+            Obj_AI_Base.OnProcessSpellCast += onStartAutoAttack;
+            Spellbook.OnStopCast += onStopAutoAttack;
+
+            Obj_AI_Base.OnDamage += onDamage;
+
+            Game.OnUpdate += OnUpdate;
         }
     }
 }
