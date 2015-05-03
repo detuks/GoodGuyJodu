@@ -15,6 +15,35 @@ namespace DetuksSharp
 {
     public class DeathWalker
     {
+
+        //Spells that reset the attack timer.
+        private static readonly string[] AttackResets =
+        {
+            "dariusnoxiantacticsonh", "fioraflurry", "garenq",
+            "hecarimrapidslash", "jaxempowertwo", "jaycehypercharge", "leonashieldofdaybreak", "luciane", "lucianq",
+            "monkeykingdoubleattack", "mordekaisermaceofspades", "nasusq", "nautiluspiercinggaze", "netherblade",
+            "parley", "poppydevastatingblow", "powerfist", "renektonpreexecute", "rengarq", "shyvanadoubleattack",
+            "sivirw", "takedown", "talonnoxiandiplomacy", "trundletrollsmash", "vaynetumble", "vie", "volibearq",
+            "xenzhaocombotarget", "yorickspectral", "reksaiq"
+        };
+
+        //Spells that are not attacks even if they have the "attack" word in their name.
+        private static readonly string[] NoAttacks =
+        {
+            "jarvanivcataclysmattack", "monkeykingdoubleattack",
+            "shyvanadoubleattack", "shyvanadoubleattackdragon", "zyragraspingplantattack", "zyragraspingplantattack2",
+            "zyragraspingplantattackfire", "zyragraspingplantattack2fire", "viktorpowertransfer"
+        };
+
+        //Spells that are attacks even if they dont have the "attack" word in their name.
+        private static readonly string[] Attacks =
+        {
+            "caitlynheadshotmissile", "frostarrow", "garenslash2",
+            "kennenmegaproc", "lucianpassiveattack", "masteryidoublestrike", "quinnwenhanced", "renektonexecute",
+            "renektonsuperexecute", "rengarnewpassivebuffdash", "trundleq", "xenzhaothrust", "xenzhaothrust2",
+            "xenzhaothrust3", "viktorqbuff"
+        };
+
         public static int now
         {
             get { return (int)DateTime.Now.TimeOfDay.TotalMilliseconds; }
@@ -113,9 +142,11 @@ namespace DetuksSharp
 
         private static void onStartAutoAttack(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
-            if(!sender.IsMe || !args.SData.IsAutoAttack())
+            if(!sender.IsMe)
                 return;
-            if (args.Target is AttackableUnit)
+            if (isAutoAttackReset(args.SData.Name) && sender.IsMe)
+                Utility.DelayAction.Add(250, resetAutoAttackTimer);
+            if (args.SData.IsAutoAttack() && args.Target is AttackableUnit)
                 FireAfterAttack(sender, (AttackableUnit)args.Target);
             //Fire after attack!
         }
@@ -326,6 +357,11 @@ namespace DetuksSharp
                     player.ServerPosition.To2D()) <= myRange * myRange;
         }
 
+        public static bool isAutoAttackReset(string name)
+        {
+            return AttackResets.Contains(name.ToLower());
+        }
+
         public static bool inAutoAttackRange(AttackableUnit unit, Vector2 pos)
         {
             if (!unit.IsValidTarget())
@@ -387,6 +423,12 @@ namespace DetuksSharp
         {
             var after = lastAutoAttack + player.AttackCastDelay * 1000 - now + Game.Ping + menu.Item("WindUp").GetValue<Slider>().Value;
             return (int)(after > 0 ? after : 0);
+        }
+
+        public static void resetAutoAttackTimer()
+        {
+            lastAutoAttack = 0;
+            lastAutoAttackMove = 0;
         }
 
         public static float realDistanceTill(AttackableUnit unit)
