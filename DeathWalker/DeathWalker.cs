@@ -204,7 +204,7 @@ namespace DetuksSharp
                         ObjectManager.Get<Obj_AI_Base>()
                             .Where(targ => targ.IsValidTarget(getTargetSearchDist()) && targ.IsEnemy))
                 {
-                    var hpOnDmgPred = HealthDeath.getLastHitPred(targ, timeTillDamageOn(targ));
+                    var hpOnDmgPred = HealthDeath.getLastHitPredPeriodic(targ, timeTillDamageOn(targ));
                     if (hpOnDmgPred <= 0 && (lastAttackUnit == null || lastAttackUnit.NetworkId != targ.NetworkId))
                         FireOnUnkillable(player, targ);
                     if (hpOnDmgPred <= 0 || hpOnDmgPred > (int) player.GetAutoAttackDamage(targ, true))
