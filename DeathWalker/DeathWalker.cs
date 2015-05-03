@@ -456,13 +456,13 @@ namespace DetuksSharp
 
         public static void AddToMenu(Menu menuIn)
         {
-            menu.AddItem(new MenuItem("Combo_Key", "Combo Key").SetValue(new KeyBind(32, KeyBindType.Press)));
-            menu.AddItem(new MenuItem("Harass_Key", "harass Key").SetValue(new KeyBind('C', KeyBindType.Press)));
-            menu.AddItem(new MenuItem("LaneClear_Key", "LaneClear Key").SetValue(new KeyBind('V', KeyBindType.Press)));
-            menu.AddItem(new MenuItem("LastHit_Key", "LastHir Key").SetValue(new KeyBind('X', KeyBindType.Press)));
-            menu.AddItem(new MenuItem("WindUp", "WindUp").SetValue(new Slider(60, 0, 250)));
-            menu.AddItem(new MenuItem("farmDelay", "Farm delay").SetValue(new Slider(60, 0, 250)));
-            menu.AddItem(new MenuItem("runCS", "Run CS distance").SetValue(new Slider(60, 0, 500)));
+            menuIn.AddItem(new MenuItem("Combo_Key", "Combo Key").SetValue(new KeyBind(32, KeyBindType.Press)));
+            menuIn.AddItem(new MenuItem("Harass_Key", "harass Key").SetValue(new KeyBind('C', KeyBindType.Press)));
+            menuIn.AddItem(new MenuItem("LaneClear_Key", "LaneClear Key").SetValue(new KeyBind('V', KeyBindType.Press)));
+            menuIn.AddItem(new MenuItem("LastHit_Key", "LastHir Key").SetValue(new KeyBind('X', KeyBindType.Press)));
+            menuIn.AddItem(new MenuItem("WindUp", "WindUp").SetValue(new Slider(60, 0, 250)));
+            menuIn.AddItem(new MenuItem("farmDelay", "Farm delay").SetValue(new Slider(60, 0, 250)));
+            menuIn.AddItem(new MenuItem("runCS", "Run CS distance").SetValue(new Slider(60, 0, 500)));
 
             menu = menuIn;
 
