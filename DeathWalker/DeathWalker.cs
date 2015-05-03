@@ -71,6 +71,9 @@ namespace DetuksSharp
         public static Obj_AI_Base ForcedTarget = null;
 
 
+        public static AttackableUnit lastAttackUnit = null;
+
+
         public static IEnumerable<Obj_AI_Hero> AllEnemys = ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsEnemy);
         public static IEnumerable<Obj_AI_Hero> AllAllys = ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsAlly);
 
@@ -169,6 +172,7 @@ namespace DetuksSharp
                     playerStoped = false;
                     lastAutoAttack = now;
                     lastAutoAttackMove = now;
+                    lastAttackUnit = target;
                 }
             }
             if (canMove())
@@ -201,7 +205,7 @@ namespace DetuksSharp
                             .Where(targ => targ.IsValidTarget(getTargetSearchDist()) && targ.IsEnemy))
                 {
                     var hpOnDmgPred = HealthDeath.getLastHitPred(targ, timeTillDamageOn(targ));
-                    if (hpOnDmgPred <= 0)
+                    if (hpOnDmgPred <= 0 && (lastAttackUnit == null || lastAttackUnit.NetworkId != targ.NetworkId))
                         FireOnUnkillable(player, targ);
                     if (hpOnDmgPred <= 0 || hpOnDmgPred > (int) player.GetAutoAttackDamage(targ, true))
                         continue;
