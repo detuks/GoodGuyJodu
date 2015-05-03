@@ -7,7 +7,7 @@ using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
-namespace DeathWalker.Prediction
+namespace DetuksSharp.Prediction
 {
     public class TargetSpell
     {

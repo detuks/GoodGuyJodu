@@ -4,14 +4,14 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using DeathWalker.Prediction;
+using DetuksSharp.Prediction;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
 using SharpDX.Direct3D9;
 using Color = System.Drawing.Color;
 
-namespace DeathWalker
+namespace DetuksSharp
 {
     public class DeathWalker
     {

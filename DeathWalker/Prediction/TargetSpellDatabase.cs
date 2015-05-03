@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LeagueSharp;
 
-namespace DeathWalker.Prediction
+namespace DetuksSharp.Prediction
 {
     public static class TargetSpellDatabase
     {

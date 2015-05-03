@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using LeagueSharp;
 using LeagueSharp.Common;
 
-namespace DeathWalker.Prediction
+namespace DetuksSharp.Prediction
 {
     class HealthDeath
     {
