@@ -53,7 +53,6 @@ namespace DetuksSharp.Prediction
             if (sender is Obj_AI_Hero)
             {
                 DeathWalker.lastDmg = now;
-                Console.WriteLine("started AA");
             }
         }
 
@@ -65,10 +64,10 @@ namespace DetuksSharp.Prediction
             if (activeDamageMakers.ContainsKey(sender.Owner.NetworkId))
                 activeDamageMakers.Remove(sender.Owner.NetworkId);
 
-            if (sender.Owner is Obj_AI_Hero)
-            {
-                Console.WriteLine("canceled AA");
-            }
+            //Ranged aswell
+            if (args.DestroyMissile && activeDamageMakers.ContainsKey(args.MissileNetworkId))
+                activeDamageMakers.Remove(args.MissileNetworkId);
+
         }
 
         private static void onUpdate(EventArgs args)
@@ -113,6 +112,30 @@ namespace DetuksSharp.Prediction
                     activeDamageMakers.Remove(sender.NetworkId);
             }
         }
+        //Maybe later change so would return data about missile
+        public static DamageMaker attackedByTurret(AttackableUnit unit)
+        {
+            return activeDamageMakers.Values.Where(v => v.target.NetworkId == unit.NetworkId).FirstOrDefault(attack => attack.source is Obj_AI_Turret);
+        }
+
+        //Only active attacks
+        public static int getTimeTillDeath(AttackableUnit unit, bool ignoreAlmostDead = true)
+        {
+            int HP = (int)unit.Health;
+            foreach (var attacks in activeDamageMakers.Values.OrderBy(atk => atk.hitOn))
+            {
+                if (attacks.target == null || attacks.target.NetworkId != unit.NetworkId || (ignoreAlmostDead && almostDead(attacks.source)))
+                    continue;
+                int hitOn = attacks.hitOn;
+                if (hitOn > now)
+                {
+                    HP -= (int)attacks.dealDamage;
+                    if (HP <= 0)
+                        return hitOn - now;
+                }
+            }
+            return int.MaxValue;
+        }
 
         public static bool almostDead(AttackableUnit unit)
         {
@@ -153,6 +176,8 @@ namespace DetuksSharp.Prediction
         {
             var predDmg = 0f;
 
+            msTime = (msTime > 10000) ? 10000 : msTime;
+
             foreach (var attacks in activeDamageMakers.Values)
             {
                 if (attacks.target == null || attacks.target.NetworkId != unit.NetworkId || (ignoreAlmostDead && almostDead(attacks.source)))
@@ -171,7 +196,7 @@ namespace DetuksSharp.Prediction
 
                 int hits = (attacks.cycle == 0 )?0:(int)((timeTo - hitOn)/attacks.cycle) +1;
 
-                if (now < hitOn && hitOn < now + msTime)
+                if (now < hitOn && hitOn <= now + msTime)
                 {
                     predDmg += attacks.dealDamage * hits;
                 }
@@ -211,6 +236,20 @@ namespace DetuksSharp.Prediction
 
             public readonly int cycle;
 
+            public int hitOn
+            {
+                get
+                {
+                    if (missle == null || sData.MissileSpeed == 0)
+                    {
+                        return (int)(createdTick + source.AttackCastDelay * 1000);
+                    }
+                    else
+                    {
+                        return now + (int)((missle.Position.Distance(target.Position) * 1000) / ((source is Obj_AI_Turret) ? sData.MissileSpeed*0.8f : sData.MissileSpeed) + 100);//lil delay cus dunno l8er could try to values what says delay of dmg dealing
+                    }
+                }
+            }
 
             public DamageMaker(Obj_AI_Base sourceIn, Obj_AI_Base targetIn, GameObject missleIn, SpellData dataIn, bool meleeIn = false)
             {

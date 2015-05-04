@@ -14,6 +14,7 @@ using Color = System.Drawing.Color;
 
 namespace DetuksSharp
 {
+
     public class DeathWalker
     {
 
@@ -77,9 +78,11 @@ namespace DetuksSharp
                 return Mode.None;
             }
         }
+
+
         public delegate void BeforeAttackEvenH(BeforeAttackEventArgs args);
         public delegate void AfterAttackEvenH(AttackableUnit unit, AttackableUnit target);
-        public delegate void OnUnkillableEvenH(AttackableUnit unit, AttackableUnit target);
+        public delegate void OnUnkillableEvenH(AttackableUnit unit, AttackableUnit target, int msTillDead);
 
         public static event BeforeAttackEvenH BeforeAttack;
         public static event AfterAttackEvenH AfterAttack;
@@ -92,6 +95,8 @@ namespace DetuksSharp
         private static int lastAutoAttackMove = 0;
         private static int lastmove = 0;
 
+        private static bool attack = true;
+
         private static bool disableNextAttack = false;
 
         private static bool playerStoped = false;
@@ -101,16 +106,30 @@ namespace DetuksSharp
         public static Obj_AI_Base ForcedTarget = null;
 
 
-        public static AttackableUnit lastAttackUnit = null;
+        public static AttackableUnit lastAutoAttackUnit = null;
 
 
-        public static IEnumerable<Obj_AI_Hero> AllEnemys = ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsEnemy);
-        public static IEnumerable<Obj_AI_Hero> AllAllys = ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsAlly);
+        public static List<Obj_AI_Hero> AllEnemys = new List<Obj_AI_Hero>();
+        public static List<Obj_AI_Hero> AllAllys = new List<Obj_AI_Hero>();
 
-        public DeathWalker()
+        public static List<Obj_AI_Turret> EnemyTowers = new List<Obj_AI_Turret>();
+
+        public static List<Obj_BarracksDampener> EnemyBarracs = new List<Obj_BarracksDampener>();
+
+        public static List<Obj_HQ> EnemyHQ = new List<Obj_HQ>();
+
+
+        private static void init()
         {
             //While testing menu
-          
+            AllEnemys = ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsEnemy).ToList();
+            AllAllys = ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsAlly).ToList();
+
+            EnemyTowers = ObjectManager.Get<Obj_AI_Turret>().Where(tow => tow.IsEnemy).ToList();
+
+            EnemyBarracs = ObjectManager.Get<Obj_BarracksDampener>().Where(tow => tow.IsEnemy).ToList();
+
+            EnemyHQ = ObjectManager.Get<Obj_HQ>().Where(tow => tow.IsEnemy).ToList();
 
         }
 
@@ -232,14 +251,14 @@ namespace DetuksSharp
                     playerStoped = false;
                     lastAutoAttack = now;
                     lastAutoAttackMove = now;
-                    lastAttackUnit = target;
+                    lastAutoAttackUnit = target;
                 }
             }
             if (canMove())
             {
                 if (target != null && CurrentMode == Mode.Lasthit)
                     killUnit = target;
-                if (killUnit != null && killUnit.IsValid && !killUnit.IsDead && killUnit.Position.Distance(player.Position) > getRealAutoAttackRange(killUnit) - 30)//Get in range
+                if (killUnit != null && !(killUnit is Obj_AI_Hero) && killUnit.IsValid && !killUnit.IsDead && killUnit.Position.Distance(player.Position) > getRealAutoAttackRange(killUnit) - 30)//Get in range
                     moveTo(killUnit.Position);
                 moveTo(goalPosition);
             }
@@ -254,19 +273,21 @@ namespace DetuksSharp
                 ForcedTarget = null;
             }
 
+            var enemiesAround = ObjectManager.Get<Obj_AI_Base>()
+                .Where(targ => targ.IsValidTarget(getTargetSearchDist()) && targ.IsEnemy).ToList();
+
             Obj_AI_Base best = null;
+
+            //Lat hit
             float bestPredHp = float.MaxValue;
             if (CurrentMode == Mode.Harass || CurrentMode == Mode.Lasthit || CurrentMode == Mode.LaneClear)
             {
                 //Last hit
-                foreach (
-                    var targ in
-                        ObjectManager.Get<Obj_AI_Base>()
-                            .Where(targ => targ.IsValidTarget(getTargetSearchDist()) && targ.IsEnemy))
+                foreach (var targ in enemiesAround)
                 {
                     var hpOnDmgPred = HealthDeath.getLastHitPredPeriodic(targ, timeTillDamageOn(targ));
-                    if (hpOnDmgPred <= 0 && (lastAttackUnit == null || lastAttackUnit.NetworkId != targ.NetworkId))
-                        FireOnUnkillable(player, targ);
+                    if (hpOnDmgPred <= 0 && (lastAutoAttackUnit == null || lastAutoAttackUnit.NetworkId != targ.NetworkId))
+                        FireOnUnkillable(player, targ,HealthDeath.getTimeTillDeath(targ));
                     if (hpOnDmgPred <= 0 || hpOnDmgPred > (int) player.GetAutoAttackDamage(targ, true))
                         continue;
                     if (best == null || hpOnDmgPred < bestPredHp)
@@ -279,41 +300,63 @@ namespace DetuksSharp
                     return best;
             }
 
-            /* turrets / inhibitors / nexus */
-            if (CurrentMode == Mode.LaneClear)
+            //check motherfuckers that are attacked by tower
+            if (CurrentMode == Mode.Harass || CurrentMode == Mode.Lasthit || CurrentMode == Mode.LaneClear)
             {
-                /* turrets */
-                foreach (var turret in
-                    ObjectManager.Get<Obj_AI_Turret>().Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
-                {
-                    return turret;
-                }
 
-                /* inhibitor */
-                foreach (var turret in
-                    ObjectManager.Get<Obj_BarracksDampener>().Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
+                foreach (var targ in enemiesAround)
                 {
-                    return turret;
-                }
+                    var towerShot = HealthDeath.attackedByTurret(targ);
+                    if (towerShot == null) continue;
+                    var hpOnDmgPred = HealthDeath.getLastHitPredPeriodic(targ, towerShot.hitOn+10);//Health till can hit next aa
 
-                /* nexus */
-                foreach (var nexus in
-                    ObjectManager.Get<Obj_HQ>().Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
-                {
-                    return nexus;
+                    var aa = player.GetAutoAttackDamage(targ);
+
+                    if (hpOnDmgPred > aa && hpOnDmgPred <= aa*2)
+                    {
+                        Console.WriteLine("Tower under shoting");
+                        //2x hit tower target
+                        return targ;
+                    }
                 }
             }
+
 
             var hero = GetBestHeroTarget();
 
             if (hero != null)
                 return hero;
 
+            /* turrets / inhibitors / nexus */
+            if (CurrentMode == Mode.LaneClear)
+            {
+                /* turrets */
+                foreach (var turret in
+                   EnemyTowers.Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
+                {
+                    return turret;
+                }
+
+                /* inhibitor */
+                foreach (var turret in
+                    EnemyBarracs.Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
+                {
+                    return turret;
+                }
+
+                /* nexus */
+                foreach (var nexus in
+                    EnemyHQ.Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
+                {
+                    return nexus;
+                }
+            }
+
+
             //Laneclear
             if (CurrentMode == Mode.LaneClear && !ShouldWait())
             {
-                best = ObjectManager.Get<Obj_AI_Base>()
-                    .Where(targ => targ.IsValidTarget(getTargetSearchDist()) && inAutoAttackRange(targ))
+                best = enemiesAround
                     .OrderByDescending(targ => targ.Health).FirstOrDefault();
             }
 
@@ -464,9 +507,14 @@ namespace DetuksSharp
                 lastmove = now;
         }
 
+        public static void setAttack(bool val)
+        {
+            attack = val;
+        }
+
         public static bool canAttack()
         {
-            return canAttackAfter() == 0;
+            return canAttackAfter() == 0 && attack;
         }
 
         public static int canAttackAfter()
@@ -553,13 +601,13 @@ namespace DetuksSharp
             }
         }
 
-        private static void FireOnUnkillable(AttackableUnit unit, AttackableUnit target)
+        private static void FireOnUnkillable(AttackableUnit unit, AttackableUnit target, int msTillDead)
         {
             lastAutoAttackMove = 0;
             //set can move
             if (OnUnkillable != null)
             {
-                OnUnkillable(unit, target);
+                OnUnkillable(unit, target, msTillDead);
             }
         }
 
@@ -574,6 +622,8 @@ namespace DetuksSharp
             menuIn.AddItem(new MenuItem("runCS", "Run CS distance").SetValue(new Slider(60, 0, 500)));
 
             menu = menuIn;
+
+            init();
 
             Drawing.OnDraw += onDraw;
 

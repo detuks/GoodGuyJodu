@@ -102,12 +102,15 @@ namespace LucianSharp
             }
         }
 
-        private static void onUnkillable(AttackableUnit unit, AttackableUnit target)
+
+        private static void onUnkillable(AttackableUnit unit, AttackableUnit target, int msTillDead)
         {
             if (target.Health < 30)
                 return;
-            if (target is Obj_AI_Base && !target.MagicImmune)
-                Lucian.useQonTarg((Obj_AI_Base)target, Lucian.QhitChance.medium);
+            if (target is Obj_AI_Base && !target.MagicImmune && msTillDead-100>(int)(Lucian.Qdata.SData.OverrideCastTime*1000))
+            {
+                Lucian.useQonTarg((Obj_AI_Base) target, Lucian.QhitChance.medium);
+            }
 
         }
 
