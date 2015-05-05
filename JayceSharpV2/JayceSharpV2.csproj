@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DeathWalker">
+      <HintPath>X:\LeagueSharp\LeagueSharp\System\DeathWalker.dll</HintPath>
+    </Reference>
     <Reference Include="LeagueSharp, Version=1.0.0.25, Culture=neutral, PublicKeyToken=a41ba14f653257a6, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>X:\LeagueSharp\LeagueSharp\System\LeagueSharp.dll</HintPath>
