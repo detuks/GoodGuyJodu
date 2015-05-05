@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using DetuksSharp;
 using LeagueSharp;
 using LeagueSharp.Common;
 /*
@@ -56,7 +57,7 @@ namespace JayceSharpV2
                 Config = new Menu("Jayce - Sharp", "Jayce", true);
                 //Orbwalker
                 Config.AddSubMenu(new Menu("Orbwalker", "Orbwalker"));
-                Jayce.orbwalker = new Orbwalking.Orbwalker(Config.SubMenu("Orbwalker"));
+                DeathWalker.AddToMenu(Config.SubMenu("Orbwalker"));
                 //TS
                 Menu targetSelectorMenu = new Menu("Target Selector", "Target Selector");
                 TargetSelector.AddToMenu(targetSelectorMenu);
@@ -74,6 +75,9 @@ namespace JayceSharpV2
                 //Extra
                 Config.AddSubMenu(new Menu("Extra Sharp", "extra"));
                 Config.SubMenu("extra").AddItem(new MenuItem("shoot", "Shoot manual Q")).SetValue(new KeyBind('T', KeyBindType.Press));
+                Config.SubMenu("extra").AddItem(new MenuItem("useExploit", "Use 2.5x Q expl")).SetValue(true);
+                Config.SubMenu("extra").AddItem(new MenuItem("shootExpDist", "shoot exploit dist")).SetValue(new Slider(150, 100, 1000));
+                
                 Config.SubMenu("extra").AddItem(new MenuItem("gapClose", "Kick Gapclosers")).SetValue(true);
                 Config.SubMenu("extra").AddItem(new MenuItem("autoInter", "Interupt spells")).SetValue(true);
                 Config.SubMenu("extra").AddItem(new MenuItem("useMunions", "Q use Minion colision")).SetValue(true);
@@ -95,6 +99,8 @@ namespace JayceSharpV2
                 GameObject.OnCreate += onCreate;
                 GameObject.OnDelete += onDelete;
 
+                Obj_AI_Base.OnDamage += onDamage;
+
                 Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
                 AntiGapcloser.OnEnemyGapcloser += OnEnemyGapcloser;
                 Interrupter2.OnInterruptableTarget += OnPosibleToInterrupt;
@@ -109,19 +115,38 @@ namespace JayceSharpV2
 
         }
 
+        private static void onDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
+        {
+            if (args.SourceNetworkId == Jayce.Player.NetworkId)
+            {
+            }
+        }
+
         private static void onDelete(GameObject sender, EventArgs args)
         {
             if (Jayce.myCastedQ != null && Jayce.myCastedQ.NetworkId == sender.NetworkId)
+            {
                 Jayce.myCastedQ = null;
+                Jayce.castedQon = null;
+            }
         }
 
         private static void onCreate(GameObject sender, EventArgs args)
         {
+            //Console.WriteLine(sender.Name+" TYPE: "+sender.Type);
+
+            if (sender is Obj_AI_Minion && sender.Name == "hiu" && Jayce.E1.IsReady())
+            {
+            }
+
             if (sender is Obj_SpellLineMissile)
             {
                 var mis = (Obj_SpellLineMissile)sender;
                 if (mis.SpellCaster.IsMe)
+                {
+                    //Console.WriteLine("My MIssle rdy");
                     Jayce.myCastedQ = mis;
+                }
 
             }
         }
@@ -165,12 +190,37 @@ namespace JayceSharpV2
                 Jayce.shootQE(Game.CursorPos);
             }
 
+            /*if (Config.Item("shootExp").GetValue<KeyBind>().Active)
+            {
+                Console.WriteLine("Edel: "+Jayce.Edata.SData.OverrideCastTime);
+                Obj_AI_Hero target = TargetSelector.GetTarget(Jayce.E1.Range, TargetSelector.DamageType.Physical);
+                if(target != null)
+                    if ((Jayce.Player.Distance(target, true) < 200 * 200))
+                        Jayce.shootQEExp(target);
+                    else
+                        Jayce.shootQEExp2(target);
+            }
+            else
+            {*/
+            if (Jayce.castedQon != null && !Jayce.isHammer)
+            {
+                if((Jayce.getJayceEQDmg(Jayce.castedQon) > Jayce.castedQon.Health ||
+                 Jayce.castedQon.Distance(Jayce.Player) > Jayce.E1.Range || Config.Item("useExploit").GetValue<bool>()))
+                {
+                    if (!Jayce.E1.IsReady())
+                        Jayce.castQon = new Vector3(0, 0, 0);
 
-            if (!Jayce.E1.IsReady())
-                Jayce.castQon = new Vector3(0, 0, 0);
+                    else if (Jayce.castQon.X != 0)
+                        Jayce.shootQE(Jayce.castQon);
+                }
+                else
+                {
+                    Jayce.doExploit(Jayce.castedQon);
+                }
+            }
+            //}
 
-            else if (Jayce.castQon.X != 0)
-                Jayce.shootQE(Jayce.castQon);
+            
 
             if (Config.Item("fullDMG").GetValue<KeyBind>().Active)//fullDMG
             {
@@ -201,7 +251,7 @@ namespace JayceSharpV2
            // if (Jayce.castEonQ != null && (Jayce.castEonQ. - 2) > Game.Time)
             //    Jayce.castEonQ = null;
 
-            if (Jayce.orbwalker.ActiveMode.ToString() == "Combo")
+            if (DeathWalker.CurrentMode == DeathWalker.Mode.Combo)
             {
                 Jayce.activateMura();
                 Obj_AI_Hero target = TargetSelector.GetTarget(Jayce.getBestRange(), TargetSelector.DamageType.Physical);
@@ -211,12 +261,12 @@ namespace JayceSharpV2
             if (Config.Item("killSteal").GetValue<bool>())
                 Jayce.doKillSteal();
 
-            if (Jayce.orbwalker.ActiveMode.ToString() == "Mixed")
+            if (DeathWalker.CurrentMode == DeathWalker.Mode.Harass)
             {
                 Jayce.deActivateMura();
             }
 
-            if (Jayce.orbwalker.ActiveMode.ToString() == "LaneClear")
+            if (DeathWalker.CurrentMode == DeathWalker.Mode.LaneClear)
             {
                 Jayce.deActivateMura();
             }
