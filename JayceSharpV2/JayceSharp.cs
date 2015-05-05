@@ -203,12 +203,9 @@ namespace JayceSharpV2
             }
             else
             {
-                if (!Jayce.E1.IsReady())
-                    Jayce.castQon = new Vector3(0, 0, 0);
-                else
+                if (Jayce.myCastedQ != null)
                 {
-                    if (Jayce.castQon.X != 0)
-                        Jayce.shootQE(Jayce.castQon);
+                    Jayce.castEonSpell(Jayce.myCastedQ);
                 }
             }
             /* if (Jayce.castedQon != null && !Jayce.isHammer)

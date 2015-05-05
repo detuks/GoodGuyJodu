@@ -531,7 +531,7 @@ namespace JayceSharpV2
             return ObjectManager.Get<Obj_AI_Turret>().Where(tur => tur.IsAlly && tur.Health > 0).Any(tur => pos.Distance(tur.Position) < (850 + Player.BoundingRadius));
         }
 
-        public static void castEonSpell(Obj_AI_Hero mis)
+        public static void castEonSpell(GameObject mis)
         {
             if (isHammer || !E1.IsReady())
                 return;
