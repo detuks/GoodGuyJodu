@@ -247,7 +247,6 @@ namespace JayceSharpV2
         {
             if (target != null && !isHammer && E1.IsReady())
             {
-                Console.WriteLine("DO Exploit!");
                 if ((Jayce.Player.Distance(target, true) < 200*200))
                     Jayce.shootQEExp(target);
                 else
@@ -439,6 +438,7 @@ namespace JayceSharpV2
 
         public static void useExploitE(Obj_AI_Base targ)
         {
+            Console.WriteLine("DO Exploit!");
             var pred = Prediction.GetPrediction(targ, 160);
             E1.Cast(targ.ServerPosition.Extend(Player.Position, 50));
         }

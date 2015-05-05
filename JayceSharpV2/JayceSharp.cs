@@ -77,6 +77,7 @@ namespace JayceSharpV2
                 Config.SubMenu("extra").AddItem(new MenuItem("shoot", "Shoot manual Q")).SetValue(new KeyBind('T', KeyBindType.Press));
                 Config.SubMenu("extra").AddItem(new MenuItem("useExploit", "Use 2.5x Q expl")).SetValue(true);
                 Config.SubMenu("extra").AddItem(new MenuItem("shootExpDist", "shoot exploit dist")).SetValue(new Slider(150, 100, 1000));
+                Config.SubMenu("extra").AddItem(new MenuItem("shootExp", "Shoot expl Q")).SetValue(new KeyBind('Z', KeyBindType.Press));
                 
                 Config.SubMenu("extra").AddItem(new MenuItem("gapClose", "Kick Gapclosers")).SetValue(true);
                 Config.SubMenu("extra").AddItem(new MenuItem("autoInter", "Interupt spells")).SetValue(true);
@@ -190,34 +191,40 @@ namespace JayceSharpV2
                 Jayce.shootQE(Game.CursorPos);
             }
 
-            /*if (Config.Item("shootExp").GetValue<KeyBind>().Active)
+            if (Config.Item("shootExp").GetValue<KeyBind>().Active)
             {
-                Console.WriteLine("Edel: "+Jayce.Edata.SData.OverrideCastTime);
+                Console.WriteLine("Edel: " + Jayce.Edata.SData.OverrideCastTime);
                 Obj_AI_Hero target = TargetSelector.GetTarget(Jayce.E1.Range, TargetSelector.DamageType.Physical);
-                if(target != null)
-                    if ((Jayce.Player.Distance(target, true) < 200 * 200))
+                if (target != null)
+                    if ((Jayce.Player.Distance(target, true) < 200*200))
                         Jayce.shootQEExp(target);
                     else
                         Jayce.shootQEExp2(target);
             }
             else
-            {*/
-            if (Jayce.castedQon != null && !Jayce.isHammer)
+            {
+                if (!Jayce.E1.IsReady())
+                    Jayce.castQon = new Vector3(0, 0, 0);
+                else
+                {
+                    if (Jayce.castQon.X != 0)
+                        Jayce.shootQE(Jayce.castQon);
+                }
+            }
+            /* if (Jayce.castedQon != null && !Jayce.isHammer)
             {
                 if((Jayce.getJayceEQDmg(Jayce.castedQon) > Jayce.castedQon.Health ||
-                 Jayce.castedQon.Distance(Jayce.Player) > Jayce.E1.Range || Config.Item("useExploit").GetValue<bool>()))
+                 Jayce.castedQon.Distance(Jayce.Player) > Jayce.E1.Range || !Config.Item("useExploit").GetValue<bool>()))
                 {
-                    if (!Jayce.E1.IsReady())
-                        Jayce.castQon = new Vector3(0, 0, 0);
 
-                    else if (Jayce.castQon.X != 0)
+                    if (Jayce.castQon.X != 0)
                         Jayce.shootQE(Jayce.castQon);
                 }
                 else
                 {
                     Jayce.doExploit(Jayce.castedQon);
                 }
-            }
+            }*/
             //}
 
             
