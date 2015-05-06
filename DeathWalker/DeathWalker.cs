@@ -244,7 +244,6 @@ namespace DetuksSharp
 
             if (target != null && canAttack() && inAutoAttackRange(target))
             {
-                Console.WriteLine("try to fakin hit");
                 if (player.IssueOrder(GameObjectOrder.AttackUnit, target))
                 {
                     FireBeforeAttack(target);
@@ -308,19 +307,19 @@ namespace DetuksSharp
                 {
                     var towerShot = HealthDeath.attackedByTurret(targ);
                     if (towerShot == null) continue;
-                    var hpOnDmgPred = HealthDeath.getLastHitPredPeriodic(targ, towerShot.hitOn+10);//Health till can hit next aa
+                    var hpOnDmgPred = HealthDeath.getLastHitPredPeriodic(targ, towerShot.hitOn+10-now);
 
                     var aa = player.GetAutoAttackDamage(targ);
-
-                    if (hpOnDmgPred > aa && hpOnDmgPred <= aa*2)
+                    //Console.WriteLine("AAdmg: " + aa + " Hp after: " + hpOnDmgPred + " hit: " + (towerShot.hitOn - now));
+                    if (hpOnDmgPred > aa && hpOnDmgPred <= aa*2.2f)
                     {
-                        Console.WriteLine("Tower under shoting");
+                        //Console.WriteLine("Tower under shoting");
+                       // Notifications.AddNotification("Tower shoot");
                         //2x hit tower target
                         return targ;
                     }
                 }
             }
-
 
             var hero = GetBestHeroTarget();
 
@@ -401,7 +400,7 @@ namespace DetuksSharp
             minion.IsValidTarget() && minion.Team != GameObjectTeam.Neutral &&
             inAutoAttackRange(minion) &&
             HealthPrediction.LaneClearHealthPrediction(
-            minion, (int)((player.AttackDelay * 1000) * 2), menu.Item("farmDelay").GetValue<Slider>().Value) <= player.GetAutoAttackDamage(minion));
+            minion, (int)((player.AttackDelay * 1000) * 2.3f), menu.Item("farmDelay").GetValue<Slider>().Value) <= player.GetAutoAttackDamage(minion));
             return minDeadSoon;
         }
 
