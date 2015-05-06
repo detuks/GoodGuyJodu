@@ -197,6 +197,9 @@ namespace DetuksSharp
                 lastAutoAttackMove = now;
             }
             //Fire after attack!
+            if(sender.IsMeele)
+                Utility.DelayAction.Add(
+                    (int)(sender.AttackCastDelay * 1000 + 40), () => FireAfterAttack(sender, (AttackableUnit)args.Target));
         }
 
 
