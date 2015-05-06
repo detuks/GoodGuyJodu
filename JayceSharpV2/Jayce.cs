@@ -79,8 +79,8 @@ namespace JayceSharpV2
             castOmen(target);
             if (!isHammer)
             {
-                if (castEonQ != null)
-                    castEonSpell(target);
+                //if (castEonQ != null)
+                //    castEonSpell(target);
 
                 //DO QE combo first
                 if (E1.IsReady() && Q1.IsReady() && gotManaFor(true, false, true))
@@ -128,6 +128,8 @@ namespace JayceSharpV2
 
         public static void doFullDmg(Obj_AI_Hero target)
         {
+            if (target == null)
+                return;;
             castIgnite(target);
             if (!isHammer)
             {
@@ -215,10 +217,11 @@ namespace JayceSharpV2
                     var dist = Player.Distance(po.UnitPosition);
                     if (dist <= E1.Range && getJayceEQDmg(target)<target.Health)
                     {
-                        if (JayceSharp.Config.Item("useExploit").GetValue<bool>())
-                            doExploit(target);
-                        else
-                            shootQE(po.CastPosition);
+                       // if (JayceSharp.Config.Item("useExploit").GetValue<bool>())
+                       //     doExploit(target);
+                       // else
+                        if (shootQE(po.CastPosition, dist>550))
+                            castedQon = target;
                     }
                     else
                     {
@@ -310,9 +313,19 @@ namespace JayceSharpV2
             if (isHammer)
                 return;
             PredictionOutput po = QEmp1.GetPrediction(target);
-            if (po.Hitchance >= HitChance.Low && Player.Distance(po.UnitPosition) < (QEmp1.Range + target.BoundingRadius))
+            var dist = Player.Distance(po.UnitPosition);
+            if (po.Hitchance >= HitChance.Low && dist < (QEmp1.Range + target.BoundingRadius))
             {
-                doExploit(target);
+               // if()
+                //doExploit(target);
+               // else
+               // {
+                if(dist < 200)
+                    shootQEExp(target);
+                else
+                    if(shootQE(po.CastPosition, dist>550))
+                        castedQon = target;
+               // }
             }
             else if (po.Hitchance == HitChance.Collision && JayceSharp.Config.Item("useMunions").GetValue<bool>())
             {
@@ -328,17 +341,13 @@ namespace JayceSharpV2
         {
             if (isHammer)
                 return;
-            PredictionOutput po = Q1.GetPrediction(target);
-            if (po.Hitchance >= HitChance.High && Player.Distance(po.UnitPosition) < (Q1.Range + target.BoundingRadius))
-            {
-                Q1.Cast(po.CastPosition);
-            }
-            else if (po.Hitchance == HitChance.Collision && JayceSharp.Config.Item("useMunions").GetValue<bool>())
+            PredictionOutput po = Q1.GetPrediction(target);if (po.Hitchance == HitChance.Collision && JayceSharp.Config.Item("useMunions").GetValue<bool>())
             {
                 Obj_AI_Base fistCol = po.CollisionObjects.OrderBy(unit => unit.Distance(Player.ServerPosition)).First();
                 if (fistCol.Distance(po.UnitPosition) < (180 - fistCol.BoundingRadius / 2) && fistCol.Distance(target.ServerPosition) < (100 - fistCol.BoundingRadius / 2))
                 {
-                    Q1.Cast(po.CastPosition);
+                    if (Q1.Cast(po.CastPosition))
+                        castedQon = target;
                 }
 
             }
@@ -422,9 +431,8 @@ namespace JayceSharpV2
         {
             if (myCastedQ != null && myCastedQ.IsValid)
             {
-                var dist = myCastedQ.Position.Distance(targ.Position) - targ.BoundingRadius - myCastedQ.BoundingRadius;
-                var colIn = (int)((dist * 1000) / 1200) -( (Player.Distance(targ, true) < 200 * 200)?3000:0);
-                if (colIn < JayceSharp.Config.Item("shootExpDist").GetValue<Slider>().Value)
+                var dist = myCastedQ.Position.Distance(targ.Position);
+                if (dist < JayceSharp.Config.Item("shootExpDist").GetValue<Slider>().Value)
                 {
                    // if(Player.Distance(targ,true)<200*200)
                    //     Utility.DelayAction.Add(300, delegate { useExploitE(targ); });
@@ -440,10 +448,10 @@ namespace JayceSharpV2
         {
             Console.WriteLine("DO Exploit!");
             var pred = Prediction.GetPrediction(targ, 160);
-            E1.Cast(targ.ServerPosition.Extend(Player.Position, 50));
+            E1.Cast(targ.ServerPosition.Extend(Player.Position, 25));
         }
 
-        public static bool shootQE(Vector3 pos)
+        public static bool shootQE(Vector3 pos,bool man = false)
         {
             try
             {
@@ -455,7 +463,7 @@ namespace JayceSharpV2
                 if (JayceSharp.Config.Item("packets").GetValue<bool>())
                 {
                     packetCastQ(pos.To2D());
-                    packetCastE(getParalelVec(pos));
+                    //packetCastE(getParalelVec(pos));
                 }
                 else
                 {
@@ -463,7 +471,8 @@ namespace JayceSharpV2
 
                     Player.IssueOrder(GameObjectOrder.MoveTo, bPos);
                     Q1.Cast(pos);
-                    E1.Cast(getParalelVec(pos));
+                    if(man)
+                        E1.Cast(getParalelVec(pos));
                 }
 
             }

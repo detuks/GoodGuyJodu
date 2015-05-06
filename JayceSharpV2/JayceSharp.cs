@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using DetuksSharp;
 using LeagueSharp;
 using LeagueSharp.Common;
@@ -77,7 +78,6 @@ namespace JayceSharpV2
                 Config.SubMenu("extra").AddItem(new MenuItem("shoot", "Shoot manual Q")).SetValue(new KeyBind('T', KeyBindType.Press));
                 Config.SubMenu("extra").AddItem(new MenuItem("useExploit", "Use 2.5x Q expl")).SetValue(true);
                 Config.SubMenu("extra").AddItem(new MenuItem("shootExpDist", "shoot exploit dist")).SetValue(new Slider(150, 100, 1000));
-                Config.SubMenu("extra").AddItem(new MenuItem("shootExp", "Shoot expl Q")).SetValue(new KeyBind('Z', KeyBindType.Press));
                 
                 Config.SubMenu("extra").AddItem(new MenuItem("gapClose", "Kick Gapclosers")).SetValue(true);
                 Config.SubMenu("extra").AddItem(new MenuItem("autoInter", "Interupt spells")).SetValue(true);
@@ -188,22 +188,19 @@ namespace JayceSharpV2
             Jayce.processCDs();
             if (Config.Item("shoot").GetValue<KeyBind>().Active)
             {
-                Jayce.shootQE(Game.CursorPos);
+                Jayce.shootQE(Game.CursorPos,true);
             }
-
-            if (Config.Item("shootExp").GetValue<KeyBind>().Active)
+            if (Jayce.myCastedQ != null)
             {
-                Console.WriteLine("Edel: " + Jayce.Edata.SData.OverrideCastTime);
-                Obj_AI_Hero target = TargetSelector.GetTarget(Jayce.E1.Range, TargetSelector.DamageType.Physical);
-                if (target != null)
+                if (Config.Item("useExploit").GetValue<bool>() && Jayce.castedQon != null && Jayce.castedQon.Distance(Jayce.Player) < 550)
+                {
+                    Obj_AI_Base target = Jayce.castedQon;
                     if ((Jayce.Player.Distance(target, true) < 200*200))
                         Jayce.shootQEExp(target);
                     else
                         Jayce.shootQEExp2(target);
-            }
-            else
-            {
-                if (Jayce.myCastedQ != null)
+                }
+                else if (Jayce.myCastedQ.Position.Distance(Jayce.Player.Position) > 120)
                 {
                     Jayce.castEonSpell(Jayce.myCastedQ);
                 }
