@@ -1,5 +1,6 @@
 If you like my work and want to see much more from me 
-Donate -> PayPal: dtk600@gmail.com
+Get you kewl accounts on https://www.leaguesmurfs.com/
+Tnx ;)
 
 LeagueSharp
 ===========
