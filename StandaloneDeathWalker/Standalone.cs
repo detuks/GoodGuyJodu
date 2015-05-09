@@ -17,6 +17,8 @@ namespace StandaloneDeathWalker
             Config = new Menu("Standalone DW", "standDW", true);
             Config.AddSubMenu(new Menu("Orbwalker", "Orbwalker"));
             DeathWalker.AddToMenu(Config.SubMenu("Orbwalker"));
+
+            Config.AddToMainMenu();
         }
     }
 }
