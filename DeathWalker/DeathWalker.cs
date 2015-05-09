@@ -197,7 +197,7 @@ namespace DetuksSharp
                 lastAutoAttackMove = now;
             }
             //Fire after attack!
-            if(sender.IsMeele)
+            if (sender.IsMeele)
                 Utility.DelayAction.Add(
                     (int)(sender.AttackCastDelay * 1000 + 40), () => FireAfterAttack(sender, (AttackableUnit)args.Target));
         }
@@ -215,7 +215,7 @@ namespace DetuksSharp
         {
             Utility.DrawCircle(player.Position, player.AttackRange+player.BoundingRadius, Color.Green);
 
-            Drawing.DrawText(100, 100, Color.Red, "targ Spells: " + HealthDeath.activeDamageMakers.Count + " : " + canAttackAfter());
+           // Drawing.DrawText(100, 100, Color.Red, "targ Spells: " + HealthDeath.activeDamageMakers.Count + " : " + canAttackAfter());
             foreach (var enemy in ObjectManager.Get<Obj_AI_Base>().Where(ene => ene != null && ene.IsValidTarget(1000) && ene.IsEnemy && ene.Distance(player,true)<1000*1000))
             {
                 var timeToHit = timeTillDamageOn(enemy);
@@ -313,11 +313,11 @@ namespace DetuksSharp
                     var hpOnDmgPred = HealthDeath.getLastHitPredPeriodic(targ, towerShot.hitOn+10-now);
 
                     var aa = player.GetAutoAttackDamage(targ);
-                    //Console.WriteLine("AAdmg: " + aa + " Hp after: " + hpOnDmgPred + " hit: " + (towerShot.hitOn - now));
+                   // Console.WriteLine("AAdmg: " + aa + " Hp after: " + hpOnDmgPred + " hit: " + (towerShot.hitOn - now));
                     if (hpOnDmgPred > aa && hpOnDmgPred <= aa*2.2f)
                     {
                         //Console.WriteLine("Tower under shoting");
-                       // Notifications.AddNotification("Tower shoot");
+                        //Notifications.AddNotification("Tower shoot");
                         //2x hit tower target
                         return targ;
                     }
