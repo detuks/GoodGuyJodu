@@ -186,7 +186,7 @@ namespace DetuksSharp
                 object value = descriptor.GetValue(args.SData);
                 Console.WriteLine("{0}={1}", name, value);
             }*/
-            if (isAutoAttackReset(args.SData.Name) && sender.IsMe)
+            if (isAutoAttackReset(args.SData.Name))
             {
                 
                 Utility.DelayAction.Add((int)250, resetAutoAttackTimer);
@@ -219,6 +219,10 @@ namespace DetuksSharp
             foreach (var enemy in ObjectManager.Get<Obj_AI_Base>().Where(ene => ene != null && ene.IsValidTarget(1000) && ene.IsEnemy && ene.Distance(player,true)<1000*1000))
             {
                 var timeToHit = timeTillDamageOn(enemy);
+
+                //var pOut = Drawing.WorldToScreen(enemy.Position);
+
+               // Drawing.DrawText(pOut.X,pOut.Y,Color.Red,"name: "+enemy.SkinName);
 
                 var hp = HealthDeath.getLastHitPredPeriodic(enemy, (int) timeToHit);
                 if (hp <= player.GetAutoAttackDamage(enemy) && hp>0)
@@ -282,25 +286,7 @@ namespace DetuksSharp
 
             //Lat hit
             float bestPredHp = float.MaxValue;
-            if (CurrentMode == Mode.Harass || CurrentMode == Mode.Lasthit || CurrentMode == Mode.LaneClear)
-            {
-                //Last hit
-                foreach (var targ in enemiesAround)
-                {
-                    var hpOnDmgPred = HealthDeath.getLastHitPredPeriodic(targ, timeTillDamageOn(targ));
-                    if (hpOnDmgPred <= 0 && (lastAutoAttackUnit == null || lastAutoAttackUnit.NetworkId != targ.NetworkId))
-                        FireOnUnkillable(player, targ,HealthDeath.getTimeTillDeath(targ));
-                    if (hpOnDmgPred <= 0 || hpOnDmgPred > (int) player.GetAutoAttackDamage(targ, true))
-                        continue;
-                    if (best == null || hpOnDmgPred < bestPredHp)
-                    {
-                        best = targ;
-                        bestPredHp = hpOnDmgPred;
-                    }
-                }
-                if (best != null)
-                    return best;
-            }
+            
 
             //check motherfuckers that are attacked by tower
             if (CurrentMode == Mode.Harass || CurrentMode == Mode.Lasthit || CurrentMode == Mode.LaneClear)
@@ -322,6 +308,27 @@ namespace DetuksSharp
                         return targ;
                     }
                 }
+            }
+
+            if (CurrentMode == Mode.Harass || CurrentMode == Mode.Lasthit || CurrentMode == Mode.LaneClear)
+            {
+                //Last hit
+                foreach (var targ in enemiesAround)
+                {
+                    var hpOnDmgPred = HealthDeath.getLastHitPredPeriodic(targ, timeTillDamageOn(targ));
+                    if (hpOnDmgPred <= 0 && (lastAutoAttackUnit == null || lastAutoAttackUnit.NetworkId != targ.NetworkId))
+                        FireOnUnkillable(player, targ, HealthDeath.getTimeTillDeath(targ));
+                    if (hpOnDmgPred <= 0 || hpOnDmgPred > (int)player.GetAutoAttackDamage(targ, true))
+                        continue;
+                    var cannonBonus = (targ.SkinName == "SRU_ChaosMinionSiege") ? 100 : 0;
+                    if (best == null || hpOnDmgPred - cannonBonus < bestPredHp)
+                    {
+                        best = targ;
+                        bestPredHp = hpOnDmgPred;
+                    }
+                }
+                if (best != null)
+                    return best;
             }
 
             var hero = GetBestHeroTarget();
