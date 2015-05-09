@@ -262,7 +262,7 @@ namespace DetuksSharp
             }
             if (canMove())
             {
-                if (target != null && CurrentMode == Mode.Lasthit)
+                if (target != null && (CurrentMode == Mode.Lasthit || CurrentMode == Mode.Harass))
                     killUnit = target;
                 if (killUnit != null && !(killUnit is Obj_AI_Hero) && killUnit.IsValid && !killUnit.IsDead && killUnit.Position.Distance(player.Position) > getRealAutoAttackRange(killUnit) - 30)//Get in range
                     moveTo(killUnit.Position);
@@ -296,11 +296,11 @@ namespace DetuksSharp
                 {
                     var towerShot = HealthDeath.attackedByTurret(targ);
                     if (towerShot == null) continue;
-                    var hpOnDmgPred = HealthDeath.getLastHitPredPeriodic(targ, towerShot.hitOn+10-now);
+                    var hpOnDmgPred = HealthPrediction.LaneClearHealthPrediction(targ, towerShot.hitOn+10-now);
 
                     var aa = player.GetAutoAttackDamage(targ);
                    // Console.WriteLine("AAdmg: " + aa + " Hp after: " + hpOnDmgPred + " hit: " + (towerShot.hitOn - now));
-                    if (hpOnDmgPred > aa && hpOnDmgPred <= aa*2.2f)
+                    if (hpOnDmgPred > aa && hpOnDmgPred <= aa*2f)
                     {
                         //Console.WriteLine("Tower under shoting");
                         //Notifications.AddNotification("Tower shoot");
@@ -528,7 +528,7 @@ namespace DetuksSharp
 
         public static int canAttackAfter()
         {
-            var after = lastAutoAttack + player.AttackDelay*1000 - now + Game.Ping;
+            var after = lastAutoAttack + player.AttackDelay * 1000 - now + menu.Item("AttDelay").GetValue<Slider>().Value;
             return (int)(after > 0 ? after : 0);
         }
 
@@ -539,7 +539,7 @@ namespace DetuksSharp
 
         public static int canMoveAfter()
         {
-            var after = lastAutoAttack + player.AttackCastDelay * 1000 - now + Game.Ping + menu.Item("WindUp").GetValue<Slider>().Value;
+            var after = lastAutoAttack + player.AttackCastDelay * 1000 - now + menu.Item("MovDelay").GetValue<Slider>().Value;
             return (int)(after > 0 ? after : 0);
         }
 
@@ -626,9 +626,10 @@ namespace DetuksSharp
             menuIn.AddItem(new MenuItem("Harass_Key", "harass Key").SetValue(new KeyBind('C', KeyBindType.Press)));
             menuIn.AddItem(new MenuItem("LaneClear_Key", "LaneClear Key").SetValue(new KeyBind('V', KeyBindType.Press)));
             menuIn.AddItem(new MenuItem("LastHit_Key", "LastHir Key").SetValue(new KeyBind('X', KeyBindType.Press)));
-            menuIn.AddItem(new MenuItem("WindUp", "WindUp").SetValue(new Slider(60, 0, 250)));
-            menuIn.AddItem(new MenuItem("farmDelay", "Farm delay").SetValue(new Slider(60, 0, 250)));
-            menuIn.AddItem(new MenuItem("runCS", "Run CS distance").SetValue(new Slider(60, 0, 500)));
+            menuIn.AddItem(new MenuItem("AttDelay", "Attack delay").SetValue(new Slider(60, -100, 250)));
+            menuIn.AddItem(new MenuItem("MovDelay", "Move delay").SetValue(new Slider(60, -100, 250)));
+            menuIn.AddItem(new MenuItem("farmDelay", "Farm delay").SetValue(new Slider(60, -100, 250)));
+            menuIn.AddItem(new MenuItem("runCS", "Run CS distance").SetValue(new Slider(40, 0, 500)));
 
             menu = menuIn;
 
