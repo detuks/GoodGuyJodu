@@ -18,6 +18,8 @@ namespace DetuksSharp
     public class DeathWalker
     {
 
+        public static bool azir = false;
+
         //Spells that reset the attack timer.
         private static readonly string[] AttackResets =
         {
@@ -116,8 +118,20 @@ namespace DetuksSharp
 
         public static List<Obj_BarracksDampener> EnemyBarracs = new List<Obj_BarracksDampener>();
 
+
+        public static List<Obj_AI_Base> enemiesAround = new List<Obj_AI_Base>();
+
         public static List<Obj_HQ> EnemyHQ = new List<Obj_HQ>();
 
+        public static int attackTime
+        {
+            get { return (int) (player.AttackDelay*1000 + menu.Item("AttDelay").GetValue<Slider>().Value); }
+        }
+
+        public static float moveTime
+        {
+            get { return (int)(player.AttackCastDelay * 1000 + menu.Item("MovDelay").GetValue<Slider>().Value); }
+        }
 
         private static void init()
         {
@@ -165,6 +179,14 @@ namespace DetuksSharp
                     FireAfterAttack(player,(AttackableUnit) mis.Target);
                 }
             }
+            if(!azir) return;
+            if (sender.Name == "AzirSoldier" && sender.IsAlly)
+            {
+                Obj_AI_Minion myMin = sender as Obj_AI_Minion;
+                if (myMin.SkinName == "AzirSoldier")
+                    azirSoldiers.Add(myMin);
+            }
+
         }
 
         private static void onStopAutoAttack(Spellbook sender, SpellbookStopCastEventArgs args)
@@ -214,7 +236,7 @@ namespace DetuksSharp
         private static void onDraw(EventArgs args)
         {
             Utility.DrawCircle(player.Position, player.AttackRange+player.BoundingRadius, Color.Green);
-
+            return;
            // Drawing.DrawText(100, 100, Color.Red, "targ Spells: " + HealthDeath.activeDamageMakers.Count + " : " + canAttackAfter());
             foreach (var enemy in ObjectManager.Get<Obj_AI_Base>().Where(ene => ene != null && ene.IsValidTarget(1000) && ene.IsEnemy && ene.Distance(player,true)<1000*1000))
             {
@@ -225,7 +247,7 @@ namespace DetuksSharp
                // Drawing.DrawText(pOut.X,pOut.Y,Color.Red,"name: "+enemy.SkinName);
 
                 var hp = HealthDeath.getLastHitPredPeriodic(enemy, (int) timeToHit);
-                if (hp <= player.GetAutoAttackDamage(enemy) && hp>0)
+                if (hp <= getRealAADmg(enemy) && hp > 0)
                 {
                     Render.Circle.DrawCircle(enemy.Position,56,Color.Green);
                 }
@@ -246,19 +268,24 @@ namespace DetuksSharp
             }
         }
 
+        public static void doAttack(AttackableUnit target)
+        {
+            if (player.IssueOrder(GameObjectOrder.AttackUnit, target))
+            {
+                FireBeforeAttack(target);
+                playerStoped = false;
+                lastAutoAttack = now;
+                lastAutoAttackMove = now;
+                lastAutoAttackUnit = target;
+            }
+        }
+
         public static void deathWalk(Vector3 goalPosition, AttackableUnit target)
         {
 
             if (target != null && canAttack() && inAutoAttackRange(target))
             {
-                if (player.IssueOrder(GameObjectOrder.AttackUnit, target))
-                {
-                    FireBeforeAttack(target);
-                    playerStoped = false;
-                    lastAutoAttack = now;
-                    lastAutoAttackMove = now;
-                    lastAutoAttackUnit = target;
-                }
+                doAttack(target);
             }
             if (canMove())
             {
@@ -278,9 +305,16 @@ namespace DetuksSharp
                     return ForcedTarget;
                 ForcedTarget = null;
             }
-
-            var enemiesAround = ObjectManager.Get<Obj_AI_Base>()
-                .Where(targ => targ.IsValidTarget(getTargetSearchDist()) && targ.IsEnemy).ToList();
+            if (azir)
+            {
+                enemiesAround = ObjectManager.Get<Obj_AI_Base>()
+                .Where(targ => targ.IsValid && inAutoAttackRange(targ) && targ.IsEnemy).ToList();
+            }
+            else
+            {
+                enemiesAround = ObjectManager.Get<Obj_AI_Base>()
+                    .Where(targ => targ.IsValidTarget(getTargetSearchDist()) && targ.IsEnemy).ToList();
+            }
 
             Obj_AI_Base best = null;
 
@@ -298,7 +332,7 @@ namespace DetuksSharp
                     if (towerShot == null) continue;
                     var hpOnDmgPred = HealthPrediction.LaneClearHealthPrediction(targ, towerShot.hitOn+10-now);
 
-                    var aa = player.GetAutoAttackDamage(targ);
+                    var aa = getRealAADmg(targ);
                    // Console.WriteLine("AAdmg: " + aa + " Hp after: " + hpOnDmgPred + " hit: " + (towerShot.hitOn - now));
                     if (hpOnDmgPred > aa && hpOnDmgPred <= aa*2f)
                     {
@@ -318,7 +352,7 @@ namespace DetuksSharp
                     var hpOnDmgPred = HealthDeath.getLastHitPredPeriodic(targ, timeTillDamageOn(targ));
                     if (hpOnDmgPred <= 0 && (lastAutoAttackUnit == null || lastAutoAttackUnit.NetworkId != targ.NetworkId))
                         FireOnUnkillable(player, targ, HealthDeath.getTimeTillDeath(targ));
-                    if (hpOnDmgPred <= 0 || hpOnDmgPred > (int)player.GetAutoAttackDamage(targ, true))
+                    if (hpOnDmgPred <= 0 || hpOnDmgPred > (int)getRealAADmg(targ))
                         continue;
                     var cannonBonus = (targ.SkinName == "SRU_ChaosMinionSiege") ? 100 : 0;
                     if (best == null || hpOnDmgPred - cannonBonus < bestPredHp)
@@ -390,7 +424,7 @@ namespace DetuksSharp
 
         private static double CountKillhits(Obj_AI_Hero enemy)
         {
-            return enemy.Health / player.GetAutoAttackDamage(enemy);
+            return enemy.Health / getRealAADmg(enemy);
         }
 
         private static bool ShouldWait()
@@ -410,7 +444,7 @@ namespace DetuksSharp
             minion.IsValidTarget() && minion.Team != GameObjectTeam.Neutral &&
             inAutoAttackRange(minion) &&
             HealthPrediction.LaneClearHealthPrediction(
-            minion, (int)((player.AttackDelay * 1000) * 2.3f), menu.Item("farmDelay").GetValue<Slider>().Value) <= player.GetAutoAttackDamage(minion));
+            minion, (int)((player.AttackDelay * 1000) * 2.3f), menu.Item("farmDelay").GetValue<Slider>().Value) <= getRealAADmg(minion));
             return minDeadSoon;
         }
 
@@ -430,7 +464,7 @@ namespace DetuksSharp
         public static int timeTillDamageOn(Obj_AI_Base unit)
         {
             var dist = unit.ServerPosition.Distance(player.ServerPosition);
-            int addTime = -menu.Item("farmDelay").GetValue<Slider>().Value;//some farm delay
+            int addTime = -menu.Item("farmDelay").GetValue<Slider>().Value -((azir)?100:0);//some farm delay
             if (!inAutoAttackRange(unit))//+ check if want to move to killabel minion and range it wants to
             {
                 var realDist = realDistanceTill(unit);
@@ -439,7 +473,7 @@ namespace DetuksSharp
                 addTime+= (int)(((realDist - aaRange)*1000)/player.MoveSpeed);
             }
 
-            if (player.IsMeele)
+            if (player.IsMeele || azir)
             {
                 return (int)(canAttackAfter() + player.AttackCastDelay * 1000) + addTime;
             }
@@ -456,6 +490,12 @@ namespace DetuksSharp
             {
                 return false;
             }
+
+            if (azir && unit is Obj_AI_Base && enemyInAzirRange((Obj_AI_Base)unit))
+            {
+                return true;
+            }
+
             var myRange = getRealAutoAttackRange(unit);
             return
                 Vector2.DistanceSquared(
@@ -470,7 +510,6 @@ namespace DetuksSharp
 
         public static bool IsAutoAttack(string name)
         {
-            Console.WriteLine(name);
             return (name.ToLower().Contains("attack") && !NoAttacks.Contains(name.ToLower())) ||
             Attacks.Contains(name.ToLower());
         }
@@ -481,6 +520,12 @@ namespace DetuksSharp
             {
                 return false;
             }
+
+            if (azir && unit is Obj_AI_Base && enemyInAzirRange((Obj_AI_Base)unit))
+            {
+                return true;
+            }
+
             var myRange = getRealAutoAttackRange(unit);
             return
                 Vector2.DistanceSquared(
@@ -545,7 +590,6 @@ namespace DetuksSharp
 
         public static void resetAutoAttackTimer()
         {
-            Console.WriteLine("Reset AA");
             lastAutoAttack = 0;
             lastAutoAttackMove = 0;
         }
@@ -603,7 +647,6 @@ namespace DetuksSharp
         {
             lastAutoAttackMove = 0;
             //set can move
-            Console.WriteLine("after attack");
             if (AfterAttack != null)
             {
                 AfterAttack(unit, target);
@@ -626,10 +669,10 @@ namespace DetuksSharp
             menuIn.AddItem(new MenuItem("Harass_Key", "harass Key").SetValue(new KeyBind('C', KeyBindType.Press)));
             menuIn.AddItem(new MenuItem("LaneClear_Key", "LaneClear Key").SetValue(new KeyBind('V', KeyBindType.Press)));
             menuIn.AddItem(new MenuItem("LastHit_Key", "LastHir Key").SetValue(new KeyBind('X', KeyBindType.Press)));
-            menuIn.AddItem(new MenuItem("AttDelay", "Attack delay").SetValue(new Slider(60, -100, 250)));
-            menuIn.AddItem(new MenuItem("MovDelay", "Move delay").SetValue(new Slider(60, -100, 250)));
-            menuIn.AddItem(new MenuItem("farmDelay", "Farm delay").SetValue(new Slider(60, -100, 250)));
-            menuIn.AddItem(new MenuItem("runCS", "Run CS distance").SetValue(new Slider(40, 0, 500)));
+            menuIn.AddItem(new MenuItem("AttDelay", "Attack delay").SetValue(new Slider(0, -100, 250)));
+            menuIn.AddItem(new MenuItem("MovDelay", "Move delay").SetValue(new Slider(0, -100, 250)));
+            menuIn.AddItem(new MenuItem("farmDelay", "Farm delay").SetValue(new Slider(100, -100, 250)));
+            menuIn.AddItem(new MenuItem("runCS", "Run CS distance").SetValue(new Slider(25, 0, 500)));
 
             menu = menuIn;
 
@@ -644,8 +687,92 @@ namespace DetuksSharp
             Obj_AI_Base.OnDamage += onDamage;
 
             GameObject.OnCreate += onCreate;
+            GameObject.OnDelete += onDelete;
 
             Game.OnUpdate += OnUpdate;
+        }
+
+        public static float getRealAADmg(Obj_AI_Base targ)
+        {
+            if (!azir)
+                return (float)player.GetAutoAttackDamage(targ,true);
+            var solAround = solidersAroundEnemy(targ);
+
+            if (solAround == 0)
+                return (float)player.GetAutoAttackDamage(targ);
+            int[] solBaseDmg = {50,55,60,65,70,75,80,85,90,95,100,110,120,130,140,150,160,170};
+
+            var solDmg = solBaseDmg[player.Level - 1] + player.FlatMagicDamageMod*0.6f;
+
+            return (float)player.CalcDamage(targ, Damage.DamageType.Magical, solDmg + (solAround - 1) * solDmg * 0.25f);
+
+        }
+
+
+        //Azir stuff
+
+        public static List<Obj_AI_Minion> azirSoldiers = new List<Obj_AI_Minion>();
+
+        public static List<Obj_AI_Minion> getUsableSoliders()
+        {
+            return azirSoldiers.Where(sol => !sol.IsDead).ToList();
+        }
+
+        public static bool solisAreStill()
+        {
+            List<Obj_AI_Minion> solis = getUsableSoliders();
+            return solis.All(sol => !sol.IsWindingUp);
+        }
+
+        public static List<Obj_AI_Hero> getEnemiesInSolRange()
+        {
+            List<Obj_AI_Minion> solis = getUsableSoliders();
+            List<Obj_AI_Hero> inRange = new List<Obj_AI_Hero>();
+
+            if (solis.Count == 0)
+                return null;
+            foreach (var ene in AllEnemys.Where(ene => ene.IsEnemy && ene.IsVisible && !ene.IsDead))
+            {
+                foreach (var sol in solis)
+                {
+                    if (ene.Distance(sol) < 350)
+                    {
+                        inRange.Add(ene);
+                        break;
+                    }
+                }
+            }
+            return inRange;
+        }
+
+        public static bool enemyInAzirRange(Obj_AI_Base ene)
+        {
+            var solis = getUsableSoliders();
+
+            return solis.Count != 0 && solis.Where(sol => sol.Distance(player, true) < 1225 * 1225).Any(sol => ene.Distance(sol) < 350);
+        }
+
+        public static int solidersAroundEnemy(Obj_AI_Base ene)
+        {
+            var solis = getUsableSoliders();
+
+            return solis.Count(sol => sol.Distance(player, true) < 875 * 875 && ene.Distance(sol) < 350);
+        }
+
+        private static void onDelete(GameObject sender, EventArgs args)
+        {
+            if(!azir)
+                return;
+            int i = 0;
+            foreach (var sol in azirSoldiers)
+            {
+                if (sol.NetworkId == sender.NetworkId)
+                {
+                    azirSoldiers.RemoveAt(i);
+                    return;
+                }
+                i++;
+            }
         }
     }
 }

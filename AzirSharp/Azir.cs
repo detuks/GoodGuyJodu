@@ -1,12 +1,12 @@
-﻿using System;
+﻿
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DetuksSharp;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
-using Collision = LeagueSharp.Common.Collision;
 
 namespace AzirSharp
 {
@@ -20,15 +20,14 @@ namespace AzirSharp
 
         public static Spellbook sBook = Player.Spellbook;
 
-        public static Orbwalking.Orbwalker orbwalker;
 
         public static SpellDataInst Qdata = sBook.GetSpell(SpellSlot.Q);
         public static SpellDataInst Wdata = sBook.GetSpell(SpellSlot.W);
         public static SpellDataInst Edata = sBook.GetSpell(SpellSlot.E);
         public static SpellDataInst Rdata = sBook.GetSpell(SpellSlot.R);
-        public static Spell Q = new Spell(SpellSlot.Q, 750);
-        public static Spell W = new Spell(SpellSlot.W, 450);
-        public static Spell E = new Spell(SpellSlot.E, 650);
+        public static Spell Q = new Spell(SpellSlot.Q, 1075);
+        public static Spell W = new Spell(SpellSlot.W, 350);
+        public static Spell E = new Spell(SpellSlot.E, 1150);
         public static Spell R = new Spell(SpellSlot.R, 250);
 
         public static List<Obj_AI_Minion> MySoldiers = new List<Obj_AI_Minion>(); 
@@ -44,6 +43,11 @@ namespace AzirSharp
             return MySoldiers.Where(sol => !sol.IsDead).ToList();
         }
 
+        public static Obj_AI_Minion getClosestSolider(Vector3 pos)
+        {
+            return MySoldiers.Where(sol => !sol.IsDead).OrderBy(sol => sol.Distance(pos, true)).FirstOrDefault();
+        }
+
         public static void doCombo(Obj_AI_Hero targ)
         {
             if (Player.IsDead)
@@ -51,14 +55,14 @@ namespace AzirSharp
             if (AzirSharp.Config.Item("useW").GetValue<bool>())
                 castWTarget(targ);
             // if (getEnemiesInSolRange().Count == 0)
-            if (AzirSharp.Config.Item("useQ").GetValue<bool>())
+            if (!W.IsReady(1600) && AzirSharp.Config.Item("useQ").GetValue<bool>())
                 castQTarget(targ);
 
             if (AzirSharp.Config.Item("useE").GetValue<bool>())
                 castETarget(targ);
         }
 
-        public static void doAttack()
+      /*  public static void doAttack()
         {
             List<Obj_AI_Hero> enes = getEnemiesInSolRange();
             if (enes != null)
@@ -66,14 +70,13 @@ namespace AzirSharp
                  foreach (var ene in enes)
                  {
 
-                     if (Orbwalking.CanMove(0) && Orbwalking.CanAttack() && solisAreStill())
+                     if (DeathWalker.canMove() && DeathWalker.canAttack() && solisAreStill())
                      {
-                         Orbwalking.LastAATick = Environment.TickCount;
-                         Player.IssueOrder(GameObjectOrder.AttackUnit, ene);
+                         DeathWalker.doAttack(ene);
                      }
                  }
             }
-        }
+        }*/
 
         public static void castQTarget(Obj_AI_Hero target)
         {
@@ -103,7 +106,8 @@ namespace AzirSharp
             if (!W.IsReady() && Wdata.Ammo == 0)
                 return;
             PredictionOutput po = Prediction.GetPrediction(target, 0.2f);
-            W.Cast(po.UnitPosition);
+            if(Qdata.CooldownExpires<Game.Time || po.UnitPosition.Distance(Player.Position,true)<630*630)
+                W.Cast(po.UnitPosition);
 
         }
 
@@ -112,7 +116,7 @@ namespace AzirSharp
             if (!E.IsReady())
                 return;
 
-            List<Obj_AI_Minion> solis = getUsableSoliders().Where(sol => !sol.IsMoving).ToList();
+            List<Obj_AI_Minion> solis = getUsableSoliders().Where(sol => !sol.IsMoving && !sol.UnderTurret(true)).ToList();
             if (solis.Count == 0)
                 return;
             foreach (var sol in solis)
@@ -120,10 +124,10 @@ namespace AzirSharp
                 float toSol = Player.Distance(sol.Position);
 
                 //Collision.GetCollision(new List<Vector3>{sol.Position},getMyEPred(sol));
-                PredictionOutput po = Prediction.GetPrediction(target,toSol/1500f);
+                PredictionOutput po = Prediction.GetPrediction(target,toSol/1800f);
 
 
-                if (sol.Distance(po.UnitPosition)<325 && interact(Player.Position.To2D(), sol.Position.To2D(), po.UnitPosition.To2D(), 65) 
+                if (sol.Distance(po.UnitPosition)<325 && interact(Player.Position.To2D(), sol.Position.To2D(), po.UnitPosition.To2D(), 45) 
                     && interactsOnlyWithTarg(target,sol,Player.Distance(po.UnitPosition)))
                 {
                     E.Cast(sol.Position);
@@ -142,6 +146,24 @@ namespace AzirSharp
                 }*/
 
             }
+        }
+
+        public static void doFlyToMouse(Vector3 pos)
+        {
+            var closest = getClosestSolider(pos);
+            if (closest == null && W.IsReady() && Qdata.CooldownExpires < Game.Time  && E.IsReady(500))
+                W.Cast(pos);
+
+            if (closest == null)
+                return;
+
+            if (E.IsReady() && Q.IsReady(250))
+            {
+                E.CastOnUnit(closest);
+            }
+
+            if (closest.Distance(Player)<300 && Q.IsReady() )
+                Q.Cast(pos);
         }
 
         public static bool interactsOnlyWithTarg(Obj_AI_Hero target,Obj_AI_Base sol, float distColser)
@@ -204,7 +226,7 @@ namespace AzirSharp
             pi.Delay = 0.0f;
             pi.From = Player.ServerPosition;
             pi.Radius = 65f;
-            pi.Range = 1030f;
+            pi.Range = 1150f;
             pi.RangeCheckFrom = Player.ServerPosition;
             pi.Speed = 1500f;
             pi.Unit = sol;
@@ -222,7 +244,7 @@ namespace AzirSharp
             pi.Delay = 0.0f;
             pi.From = sol.ServerPosition;
             pi.Radius = 65f;
-            pi.Range = 830f;
+            pi.Range = 900f;
             pi.RangeCheckFrom = Player.ServerPosition;
             pi.Speed = 1500f;
             pi.Unit = target;

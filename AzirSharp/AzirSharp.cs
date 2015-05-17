@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using LeagueSharp;
-using LeagueSharp.Common;
-using System.Drawing;
+﻿
 /*
  * ToDo:
  * 
@@ -27,7 +19,13 @@ using System.Drawing;
  * 
  * 
  * */
+
+using System;
+using DetuksSharp;
+using LeagueSharp;
+using LeagueSharp.Common;
 using SharpDX;
+using Color = System.Drawing.Color;
 
 
 namespace AzirSharp
@@ -60,7 +58,7 @@ namespace AzirSharp
                 Config = new Menu("Azir - Sharp", "Azir", true);
                 //Orbwalker
                 Config.AddSubMenu(new Menu("Orbwalker", "Orbwalker"));
-                Azir.orbwalker = new Orbwalking.Orbwalker(Config.SubMenu("Orbwalker"));
+                DeathWalker.AddToMenu(Config.SubMenu("Orbwalker"));
                 //TS
                 var TargetSelectorMenu = new Menu("Target Selector", "Target Selector");
                 TargetSelector.AddToMenu(TargetSelectorMenu);
@@ -70,6 +68,7 @@ namespace AzirSharp
                 Config.SubMenu("combo").AddItem(new MenuItem("useQ", "use Q")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useW", "use W")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useE", "use E")).SetValue(true);
+                Config.SubMenu("combo").AddItem(new MenuItem("fly", "fly to mouse")).SetValue(new KeyBind('T', KeyBindType.Press, false));
 
                 //LastHit
                 Config.AddSubMenu(new Menu("LastHit Sharp", "lHit"));
@@ -86,7 +85,7 @@ namespace AzirSharp
 
                 //Debug
                 Config.AddSubMenu(new Menu("Debug", "debug"));
-                Config.SubMenu("debug").AddItem(new MenuItem("db_targ", "Debug Target")).SetValue(new KeyBind('T', KeyBindType.Press, false));
+                Config.SubMenu("debug").AddItem(new MenuItem("db_targ", "Debug Target")).SetValue(new KeyBind('Y', KeyBindType.Press, false));
 
 
                 Config.AddToMainMenu();
@@ -99,25 +98,15 @@ namespace AzirSharp
 
               //  Game.OnGameSendPacket += OnGameSendPacket;
                // Game.OnGameProcessPacket += OnGameProcessPacket;
-
+                DeathWalker.azir = true;
                 Azir.setSkillShots();
             }
-            catch
+            catch (Exception ex)
             {
-                Game.PrintChat("Oops. Something went wrong with Yasuo- Sharpino");
+                Console.WriteLine(ex);
+                Game.PrintChat("Oops. Something went wrong with Azir Sharp");
             }
 
-        }
-
-        private static void OnGameProcessPacket(GamePacketEventArgs args)
-        {
-           
-        }
-
-        private static void OnGameSendPacket(GamePacketEventArgs args)
-        {
-            if (args.PacketData[0] == 119)
-                args.Process = false;
         }
 
         public static float startTime = 0;
@@ -160,22 +149,26 @@ namespace AzirSharp
                     }
                 }*/
 
-                if (Azir.orbwalker.ActiveMode.ToString() == "Combo")
+                if (DeathWalker.CurrentMode == DeathWalker.Mode.Combo)
                 {
                     Obj_AI_Hero target = TargetSelector.GetTarget(1000, TargetSelector.DamageType.Magical);
-                    Azir.doAttack();
                     if(target != null)
                         Azir.doCombo(target);
                 }
 
-                if (Azir.orbwalker.ActiveMode.ToString() == "Mixed")
+                if (DeathWalker.CurrentMode == DeathWalker.Mode.Harass)
                 {
                     //Azir.doAttack();
                 }
 
-                if (Azir.orbwalker.ActiveMode.ToString() == "LaneClear")
+                if (DeathWalker.CurrentMode == DeathWalker.Mode.LaneClear)
                 {
                     //Azir.doAttack();
+                }
+
+                if (Config.Item("fly").GetValue<KeyBind>().Active)
+                {
+                    Azir.doFlyToMouse(Game.CursorPos);
                 }
             }
             catch (Exception ex)
@@ -187,7 +180,7 @@ namespace AzirSharp
 
         private static void onDraw(EventArgs args)
         {
-
+            Render.Circle.DrawCircle(Azir.Player.Position, 1150, (Azir.Player.IsDashing()) ? Color.Red : Color.Blue);
         }
 
         private static void OnCreateObject(GameObject sender, EventArgs args)
@@ -217,7 +210,8 @@ namespace AzirSharp
 
         public static void OnProcessSpell(Obj_AI_Base obj, GameObjectProcessSpellCastEventArgs arg)
         {
-
+          //  if(obj.IsMe)
+           //     Console.WriteLine(arg.SData.Name);
            
         }
 

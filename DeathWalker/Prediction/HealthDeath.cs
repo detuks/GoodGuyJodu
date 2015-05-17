@@ -111,6 +111,22 @@ namespace DetuksSharp.Prediction
                 if (activeDamageMakers.ContainsKey(sender.NetworkId))
                     activeDamageMakers.Remove(sender.NetworkId);
             }
+
+            if (sender is Obj_AI_Base )
+            {
+                int i = 0;
+                foreach (var dmgMk in activeDamageMakers)
+                {
+                    if (dmgMk.Value.source == null || dmgMk.Value.missle == null)
+                        continue;
+                    if (dmgMk.Value.source.NetworkId == sender.NetworkId)
+                    {
+                        activeDamageMakers.Remove(dmgMk.Value.missle.NetworkId);
+                        return;
+                    }
+                    i++;
+                }
+            }
         }
         //Maybe later change so would return data about missile
         public static DamageMaker attackedByTurret(AttackableUnit unit)
@@ -139,11 +155,21 @@ namespace DetuksSharp.Prediction
 
         public static bool almostDead(AttackableUnit unit)
         {
+            if (unit == null)
+                return true;
+            try
+            {
+
             var hitingUnitDamage = misslesHeadedOnDamage(unit);
            // if (unit.Health < hitingUnitDamage * 0.65)
             //    Console.WriteLine("Ignore cus almost dead!");
 
-            return unit.Health < hitingUnitDamage*0.65;
+            return unit.Health < hitingUnitDamage * 0.65;
+            }
+            catch (Exception)
+            {
+                return true;
+            }
 
         }
 
@@ -240,13 +266,23 @@ namespace DetuksSharp.Prediction
             {
                 get
                 {
-                    if (missle == null || sData.MissileSpeed == 0)
+                    try
                     {
-                        return (int)(createdTick + source.AttackCastDelay * 1000);
+                        if (source == null || !source.IsValid)
+                            return int.MaxValue;
+                        if (missle == null || DeathWalker.azir)
+                        {
+                            return (int)(createdTick + source.AttackCastDelay * 1000);
+                        }
+                        else
+                        {
+                            return now + (int)((missle.Position.Distance(target.Position) * 1000) / ((source is Obj_AI_Turret) ? sData.MissileSpeed*0.8f : sData.MissileSpeed));//lil delay cus dunno l8er could try to values what says delay of dmg dealing
+                        }
+
                     }
-                    else
+                    catch (Exception)
                     {
-                        return now + (int)((missle.Position.Distance(target.Position) * 1000) / ((source is Obj_AI_Turret) ? sData.MissileSpeed*0.8f : sData.MissileSpeed) + 100);//lil delay cus dunno l8er could try to values what says delay of dmg dealing
+                        return int.MaxValue;
                     }
                 }
             }
