@@ -36,6 +36,7 @@ namespace AzirSharp
         {
             Q.SetSkillshot(0.0f, 65f, 1500f, false, SkillshotType.SkillshotLine);
             E.SetSkillshot(0.0f, 65f, 1500f, false, SkillshotType.SkillshotLine);
+            R.SetSkillshot(0.5f, 700, 1400, false, SkillshotType.SkillshotLine);
         }
 
         public static List<Obj_AI_Minion> getUsableSoliders()
@@ -53,30 +54,38 @@ namespace AzirSharp
             if (Player.IsDead)
                 return;
             if (AzirSharp.Config.Item("useW").GetValue<bool>())
+            {
                 castWTarget(targ);
+            }
             // if (getEnemiesInSolRange().Count == 0)
-            if (!W.IsReady(1600) && AzirSharp.Config.Item("useQ").GetValue<bool>())
+            if (!W.IsReady(1600) && (!enemyInAzirRange(targ) || targ.Health<Q.GetDamage(targ)*1.25) && AzirSharp.Config.Item("useQ").GetValue<bool>())
                 castQTarget(targ);
 
             if (AzirSharp.Config.Item("useE").GetValue<bool>())
                 castETarget(targ);
+
+            if (AzirSharp.Config.Item("useR").GetValue<bool>())
+            {
+                if (targ.Health < R.GetDamage(targ))
+                    R.Cast(targ);
+            }
         }
 
-      /*  public static void doAttack()
+        public static void doAttack()
         {
             List<Obj_AI_Hero> enes = getEnemiesInSolRange();
             if (enes != null)
             {
                  foreach (var ene in enes)
                  {
-
-                     if (DeathWalker.canMove() && DeathWalker.canAttack() && solisAreStill())
+                     if (DeathWalker.canAttack() && solisAreStill())
                      {
+                         Console.WriteLine("Attack");
                          DeathWalker.doAttack(ene);
                      }
                  }
             }
-        }*/
+        }
 
         public static void castQTarget(Obj_AI_Hero target)
         {
@@ -151,19 +160,31 @@ namespace AzirSharp
         public static void doFlyToMouse(Vector3 pos)
         {
             var closest = getClosestSolider(pos);
-            if (closest == null && W.IsReady() && Qdata.CooldownExpires < Game.Time  && E.IsReady(500))
+            if ((closest == null || (closest.Distance(pos, true) > Player.Distance(pos, true))) && W.IsReady() && Qdata.CooldownExpires < Game.Time  && E.IsReady(500))
                 W.Cast(pos);
 
-            if (closest == null)
+            if (closest == null || (closest.Distance(pos, true) > Player.Distance(pos, true)))
                 return;
-
-            if (E.IsReady() && Q.IsReady(250))
+           /* if ((closest.Distance(pos, true) > Player.Distance(pos, true)))
             {
-                E.CastOnUnit(closest);
+                if (Q.IsReady() && E.IsReady(250))
+                    Q.Cast(pos);
+                if (E.IsReady() && closest.IsMoving)
+                    E.CastOnUnit(closest);
             }
+            else
+            {*/
+                if (E.IsReady() && Q.IsReady(250))
+                {
+                    E.CastOnUnit(closest);
+                }
 
-            if (closest.Distance(Player)<300 && Q.IsReady() )
-                Q.Cast(pos);
+                if (closest.Distance(Player) < 350 && Q.IsReady())
+                    Q.Cast(pos);
+            //}
+
+
+
         }
 
         public static bool interactsOnlyWithTarg(Obj_AI_Hero target,Obj_AI_Base sol, float distColser)
@@ -267,11 +288,17 @@ namespace AzirSharp
             return true;
         }
 
+        public static bool enemyInAzirRange(Obj_AI_Base ene)
+        {
+            var solis = getUsableSoliders();
+
+            return solis.Count != 0 && solis.Where(sol => !sol.IsMoving && sol.Distance(Player, true) < 1225 * 1225).Any(sol => ene.Distance(sol) < 325);
+        }
 
         public static List<Obj_AI_Hero> getEnemiesInSolRange()
         {
             List<Obj_AI_Minion> solis = getUsableSoliders();
-            List<Obj_AI_Hero> enemies = ObjectManager.Get<Obj_AI_Hero>().Where(ene => ene.IsEnemy && ene.IsVisible && !ene.IsDead).ToList();
+            List<Obj_AI_Hero> enemies = DeathWalker.AllEnemys.Where(ene => ene.IsEnemy && ene.IsVisible && !ene.IsDead).ToList();
             List<Obj_AI_Hero> inRange = new List<Obj_AI_Hero>();
 
             if (solis.Count == 0)

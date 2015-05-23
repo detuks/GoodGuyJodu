@@ -68,6 +68,7 @@ namespace AzirSharp
                 Config.SubMenu("combo").AddItem(new MenuItem("useQ", "use Q")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useW", "use W")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useE", "use E")).SetValue(true);
+                Config.SubMenu("combo").AddItem(new MenuItem("useR", "use R")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("fly", "fly to mouse")).SetValue(new KeyBind('T', KeyBindType.Press, false));
 
                 //LastHit
