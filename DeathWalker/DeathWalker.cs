@@ -400,7 +400,7 @@ namespace DetuksSharp
             if (CurrentMode == Mode.LaneClear && !ShouldWait())
             {
                 best = enemiesAround
-                    .OrderByDescending(targ => targ.Health).FirstOrDefault();
+                    .OrderByDescending(targ => targ.Health+(enemyInAzirRange(targ)?1000:0)).FirstOrDefault();
             }
 
 
@@ -411,7 +411,19 @@ namespace DetuksSharp
         {
             Obj_AI_Hero killableEnemy = null;
             var hitsToKill = double.MaxValue;
-            foreach (var enemy in AllEnemys.Where(hero => hero.IsValidTarget() && inAutoAttackRange(hero)))
+
+            if (azir)
+            {
+                var enemy =
+                    AllEnemys.Where(hero => hero.IsValid && enemyInAzirRange(hero))
+                        .OrderBy(hero => hero.Health)
+                        .FirstOrDefault();
+                if (enemy != null && !enemy.IsDead)
+                    return enemy;
+
+            }
+
+            foreach (var enemy in AllEnemys.Where(hero => hero.IsValid && inAutoAttackRange(hero)))
             {
                 var killHits = CountKillhits(enemy);
                 if (killableEnemy != null && !(killHits < hitsToKill))
@@ -749,7 +761,7 @@ namespace DetuksSharp
         {
             var solis = getUsableSoliders();
 
-            return solis.Count != 0 && solis.Where(sol => sol.Distance(player, true) < 1225 * 1225).Any(sol => ene.Distance(sol) < 350);
+            return !ene.IsDead && solis.Count != 0 && solis.Where(sol => !sol.IsMoving && sol.Distance(player, true) < 1225 * 1225).Any(sol => ene.Distance(sol) < 325);
         }
 
         public static int solidersAroundEnemy(Obj_AI_Base ene)

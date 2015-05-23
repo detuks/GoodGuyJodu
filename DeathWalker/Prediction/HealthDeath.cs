@@ -319,7 +319,7 @@ namespace DetuksSharp.Prediction
                         var tSpell = TargetSpellDatabase.GetByName(sData.Name);
                         if (tSpell == null)
                         {
-                            Console.WriteLine("Unknown targeted spell: " + sData.Name);
+                            //Console.WriteLine("Unknown targeted spell: " + sData.Name);
                             dealDamage = 0;
                         }
                         else
