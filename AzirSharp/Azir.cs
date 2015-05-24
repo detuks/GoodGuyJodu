@@ -1,12 +1,11 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using DetuksSharp;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
+using DeathWalker = DetuksSharp.DeathWalker;
 
 namespace AzirSharp
 {

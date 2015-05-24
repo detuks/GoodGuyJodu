@@ -411,18 +411,43 @@ namespace DetuksSharp
         {
             Obj_AI_Hero killableEnemy = null;
             var hitsToKill = double.MaxValue;
+            try
+            {
 
             if (azir)
             {
-                var enemy =
-                    AllEnemys.Where(hero => hero.IsValid && enemyInAzirRange(hero))
-                        .OrderBy(hero => hero.Health)
-                        .FirstOrDefault();
-                if (enemy != null && !enemy.IsDead)
-                    return enemy;
-
+                foreach (var ene in AllEnemys.OrderBy(enemy => enemy.Health))
+                {
+                    if (ene == null || ene.IsDead)
+                        continue;
+                    foreach (var sol in getUsableSoliders())
+                    {
+                        if (sol == null || sol.IsDead)
+                            continue;
+                        if (ene.Distance(sol, true) < 325*325)
+                            return ene;
+                        foreach (var around in enemiesAround.Where(arou => arou != null && arou.IsValid && !arou.IsDead && arou.Distance(sol,true)<325*325))
+                        {
+                            if (around == null || around.IsDead)
+                                continue;
+                            DeathMath.Polygon poly = DeathMath.getPolygonOn(sol, around, 50 + ene.BoundingRadius / 2, 375 + ene.BoundingRadius / 2);
+                            if (
+                                poly.pointInside(
+                                    LeagueSharp.Common.Prediction.GetPrediction(ene, sol.AttackCastDelay)
+                                        .UnitPosition.To2D()))
+                            {
+                                return around;
+                            }
+                        }
+                    }
+                }
             }
 
+            }
+            catch (Exception)
+            {
+
+            }
             foreach (var enemy in AllEnemys.Where(hero => hero.IsValid && inAutoAttackRange(hero)))
             {
                 var killHits = CountKillhits(enemy);
@@ -727,7 +752,7 @@ namespace DetuksSharp
 
         public static List<Obj_AI_Minion> getUsableSoliders()
         {
-            return azirSoldiers.Where(sol => !sol.IsDead).ToList();
+            return azirSoldiers.Where(sol => !sol.IsDead && sol != null).ToList();
         }
 
         public static bool solisAreStill()
@@ -761,7 +786,7 @@ namespace DetuksSharp
         {
             var solis = getUsableSoliders();
 
-            return !ene.IsDead && solis.Count != 0 && solis.Where(sol => !sol.IsMoving && sol.Distance(player, true) < 1225 * 1225).Any(sol => ene.Distance(sol) < 325);
+            return !ene.IsDead && solis.Count != 0 && solis.Where(sol => !sol.IsMoving && sol.Distance(player, true) < 1025 * 1025).Any(sol => ene.Distance(sol) < 325);
         }
 
         public static int solidersAroundEnemy(Obj_AI_Base ene)
