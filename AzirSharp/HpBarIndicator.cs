@@ -1,12 +1,22 @@
 ﻿
-
+using System;
+using System.Drawing;
+using System.IO;
+using System.Net;
 using LeagueSharp;
 using SharpDX;
+using SharpDX.Direct3D9;
 
 namespace AzirSharp
 {
     class HpBarIndicator
     {
+
+        public static SharpDX.Direct3D9.Device dxDevice = Drawing.Direct3DDevice;
+        public static SharpDX.Direct3D9.Line dxLine;
+        public static SharpDX.Direct3D9.Sprite sprite;
+
+
 
         public Obj_AI_Hero unit { get; set; }
 
@@ -14,6 +24,43 @@ namespace AzirSharp
 
         public float hight = 9;
 
+
+
+
+        public HpBarIndicator()
+        {
+            dxLine = new Line(dxDevice) { Width = 9 };
+            sprite = new Sprite(dxDevice);
+
+            Drawing.OnPreReset += DrawingOnOnPreReset;
+            Drawing.OnPostReset += DrawingOnOnPostReset;
+            AppDomain.CurrentDomain.DomainUnload += CurrentDomainOnDomainUnload;
+            AppDomain.CurrentDomain.ProcessExit += CurrentDomainOnDomainUnload;
+
+        }
+
+
+        private static void CurrentDomainOnDomainUnload(object sender, EventArgs eventArgs)
+        {
+            sprite.Dispose();
+            dxLine.Dispose();
+        }
+
+        private static void DrawingOnOnPostReset(EventArgs args)
+        {
+            dxLine.OnResetDevice();
+            sprite.OnResetDevice();
+        }
+
+        private static void DrawingOnOnPreReset(EventArgs args)
+        {
+            sprite.OnLostDevice();
+            dxLine.OnLostDevice();
+        }
+
+        public void drawAwsomee()
+        {
+        }
 
         private Vector2 Offset
         {
@@ -43,8 +90,8 @@ namespace AzirSharp
 
         private Vector2 getHpPosAfterDmg(float dmg)
         {
-            float w = getHpProc(dmg)*width;
-            return  new Vector2(startPosition.X+w,startPosition.Y);
+            float w = getHpProc(dmg) * width;
+            return new Vector2(startPosition.X + w, startPosition.Y);
         }
 
         public void drawDmg(float dmg, System.Drawing.Color color)
@@ -68,8 +115,17 @@ namespace AzirSharp
 
         private void fillHPBar(Vector2 from, Vector2 to, System.Drawing.Color color)
         {
-            Vector2 sPos = startPosition;
-            Drawing.DrawLine((int)from.X, (int)from.Y + 9f, (int)to.X, (int)to.Y + 9f, 9f, color);
+            dxLine.Begin();
+
+            dxLine.Draw(new[]
+                                    {
+                                        new Vector2((int)from.X, (int)from.Y + 4f),
+                                        new Vector2( (int)to.X, (int)to.Y + 4f)
+                                    }, new ColorBGRA(255, 255, 00, 90));
+            // Vector2 sPos = startPosition;
+            //Drawing.DrawLine((int)from.X, (int)from.Y + 9f, (int)to.X, (int)to.Y + 9f, 9f, color);
+
+            dxLine.End();
         }
 
     }

@@ -9,18 +9,26 @@ using SharpDX;
 
 namespace DetuksSharp
 {
-    class DeathMath
+    public class DeathMath
     {
         public static Polygon getPolygonOn(Obj_AI_Base source, Obj_AI_Base target, float W,  float L)
         {
-            List<Vector2> points = new List<Vector2>();
 
             Vector2 rTpos = LeagueSharp.Common.Prediction.GetPrediction(target, 0.10f).UnitPosition.To2D();
-            Vector2 startP = source.ServerPosition.To2D();
+
+            return getPolygonOn(source.ServerPosition.To2D(), rTpos, W, L);
+        }
+
+        public static Polygon getPolygonOn(Vector2 source, Vector2 target, float W, float L)
+        {
+            List<Vector2> points = new List<Vector2>();
+
+            Vector2 rTpos = target;
+            Vector2 startP = source;
             Vector2 endP = startP.Extend(rTpos, L);
 
-            Vector2 p = (rTpos- startP);
-            var per = p.Perpendicular().Normalized() * (W/2);
+            Vector2 p = (rTpos - startP);
+            var per = p.Perpendicular().Normalized() * (W / 2);
             points.Add(startP + per);
             points.Add(startP - per);
             points.Add(endP - per);
@@ -29,7 +37,7 @@ namespace DetuksSharp
             return new Polygon(points);
         }
 
-        internal class Polygon
+        public class Polygon
         {
             public List<Vector2> Points = new List<Vector2>();
 

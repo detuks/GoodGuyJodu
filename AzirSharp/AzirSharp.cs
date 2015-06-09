@@ -21,6 +21,7 @@
  * */
 
 using System;
+using System.Linq;
 using DetuksSharp;
 using LeagueSharp;
 using LeagueSharp.Common;
@@ -66,6 +67,7 @@ namespace AzirSharp
                 Config.AddSubMenu(TargetSelectorMenu);
                 //Combo
                 Config.AddSubMenu(new Menu("Combo Sharp", "combo"));
+                Config.SubMenu("combo").AddItem(new MenuItem("fullin", "full in combo")).SetValue(new KeyBind('A', KeyBindType.Press, false));
                 Config.SubMenu("combo").AddItem(new MenuItem("useQ", "use Q")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useW", "use W")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useE", "use E")).SetValue(true);
@@ -98,6 +100,11 @@ namespace AzirSharp
                 GameObject.OnDelete += OnDeleteObject;
                 Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
 
+
+                Spellbook.OnCastSpell += onCastSpell;
+
+                Drawing.OnEndScene += OnEndScene;
+
               //  Game.OnGameSendPacket += OnGameSendPacket;
                // Game.OnGameProcessPacket += OnGameProcessPacket;
                 DeathWalker.azir = true;
@@ -109,6 +116,10 @@ namespace AzirSharp
                 Game.PrintChat("Oops. Something went wrong with Azir Sharp");
             }
 
+        }
+
+        private static void onCastSpell(Spellbook sender, SpellbookCastSpellEventArgs args)
+        {
         }
 
         public static float startTime = 0;
@@ -153,7 +164,7 @@ namespace AzirSharp
 
                 if (DeathWalker.CurrentMode == DeathWalker.Mode.Combo)
                 {
-                    Obj_AI_Hero target = TargetSelector.GetTarget(1000, TargetSelector.DamageType.Magical);
+                    Obj_AI_Hero target = TargetSelector.GetTarget(1200, TargetSelector.DamageType.Magical);
                     if(target != null)
                         Azir.doCombo(target);
                 }
@@ -172,6 +183,14 @@ namespace AzirSharp
                 {
                     Azir.doFlyToMouse(Game.CursorPos);
                 }
+
+                if (Config.Item("fullin").GetValue<KeyBind>().Active)
+                {
+                    DeathWalker.deathWalk(Game.CursorPos);
+                    Obj_AI_Hero target = TargetSelector.GetTarget(1500, TargetSelector.DamageType.Magical);
+                    if(target != null)
+                            Azir.goFullIn(target);
+                }
             }
             catch (Exception ex)
             {
@@ -182,7 +201,33 @@ namespace AzirSharp
 
         private static void onDraw(EventArgs args)
         {
-            Render.Circle.DrawCircle(Azir.Player.Position, 1150, (Azir.Player.IsDashing()) ? Color.Red : Color.Blue);
+            Render.Circle.DrawCircle(Azir.Player.Position, 1150, (DeathWalker.canAttack()) ? Color.Red : Color.Blue);
+
+            foreach (var solid in Azir.MySoldiers)
+            {
+                if (solid.IsValid && !solid.IsDead)
+                {
+                    Render.Circle.DrawCircle(solid.Position, 325, Color.Yellow);
+                    Render.Circle.DrawCircle(solid.Position, 900, Color.GreenYellow);
+                }
+            }
+
+            Obj_AI_Base tower = ObjectManager.Get<Obj_AI_Turret>().Where(tur => tur.IsAlly && tur.Health > 0).OrderBy(tur => Azir.Player.Distance(tur)).First();
+            if (tower != null)
+            {
+                var pol = DeathMath.getPolygonOn(Azir.Player.Position.Extend(tower.Position, -125).To2D(), tower.Position.To2D(), Azir.R.Width, 270);
+                pol.Draw(Color.Yellow);
+            }
+
+        }
+
+        private static void OnEndScene(EventArgs args)
+        {
+                foreach (var enemy in DeathWalker.AllEnemys.Where(ene => !ene.IsDead && ene.IsEnemy && ene.IsVisible))
+                {
+                    hpi.unit = enemy;
+                    hpi.drawDmg(Azir.getFullDmgOn(enemy), Color.Yellow);
+                }
         }
 
         private static void OnCreateObject(GameObject sender, EventArgs args)
@@ -212,8 +257,9 @@ namespace AzirSharp
 
         public static void OnProcessSpell(Obj_AI_Base obj, GameObjectProcessSpellCastEventArgs arg)
         {
-          //  if(obj.IsMe)
-           //     Console.WriteLine(arg.SData.Name);
+           // if(!obj.IsMe)
+          //      return;;
+
            
         }
 

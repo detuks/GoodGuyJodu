@@ -60,7 +60,7 @@ namespace AzirSharp
             if (!W.IsReady(1600) && (!enemyInAzirRange(targ) || targ.Health<Q.GetDamage(targ)*1.25) && AzirSharp.Config.Item("useQ").GetValue<bool>())
                 castQTarget(targ);
 
-            if (AzirSharp.Config.Item("useE").GetValue<bool>())
+            if (AzirSharp.Config.Item("useE").GetValue<bool>() || Player.HealthPercent<15)
                 castETarget(targ);
 
             if (AzirSharp.Config.Item("useR").GetValue<bool>())
@@ -111,7 +111,7 @@ namespace AzirSharp
 
         public static void castWTarget(Obj_AI_Hero target)
         {
-            if (!W.IsReady() && Wdata.Ammo == 0)
+            if ((!W.IsReady() && Wdata.Ammo == 0) || Player.IsAttackingPlayer)
                 return;
             PredictionOutput po = Prediction.GetPrediction(target, 0.2f);
             if(Qdata.CooldownExpires<Game.Time || po.UnitPosition.Distance(Player.Position,true)<630*630)
@@ -159,10 +159,11 @@ namespace AzirSharp
         public static void doFlyToMouse(Vector3 pos)
         {
             var closest = getClosestSolider(pos);
-            if ((closest == null || (closest.Distance(pos, true) > Player.Distance(pos, true))) && W.IsReady() && Qdata.CooldownExpires < Game.Time  && E.IsReady(500))
+            var dist = Player.Distance(pos, true);
+            if ((closest == null || (closest.Distance(pos, true) > dist)) && W.IsReady() && Qdata.CooldownExpires < Game.Time && E.IsReady(500))
                 W.Cast(pos);
 
-            if (closest == null || (closest.Distance(pos, true) > Player.Distance(pos, true)))
+            if (closest == null || (closest.Distance(pos, true) > dist))
                 return;
            /* if ((closest.Distance(pos, true) > Player.Distance(pos, true)))
             {
@@ -173,18 +174,67 @@ namespace AzirSharp
             }
             else
             {*/
-                if (E.IsReady() && Q.IsReady(250))
+                if (E.IsReady() && Q.IsReady(150))
                 {
                     E.CastOnUnit(closest);
                 }
-
-                if (closest.Distance(Player) < 350 && Q.IsReady())
+            var clo = closest.Distance(Player, true);
+            if (Player.IsDashing() && Q.IsReady())
                     Q.Cast(pos);
             //}
 
 
 
         }
+
+        public static void goFullIn(Obj_AI_Hero target)
+        {
+            //R logic here!
+
+            try
+            {
+                
+                var dist = Player.Distance(target);
+                if (R.IsReady() && !Player.IsDashing())
+                {
+                    
+                    Obj_AI_Base tower = ObjectManager.Get<Obj_AI_Turret>().Where(tur => tur.IsAlly && tur.Health > 0).OrderBy(tur => Player.Distance(tur)).First();
+                    if (tower != null)
+                    {
+                        var pol = DeathMath.getPolygonOn(Player.Position.Extend(tower.Position, -125).To2D(), tower.Position.To2D(), R.Width,270);
+                        if(pol.pointInside(target.Position.To2D()))
+                            R.Cast(tower.Position);
+                    }
+                }
+                var aprTime = dist / E.Speed;
+                var output = Prediction.GetPrediction(target, aprTime);
+                if (Player.Distance(output.UnitPosition,true)<1050*1050)
+                    doFlyToMouse(output.UnitPosition.Extend(Player.Position, -120));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+           
+        }
+
+
+
+        public static float getFullDmgOn(Obj_AI_Hero target)
+        {
+            float dmg = 0;
+            if (Qdata.CooldownExpires < Game.Time)
+                dmg += Q.GetDamage(target);
+            if (E.IsReady())
+                dmg += E.GetDamage(target);
+            if (R.IsReady())
+                dmg += R.GetDamage(target);
+
+            dmg += DeathWalker.getRealAADmg(target);
+
+            return dmg;
+        }
+
 
         public static bool interactsOnlyWithTarg(Obj_AI_Hero target,Obj_AI_Base sol, float distColser)
         {
