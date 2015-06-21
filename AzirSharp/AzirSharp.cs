@@ -69,23 +69,28 @@ namespace AzirSharp
                 Config.AddSubMenu(new Menu("Combo Sharp", "combo"));
                 Config.SubMenu("combo").AddItem(new MenuItem("fullin", "full in combo")).SetValue(new KeyBind('A', KeyBindType.Press, false));
                 Config.SubMenu("combo").AddItem(new MenuItem("useQ", "use Q")).SetValue(true);
-                Config.SubMenu("combo").AddItem(new MenuItem("useW", "use W")).SetValue(true);
+                Config.SubMenu("combo").AddItem(new MenuItem("useW", "use W")).SetValue(false);
                 Config.SubMenu("combo").AddItem(new MenuItem("useE", "use E")).SetValue(true);
-                Config.SubMenu("combo").AddItem(new MenuItem("useR", "use R")).SetValue(true);
+                Config.SubMenu("combo").AddItem(new MenuItem("useR", "use R")).SetValue(false);
                 Config.SubMenu("combo").AddItem(new MenuItem("fly", "fly to mouse")).SetValue(new KeyBind('T', KeyBindType.Press, false));
 
                 //LastHit
-                Config.AddSubMenu(new Menu("LastHit Sharp", "lHit"));
+               // Config.AddSubMenu(new Menu("LastHit Sharp", "lHit"));
                
                 //LaneClear
-                Config.AddSubMenu(new Menu("LaneClear Sharp", "lClear"));
+               // Config.AddSubMenu(new Menu("LaneClear Sharp", "lClear"));
                
                 //Harass
-                Config.AddSubMenu(new Menu("Harass Sharp", "harass"));
+                //Config.AddSubMenu(new Menu("Harass Sharp", "harass"));
                
-                //Extra
-                Config.AddSubMenu(new Menu("Extra Sharp", "extra"));
-                
+                //Drawings
+                Config.AddSubMenu(new Menu("Drawings Sharp", "draw"));
+                Config.SubMenu("draw").AddItem(new MenuItem("drawQmax", "draw Q max")).SetValue(true);
+                Config.SubMenu("draw").AddItem(new MenuItem("drawW", "draw W")).SetValue(true);
+                Config.SubMenu("draw").AddItem(new MenuItem("drawR", "draw R")).SetValue(true);
+                Config.SubMenu("draw").AddItem(new MenuItem("drawFullDmg", "draw damage")).SetValue(true);
+                Config.SubMenu("draw").AddItem(new MenuItem("drawSoliAA", "draw Solider AA")).SetValue(true);
+                Config.SubMenu("draw").AddItem(new MenuItem("drawSoliCtrl", "draw Solider Control")).SetValue(true);
 
                 //Debug
                 Config.AddSubMenu(new Menu("Debug", "debug"));
@@ -201,28 +206,44 @@ namespace AzirSharp
 
         private static void onDraw(EventArgs args)
         {
-            Render.Circle.DrawCircle(Azir.Player.Position, 1150, (DeathWalker.canAttack()) ? Color.Red : Color.Blue);
+            if(Config.Item("drawQmax").GetValue<bool>())
+                Render.Circle.DrawCircle(Azir.Player.Position, 1150, (DeathWalker.canAttack()) ? Color.Red : Color.Blue);
 
-            foreach (var solid in Azir.MySoldiers)
-            {
-                if (solid.IsValid && !solid.IsDead)
+            if (Config.Item("drawSoliAA").GetValue<bool>() || Config.Item("drawSoliCtrl").GetValue<bool>())
+                foreach (var solid in Azir.MySoldiers)
                 {
-                    Render.Circle.DrawCircle(solid.Position, 325, Color.Yellow);
-                    Render.Circle.DrawCircle(solid.Position, 900, Color.GreenYellow);
+                    if (solid.IsValid && !solid.IsDead)
+                    {
+                        if (Config.Item("drawSoliAA").GetValue<bool>())
+                            Render.Circle.DrawCircle(solid.Position, 325, Color.Yellow);
+                        if (Config.Item("drawSoliCtrl").GetValue<bool>())
+                            Render.Circle.DrawCircle(solid.Position, 900, Color.GreenYellow);
+                    }
                 }
-            }
 
-            Obj_AI_Base tower = ObjectManager.Get<Obj_AI_Turret>().Where(tur => tur.IsAlly && tur.Health > 0).OrderBy(tur => Azir.Player.Distance(tur)).First();
-            if (tower != null)
+            if (Config.Item("drawW").GetValue<bool>())
+                Render.Circle.DrawCircle(Azir.Player.Position, Azir.W.Range, Color.Yellow);
+
+            if (Config.Item("drawR").GetValue<bool>())
             {
-                var pol = DeathMath.getPolygonOn(Azir.Player.Position.Extend(tower.Position, -125).To2D(), tower.Position.To2D(), Azir.R.Width, 270);
-                pol.Draw(Color.Yellow);
+                Obj_AI_Base tower =
+                    ObjectManager.Get<Obj_AI_Turret>()
+                        .Where(tur => tur.IsAlly && tur.Health > 0)
+                        .OrderBy(tur => Azir.Player.Distance(tur))
+                        .First();
+                if (tower != null)
+                {
+                    var pol = DeathMath.getPolygonOn(Azir.Player.Position.Extend(tower.Position, -125).To2D(),
+                        tower.Position.To2D(), Azir.R.Width, 270);
+                    pol.Draw(Color.Yellow);
+                }
             }
 
         }
 
         private static void OnEndScene(EventArgs args)
         {
+            if (Config.Item("drawFullDmg").GetValue<bool>())
                 foreach (var enemy in DeathWalker.AllEnemys.Where(ene => !ene.IsDead && ene.IsEnemy && ene.IsVisible))
                 {
                     hpi.unit = enemy;

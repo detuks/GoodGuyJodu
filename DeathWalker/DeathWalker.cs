@@ -277,8 +277,7 @@ namespace DetuksSharp
         {
             try
             {
-                if(CurrentMode != Mode.None)
-                    deathWalk(Game.CursorPos, getBestTarget());
+                deathWalk(Game.CursorPos, CurrentMode != Mode.None ? getBestTarget() : getBestTarget(azir), CurrentMode == Mode.None);
             }
             catch (Exception ex)
             {
@@ -304,14 +303,14 @@ namespace DetuksSharp
                 deathWalk(goalPosition, getBestTarget());
         }
 
-        public static void deathWalk(Vector3 goalPosition, AttackableUnit target = null)
+        public static void deathWalk(Vector3 goalPosition, AttackableUnit target = null, bool noMove = false)
         {
 
             if (target != null && canAttack() && inAutoAttackRange(target))
             {
                 doAttack(target);
             }
-            if (canMove())
+            if (canMove() && !noMove)
             {
                 if (target != null && (CurrentMode == Mode.Lasthit || CurrentMode == Mode.Harass))
                     killUnit = target;
@@ -321,9 +320,10 @@ namespace DetuksSharp
             }
         }
 
-        public static AttackableUnit getBestTarget()
+        public static AttackableUnit getBestTarget(bool onlySolider = false)
         {
-            if (ForcedTarget != null)
+            bool soliderHit = false;
+            if (ForcedTarget != null && !onlySolider)
             {
                 if (inAutoAttackRange(ForcedTarget))
                     return ForcedTarget;
@@ -347,12 +347,12 @@ namespace DetuksSharp
 
             if (azir)
             {
-                var hero1 = GetBestHeroTarget();
+                var hero1 = GetBestHeroTarget(out soliderHit);
 
-                if (hero1 != null && (enemyInAzirRange(hero1) || hero1 is Obj_AI_Minion))
+                if (hero1 != null && (enemyInAzirRange(hero1) || hero1 is Obj_AI_Minion) && (!onlySolider || soliderHit))
                     return hero1;
             }
-
+            if (!onlySolider)
             //check motherfuckers that are attacked by tower
             if (CurrentMode == Mode.Harass || CurrentMode == Mode.Lasthit || CurrentMode == Mode.LaneClear)
             {
@@ -370,11 +370,12 @@ namespace DetuksSharp
                         //Console.WriteLine("Tower under shoting");
                         //Notifications.AddNotification("Tower shoot");
                         //2x hit tower target
+                        
                         return targ;
                     }
                 }
             }
-
+            if (!onlySolider)
             if (CurrentMode == Mode.Harass || CurrentMode == Mode.Lasthit || CurrentMode == Mode.LaneClear)
             {
                 //Last hit
@@ -395,12 +396,11 @@ namespace DetuksSharp
                 if (best != null)
                     return best;
             }
+            var hero = GetBestHeroTarget(out soliderHit);
 
-            var hero = GetBestHeroTarget();
-
-            if (hero != null)
+            if (hero != null && (!onlySolider || soliderHit))
                 return hero;
-
+            if (!onlySolider)
             /* turrets / inhibitors / nexus */
             if (CurrentMode == Mode.LaneClear)
             {
@@ -426,7 +426,7 @@ namespace DetuksSharp
                 }
             }
 
-
+            if (!onlySolider)
             //Laneclear
             if (CurrentMode == Mode.LaneClear && !ShouldWait())
             {
@@ -438,7 +438,7 @@ namespace DetuksSharp
             return best;
         }
 
-        private static Obj_AI_Base GetBestHeroTarget()
+        private static Obj_AI_Base GetBestHeroTarget(out bool soliderHit)
         {
             Obj_AI_Hero killableEnemy = null;
             var hitsToKill = double.MaxValue;
@@ -456,7 +456,10 @@ namespace DetuksSharp
                         var solAarange = 325 + ene.BoundingRadius;
                         solAarange *= solAarange;
                         if (ene.ServerPosition.Distance(sol.ServerPosition, true) < solAarange)
+                        {
+                            soliderHit = true;
                             return ene;
+                        }
                         foreach (var around in enemiesAround.Where(arou => arou != null && arou.IsValid && !arou.IsDead && arou.ServerPosition.Distance(sol.ServerPosition, true) <= ((325 + arou.BoundingRadius) * (325 + arou.BoundingRadius))))
                         {
                             if (around == null || around.IsDead || ene == null)
@@ -469,6 +472,7 @@ namespace DetuksSharp
                                 if (posi != null && posi.UnitPosition != null &&
                                     poly.pointInside(posi.UnitPosition.To2D()))
                                 {
+                                    soliderHit = true;
                                     return around;
                                 }
                             }
@@ -487,6 +491,7 @@ namespace DetuksSharp
                 killableEnemy = enemy;
                 hitsToKill = killHits;
             }
+            soliderHit = false;
             return hitsToKill < 4 ? killableEnemy : TargetSelector.GetTarget(player.AttackRange+player.BoundingRadius + 100, TargetSelector.DamageType.Physical);
         }
 

@@ -16,6 +16,9 @@ namespace DetuksSharp.Prediction
 
         public static readonly Dictionary<int, DamageMaker> activeDamageMakers = new Dictionary<int, DamageMaker>();
 
+
+        public static readonly Dictionary<int, DamageMaker> activeTowerTargets = new Dictionary<int, DamageMaker>();
+
         public static int now
         {
             get { return (int) DateTime.Now.TimeOfDay.TotalMilliseconds; }
@@ -35,6 +38,20 @@ namespace DetuksSharp.Prediction
 
         private static void onMeleeStartAutoAttack(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
+            if (sender is Obj_AI_Turret)
+            {
+                activeTowerTargets.Remove(sender.NetworkId);
+                var dMake = new DamageMaker(sender,
+                    (Obj_AI_Base)args.Target,
+                    null,
+                    args.SData,
+                    true);
+
+                activeTowerTargets.Add(sender.NetworkId, dMake);
+
+
+            }
+
             if(!sender.IsMelee() || !args.SData.IsAutoAttack())
                 return;
 
@@ -58,8 +75,8 @@ namespace DetuksSharp.Prediction
 
         private static void onMeleeStopAutoAttack(Spellbook sender, SpellbookStopCastEventArgs args)
         {
-            if (!sender.Owner.IsMelee())
-                return;
+            //if (!sender.Owner.IsMelee())
+            //    return;
 
             if (activeDamageMakers.ContainsKey(sender.Owner.NetworkId))
                 activeDamageMakers.Remove(sender.Owner.NetworkId);
@@ -131,7 +148,7 @@ namespace DetuksSharp.Prediction
         //Maybe later change so would return data about missile
         public static DamageMaker attackedByTurret(AttackableUnit unit)
         {
-            return activeDamageMakers.Values.Where(v => v.target.NetworkId == unit.NetworkId).FirstOrDefault(attack => attack.source is Obj_AI_Turret);
+            return activeTowerTargets.Values.Where(v => v.target.NetworkId == unit.NetworkId).FirstOrDefault(attack => attack.source is Obj_AI_Turret);
         }
 
         //Only active attacks
