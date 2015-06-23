@@ -14,6 +14,7 @@ namespace AzirSharp
 
         public static Obj_AI_Hero Player = ObjectManager.Player;
 
+        public static Vector3 testShow = new Vector3();
 
         public static SummonerItems sumItems = new SummonerItems(Player);
 
@@ -25,7 +26,7 @@ namespace AzirSharp
         public static SpellDataInst Edata = sBook.GetSpell(SpellSlot.E);
         public static SpellDataInst Rdata = sBook.GetSpell(SpellSlot.R);
         public static Spell Q = new Spell(SpellSlot.Q, 1075);
-        public static Spell W = new Spell(SpellSlot.W, 350);
+        public static Spell W = new Spell(SpellSlot.W, 450);
         public static Spell E = new Spell(SpellSlot.E, 1150);
         public static Spell R = new Spell(SpellSlot.R, 250);
 
@@ -45,7 +46,7 @@ namespace AzirSharp
 
         public static Obj_AI_Minion getClosestSolider(Vector3 pos)
         {
-            return MySoldiers.Where(sol => !sol.IsDead).OrderBy(sol => sol.Distance(pos, true)).FirstOrDefault();
+            return MySoldiers.Where(sol => !sol.IsDead).OrderBy(sol => sol.Distance(pos, true)-((sol.IsMoving)?500:0)).FirstOrDefault();
         }
 
         public static void doCombo(Obj_AI_Hero targ)
@@ -114,12 +115,38 @@ namespace AzirSharp
             if ((!W.IsReady() && Wdata.Ammo == 0) || Player.IsAttackingPlayer)
                 return;
             PredictionOutput po = Prediction.GetPrediction(target, 0.2f);
-            if (Qdata.CooldownExpires < Game.Time || po.UnitPosition.Distance(Player.Position, true) < 630*630)
+            if (Qdata.CooldownExpires < Game.Time || po.UnitPosition.Distance(Player.Position, true) < 630*630 && (Player.Mana > Wdata.ManaCost+Qdata.ManaCost || target.Distance(Player,true)<700*700))
             {
-                W.Cast(po.UnitPosition);
-                Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
+                summonSolider(po.UnitPosition);
             }
 
+        }
+
+        public static void summonSolider(Vector3 posIn)
+        {
+            if(!W.IsReady())
+                return;
+            var pos = (posIn.Distance(Player.Position, true) < W.RangeSqr) ? posIn : Player.Position.Extend(posIn, W.Range);
+
+            Obj_AI_Base tower = DeathWalker.EnemyTowers.Where(tur => tur != null && tur.IsValid && tur.IsEnemy && tur.Health > 0 && tur.Distance(Player, true) < 700 * 700).OrderBy(tur => pos.Distance(tur.Position)).FirstOrDefault();
+            
+            if (tower != null )
+            {
+                var rad = tower.BoundingRadius + 150;
+                if (tower.Distance(pos, true) <= rad*rad)
+                {
+                    var bestPo =
+                        tower.BBox.GetCorners()
+                            .Where(corn => corn.Distance(Player.Position, true) < W.RangeSqr)
+                            .OrderBy(cor => cor.Distance(pos, true))
+                            .FirstOrDefault();
+                    pos = tower.Position.To2D().Extend(bestPo.To2D(), tower.BoundingRadius + 300).To3D();
+                    
+                }
+            }
+            testShow = pos;
+            W.Cast(pos);
+            Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
         }
 
         public static void castETarget(Obj_AI_Hero target)
@@ -161,22 +188,64 @@ namespace AzirSharp
 
         public static void doFlyToMouse(Vector3 pos)
         {
+            /* E use if soli dist targ < 250
+             * or soli dist targ < play dist targ and soli dist play > 650
+             * 
+             * if palyer time to soli < soli tiem to targ
+             */
+
             var closest = getClosestSolider(pos);
             var dist = Player.Distance(pos, true);
-            if ((closest == null || (closest.Distance(pos, true) > dist*dist)) && W.IsReady() &&
+            if ((closest == null || (closest.Distance(pos, true) > dist)) && W.IsReady() &&
                 Qdata.CooldownExpires < Game.Time && E.IsReady(200))
             {
-                W.Cast(pos);
+                summonSolider(pos);
                 Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
+                return;
             }
 
-            if (closest == null || (closest.Distance(pos, true) > dist * dist))
+            if (closest == null)
                 return;
-            if ((closest.Distance(pos, true) > Player.Distance(pos, true)))
+
+            var timeToSoli = Player.Distance(closest)/E.Speed+E.Delay;
+            var soliTimeToTarg = closest.Distance(pos)/Q.Speed+Q.Delay;
+
+           // if (soliTimeToTarg < timeToSoli && E.IsReady())
+            //    E.CastOnUnit(closest);
+
+           // if (Q.IsReady() && soliTimeToTarg > timeToSoli)
+            //    Q.Cast(pos);
+            //return;
+
+            var soliToTarg = closest.Distance(pos);
+            var playToTarg = Player.Distance(pos);
+            var playToSoli = Player.Distance(closest);
+
+            if (soliToTarg + 250 < playToTarg)
             {
-                if (Q.IsReady() && E.IsReady(250))
+                if (E.IsReady())
+                    E.CastOnUnit(closest);
+            }
+            else
+            {
+                if (Q.IsReady())
                     Q.Cast(pos);
-                if (E.IsReady() && closest.IsMoving)
+            }
+
+            if (Player.IsDashing() && playToSoli < 400)
+            {
+                if (Q.IsReady())
+                    Q.Cast(pos);
+            }
+            else if (soliToTarg >= playToTarg)
+            {
+                if (Q.IsReady())
+                    Q.Cast(pos);
+            }
+            return;
+            if ((closest.Distance(pos, true) > dist - 150 * 150))
+            {
+                if (E.IsReady())
                     E.CastOnUnit(closest);
             }
             else
@@ -185,9 +254,8 @@ namespace AzirSharp
                 {
                     E.CastOnUnit(closest);
                 }
-            var clo = closest.Distance(Player, true);
-            if (Player.IsDashing() && Q.IsReady())
-                    Q.Cast(pos);
+                if (Player.IsDashing() && Q.IsReady())
+                        Q.Cast(pos);
             }
 
 
@@ -209,15 +277,16 @@ namespace AzirSharp
                     Obj_AI_Base tower = ObjectManager.Get<Obj_AI_Turret>().Where(tur => tur.IsAlly && tur.Health > 0).OrderBy(tur => Player.Distance(tur)).First();
                     if (tower != null)
                     {
-                        var pol = DeathMath.getPolygonOn(Player.Position.Extend(tower.Position, -175).To2D(), tower.Position.To2D(), R.Width,270);
-                        if(pol.pointInside(target.Position.To2D()))
+                        var pol = DeathMath.getPolygonOn(Player.Position.Extend(tower.Position, -155).To2D(), tower.Position.To2D(), R.Width,260);
+                        if(DeathWalker.AllEnemys.Any(ene => ene.IsValid && !ene.IsDead && pol.pointInside(ene.Position.To2D())))
+                        //if(pol.pointInside(target.Position.To2D()))
                             R.Cast(tower.Position);
                     }
                 }
                 var aprTime = dist / E.Speed;
                 var output = Prediction.GetPrediction(target, aprTime);
                 if (Player.Distance(output.UnitPosition,true)<1050*1050)
-                    doFlyToMouse(output.UnitPosition.Extend(Player.Position, -120));
+                    doFlyToMouse(output.UnitPosition.Extend(Player.Position, -75));
             }
             catch (Exception ex)
             {

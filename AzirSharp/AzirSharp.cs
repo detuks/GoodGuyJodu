@@ -21,6 +21,8 @@
  * */
 
 using System;
+using System.Collections.Generic;
+using System.Drawing.Design;
 using System.Linq;
 using DetuksSharp;
 using LeagueSharp;
@@ -79,10 +81,11 @@ namespace AzirSharp
                
                 //LaneClear
                // Config.AddSubMenu(new Menu("LaneClear Sharp", "lClear"));
-               
-                //Harass
-                //Config.AddSubMenu(new Menu("Harass Sharp", "harass"));
-               
+
+                //Extra
+                Config.AddSubMenu(new Menu("Extra Sharp", "extra"));
+                Config.SubMenu("extra").AddItem(new MenuItem("wasteR", "dont Waste R")).SetValue(true);
+
                 //Drawings
                 Config.AddSubMenu(new Menu("Drawings Sharp", "draw"));
                 Config.SubMenu("draw").AddItem(new MenuItem("drawQmax", "draw Q max")).SetValue(true);
@@ -125,6 +128,10 @@ namespace AzirSharp
 
         private static void onCastSpell(Spellbook sender, SpellbookCastSpellEventArgs args)
         {
+            if (Config.Item("wasteR").GetValue<bool>() && args.Slot == SpellSlot.R &&
+                Azir.Player.GetEnemiesInRange(650).Count(ene => ene.IsValid && !ene.IsDead) == 0)
+                args.Process = false;
+
         }
 
         public static float startTime = 0;

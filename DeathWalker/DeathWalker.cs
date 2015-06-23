@@ -139,8 +139,11 @@ namespace DetuksSharp
             get { return (int)(player.AttackCastDelay * 1000 + menu.Item("MovDelay").GetValue<Slider>().Value); }
         }
 
+        private static DeathDraw dDraw;
+
         private static void init()
         {
+            dDraw = new DeathDraw();
             //While testing menu
             AllEnemys = ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsEnemy).ToList();
             AllAllys = ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsAlly).ToList();
@@ -155,21 +158,15 @@ namespace DetuksSharp
 
         private void onLoad(EventArgs args)
         {
-            /*Config = new Menu("DeathWalker", "dWalk", true);
+        }
 
-            AddToMenu(Config);
-            Config.AddToMainMenu();*/
-            Drawing.OnDraw += onDraw;
+        private static void OnEndScene(EventArgs args)
+        {
+            var attPrec = ((attackTime - canAttackAfter()) * 100) / attackTime;
 
+            dDraw.draw((int)attPrec);
 
-            Obj_AI_Base.OnProcessSpellCast += onStartAutoAttack;
-            Spellbook.OnStopCast += onStopAutoAttack;
-
-
-            Obj_AI_Base.OnDamage += onDamage;
-
-            Game.OnUpdate += OnUpdate;
-
+            Drawing.DrawText(dDraw.mPos.X, dDraw.mPos.Y-20, Color.WhiteSmoke, attPrec+"%");
         }
 
         private static void onCreate(GameObject sender, EventArgs args)
@@ -216,7 +213,6 @@ namespace DetuksSharp
             }*/
             if (isAutoAttackReset(args.SData.Name))
             {
-                
                 Utility.DelayAction.Add((int)250, resetAutoAttackTimer);
             }
 
@@ -227,7 +223,7 @@ namespace DetuksSharp
             }
             if (IsCantCancel(args.SData.Name))
             {
-                lastAutoAttackMove = 0;
+                lastAutoAttackMove-=100;
             }
             //Fire after attack!
             if (sender.IsMeele)
@@ -253,9 +249,10 @@ namespace DetuksSharp
 
         private static void onDraw(EventArgs args)
         {
-            Utility.DrawCircle(player.Position, player.AttackRange+player.BoundingRadius, Color.Green);
+            Utility.DrawCircle(player.Position, player.AttackRange + player.BoundingRadius, Color.Green);
+
+           // Drawing.DrawText(100, 100, Color.Red, " " + attPrec + " : " + canAttackAfter() + " : "+total);
             return;
-           // Drawing.DrawText(100, 100, Color.Red, "targ Spells: " + HealthDeath.activeDamageMakers.Count + " : " + canAttackAfter());
             foreach (var enemy in ObjectManager.Get<Obj_AI_Base>().Where(ene => ene != null && ene.IsValidTarget(1000) && ene.IsEnemy && ene.Distance(player,true)<1000*1000))
             {
                 var timeToHit = timeTillDamageOn(enemy);
@@ -652,7 +649,7 @@ namespace DetuksSharp
 
         public static int canAttackAfter()
         {
-            var after = lastAutoAttack + player.AttackDelay * 1000 - now + menu.Item("AttDelay").GetValue<Slider>().Value;
+            var after = player.AttackDelay * 1000 + lastAutoAttack - now + menu.Item("AttDelay").GetValue<Slider>().Value;
             return (int)(after > 0 ? after : 0);
         }
 
@@ -734,7 +731,6 @@ namespace DetuksSharp
 
         private static void FireOnUnkillable(AttackableUnit unit, AttackableUnit target, int msTillDead)
         {
-            lastAutoAttackMove = 0;
             //set can move
             if (OnUnkillable != null)
             {
@@ -759,6 +755,7 @@ namespace DetuksSharp
 
             Drawing.OnDraw += onDraw;
 
+            Drawing.OnEndScene += OnEndScene;
 
             Obj_AI_Base.OnProcessSpellCast += onStartAutoAttack;
             Spellbook.OnStopCast += onStopAutoAttack;

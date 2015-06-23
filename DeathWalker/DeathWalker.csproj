@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeathDraw.cs" />
     <Compile Include="DeathMath.cs" />
     <Compile Include="DeathWalker.cs" />
     <Compile Include="Prediction\HealthDeath.cs" />
