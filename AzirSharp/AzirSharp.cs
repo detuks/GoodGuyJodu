@@ -45,6 +45,8 @@ namespace AzirSharp
 
         public AzirSharp()
         {
+            if (ObjectManager.Player.ChampionName != CharName)
+                    return;
             Console.WriteLine("Azir started");
             /* CallBAcks */
             CustomEvents.Game.OnGameLoad += onLoad;
@@ -53,6 +55,7 @@ namespace AzirSharp
 
         private static void onLoad(EventArgs args)
         {
+
 
             Game.PrintChat("Azir - Sharp by DeTuKs");
 

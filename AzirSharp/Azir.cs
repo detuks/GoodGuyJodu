@@ -25,15 +25,19 @@ namespace AzirSharp
         public static SpellDataInst Wdata = sBook.GetSpell(SpellSlot.W);
         public static SpellDataInst Edata = sBook.GetSpell(SpellSlot.E);
         public static SpellDataInst Rdata = sBook.GetSpell(SpellSlot.R);
-        public static Spell Q = new Spell(SpellSlot.Q, 1075);
-        public static Spell W = new Spell(SpellSlot.W, 450);
-        public static Spell E = new Spell(SpellSlot.E, 1150);
-        public static Spell R = new Spell(SpellSlot.R, 250);
+        public static Spell Q;
+        public static Spell W;
+        public static Spell E;
+        public static Spell R;
 
         public static List<Obj_AI_Minion> MySoldiers = new List<Obj_AI_Minion>(); 
 
         public static void setSkillShots()
         {
+            Q = new Spell(SpellSlot.Q, 1075);
+            W = new Spell(SpellSlot.W, 450);
+            E = new Spell(SpellSlot.E, 1150);
+            R = new Spell(SpellSlot.R, 250);
             Q.SetSkillshot(0.0f, 65f, 1500f, false, SkillshotType.SkillshotLine);
             E.SetSkillshot(0.0f, 65f, 1500f, false, SkillshotType.SkillshotLine);
             R.SetSkillshot(0.5f, 700, 1400, false, SkillshotType.SkillshotLine);
@@ -112,8 +116,9 @@ namespace AzirSharp
 
         public static void castWTarget(Obj_AI_Hero target)
         {
-            if ((!W.IsReady() && Wdata.Ammo == 0) || Player.IsAttackingPlayer)
+            if ((!W.IsReady() && Wdata.Ammo == 0) )
                 return;
+
             PredictionOutput po = Prediction.GetPrediction(target, 0.2f);
             if (Qdata.CooldownExpires < Game.Time || po.UnitPosition.Distance(Player.Position, true) < 630*630 && (Player.Mana > Wdata.ManaCost+Qdata.ManaCost || target.Distance(Player,true)<700*700))
             {
@@ -144,7 +149,6 @@ namespace AzirSharp
                     
                 }
             }
-            testShow = pos;
             W.Cast(pos);
             Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
         }
