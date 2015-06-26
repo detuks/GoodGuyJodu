@@ -246,16 +246,6 @@ namespace JayceSharpV2
             }
         }
 
-        public static void doExploit(Obj_AI_Base target)
-        {
-            if (target != null && !isHammer && E1.IsReady())
-            {
-                if ((Jayce.Player.Distance(target, true) < 200*200))
-                    Jayce.shootQEExp(target);
-                else
-                    Jayce.shootQEExp2(target);
-            }
-        }
 
       /*  public static Vector3 posAfterInj(Obj_AI_Base target)
         {
@@ -320,9 +310,6 @@ namespace JayceSharpV2
                 //doExploit(target);
                // else
                // {
-                if(dist < 200)
-                    shootQEExp(target);
-                else
                     if(shootQE(po.CastPosition, dist>550))
                         castedQon = target;
                // }
@@ -341,7 +328,8 @@ namespace JayceSharpV2
         {
             if (isHammer)
                 return;
-            PredictionOutput po = Q1.GetPrediction(target);if (po.Hitchance == HitChance.Collision && JayceSharp.Config.Item("useMunions").GetValue<bool>())
+            PredictionOutput po = Q1.GetPrediction(target);
+            if (po.Hitchance == HitChance.Collision && JayceSharp.Config.Item("useMunions").GetValue<bool>())
             {
                 Obj_AI_Base fistCol = po.CollisionObjects.OrderBy(unit => unit.Distance(Player.ServerPosition)).First();
                 if (fistCol.Distance(po.UnitPosition) < (180 - fistCol.BoundingRadius / 2) && fistCol.Distance(target.ServerPosition) < (100 - fistCol.BoundingRadius / 2))
@@ -350,6 +338,10 @@ namespace JayceSharpV2
                         castedQon = target;
                 }
 
+            }
+            else
+            {
+                Q1.Cast(target);
             }
         }
 
@@ -401,55 +393,8 @@ namespace JayceSharpV2
             return range + 50;
         }
 
-        public static void shootQEExp(Obj_AI_Base targ)
-        {
-            if (!E1.IsReady())
-                return;
-            /*Console.WriteLine(Qdata.SData);
-            if (E1.IsReady() && myCastedQ != null && myCastedQ.IsValid && Player.Distance(myCastedQ.Position)<E1.Range)
-            {
-                var shotDist = myCastedQ.Position.Distance(targ.Position);
-                if (shotDist < JayceSharp.Config.Item("shootExpDist").GetValue<Slider>().Value)
-                {
-                    E1.Cast(myCastedQ.Position);
-                }
-            }
 
-            if (Q1.IsReady())
-                Q1.Cast(targ);*/
-            var valis = 1250;//JayceSharp.Config.Item("shootExpDist").GetValue<Slider>().Value;
-            var dist = Player.Distance(targ)-targ.BoundingRadius-50-Player.BoundingRadius;
-            var aprox = (int) ((dist*1000)/valis) + 200;
-            var targPos = Prediction.GetPrediction(targ, aprox);
-            var distReal = Player.Distance(targPos.UnitPosition)-targ.BoundingRadius-50-Player.BoundingRadius;
-            var real = (int)((distReal * 1000) / valis) + 200;
-            if(Q1.Cast(targ) != Spell.CastStates.NotCasted)
-                Utility.DelayAction.Add(real, delegate { useExploitE(targ); });
-        }
 
-        public static void shootQEExp2(Obj_AI_Base targ)
-        {
-            if (myCastedQ != null && myCastedQ.IsValid)
-            {
-                var dist = myCastedQ.Position.Distance(targ.Position);
-                if (dist < JayceSharp.Config.Item("shootExpDist").GetValue<Slider>().Value)
-                {
-                   // if(Player.Distance(targ,true)<200*200)
-                   //     Utility.DelayAction.Add(300, delegate { useExploitE(targ); });
-                  //  else
-                        useExploitE(targ);
-                }
-            }
-            if(Q1.IsReady())
-                Q1.CastIfHitchanceEquals(targ, HitChance.VeryHigh);
-        }
-
-        public static void useExploitE(Obj_AI_Base targ)
-        {
-            Console.WriteLine("DO Exploit!");
-            var pred = Prediction.GetPrediction(targ, 160);
-            E1.Cast(targ.ServerPosition.Extend(Player.Position, 25));
-        }
 
         public static bool shootQE(Vector3 pos,bool man = false)
         {

@@ -36,21 +36,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DeathWalker">
-      <HintPath>X:\LeagueSharp\LeagueSharp\System\DeathWalker.dll</HintPath>
+      <HintPath>C:\Users\DETUKS\Desktop\ToolSet\L#Loader++\LeagueSharp\System\DeathWalker.dll</HintPath>
     </Reference>
     <Reference Include="LeagueSharp, Version=1.0.0.25, Culture=neutral, PublicKeyToken=a41ba14f653257a6, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>X:\LeagueSharp\LeagueSharp\System\LeagueSharp.dll</HintPath>
+      <HintPath>C:\Users\DETUKS\Desktop\ToolSet\L#Loader++\LeagueSharp\System\LeagueSharp.dll</HintPath>
     </Reference>
     <Reference Include="LeagueSharp.Common, Version=1.0.0.35, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>X:\LeagueSharp\LeagueSharp\System\LeagueSharp.Common.dll</HintPath>
+      <HintPath>C:\Users\DETUKS\Desktop\ToolSet\L#Loader++\LeagueSharp\System\LeagueSharp.Common.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>X:\LeagueSharp\LeagueSharp\System\SharpDX.dll</HintPath>
+      <HintPath>C:\Users\DETUKS\Desktop\ToolSet\L#Loader++\LeagueSharp\System\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D9">
-      <HintPath>X:\LeagueSharp\LeagueSharp\System\SharpDX.Direct3D9.dll</HintPath>
+      <HintPath>C:\Users\DETUKS\Desktop\ToolSet\L#Loader++\LeagueSharp\System\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

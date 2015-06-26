@@ -76,9 +76,7 @@ namespace JayceSharpV2
                 //Extra
                 Config.AddSubMenu(new Menu("Extra Sharp", "extra"));
                 Config.SubMenu("extra").AddItem(new MenuItem("shoot", "Shoot manual Q")).SetValue(new KeyBind('T', KeyBindType.Press));
-                Config.SubMenu("extra").AddItem(new MenuItem("useExploit", "Use 2.5x Q expl")).SetValue(true);
-                Config.SubMenu("extra").AddItem(new MenuItem("shootExpDist", "shoot exploit dist")).SetValue(new Slider(150, 100, 1000));
-                
+               
                 Config.SubMenu("extra").AddItem(new MenuItem("gapClose", "Kick Gapclosers")).SetValue(true);
                 Config.SubMenu("extra").AddItem(new MenuItem("autoInter", "Interupt spells")).SetValue(true);
                 Config.SubMenu("extra").AddItem(new MenuItem("useMunions", "Q use Minion colision")).SetValue(true);
@@ -190,20 +188,9 @@ namespace JayceSharpV2
             {
                 Jayce.shootQE(Game.CursorPos,true);
             }
-            if (Jayce.myCastedQ != null)
+            if (Jayce.myCastedQ != null && (Config.Item("fullDMG").GetValue<KeyBind>().Active || DeathWalker.CurrentMode == DeathWalker.Mode.Combo))
             {
-                if (Config.Item("useExploit").GetValue<bool>() && Jayce.castedQon != null && Jayce.castedQon.Distance(Jayce.Player) < 550)
-                {
-                    Obj_AI_Base target = Jayce.castedQon;
-                    if ((Jayce.Player.Distance(target, true) < 200*200))
-                        Jayce.shootQEExp(target);
-                    else
-                        Jayce.shootQEExp2(target);
-                }
-                else if (Jayce.myCastedQ.Position.Distance(Jayce.Player.Position) > 120)
-                {
                     Jayce.castEonSpell(Jayce.myCastedQ);
-                }
             }
             /* if (Jayce.castedQon != null && !Jayce.isHammer)
             {
