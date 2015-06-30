@@ -30,7 +30,7 @@ namespace MasterSharp
 {
     internal static class SkillshotDetector
     {
-        public delegate void OnDeleteMissileH(Skillshot skillshot, Obj_SpellMissile missile);
+        public delegate void OnDeleteMissileH(Skillshot skillshot, MissileClient missile);
 
         public delegate void OnDetectSkillshotH(Skillshot skillshot);
 
@@ -84,12 +84,12 @@ namespace MasterSharp
 
         private static void ObjSpellMissileOnOnCreate(GameObject sender, EventArgs args)
         {
-            if (!sender.IsValid || !(sender is Obj_SpellMissile))
+            if (!sender.IsValid || !(sender is MissileClient))
             {
                 return; //not sure if needed
             }
 
-            var missile = (Obj_SpellMissile) sender;
+            var missile = (MissileClient) sender;
 
 #if DEBUG
             if (missile.SpellCaster is Obj_AI_Hero)
@@ -143,12 +143,12 @@ namespace MasterSharp
         /// </summary>
         private static void ObjSpellMissileOnOnDelete(GameObject sender, EventArgs args)
         {
-            if (!(sender is Obj_SpellMissile))
+            if (!(sender is MissileClient))
             {
                 return;
             }
 
-            var missile = (Obj_SpellMissile) sender;
+            var missile = (MissileClient) sender;
 
             if (!(missile.SpellCaster is Obj_AI_Hero))
             {

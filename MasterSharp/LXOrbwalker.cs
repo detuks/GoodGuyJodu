@@ -134,10 +134,10 @@ namespace MasterSharp
             Drawing.OnDraw += OnDraw;
             Game.OnUpdate += OnUpdate;
             Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
-            GameObject.OnCreate += Obj_SpellMissile_OnCreate;
+            GameObject.OnCreate += MissileClient_OnCreate;
         }
 
-        private static void Obj_SpellMissile_OnCreate(GameObject sender, EventArgs args)
+        private static void MissileClient_OnCreate(GameObject sender, EventArgs args)
         {
             if (sender.IsMe)
             {
@@ -145,9 +145,9 @@ namespace MasterSharp
                 if (obj.IsMelee())
                     return;
             }
-            if (!(sender is Obj_SpellMissile) || !sender.IsValid)
+            if (!(sender is MissileClient) || !sender.IsValid)
                 return;
-            var missile = (Obj_SpellMissile)sender;
+            var missile = (MissileClient)sender;
             if (missile.SpellCaster is Obj_AI_Hero && missile.SpellCaster.IsValid && IsAutoAttack(missile.SData.Name))
                 FireAfterAttack(missile.SpellCaster, _lastTarget);
         }

@@ -37,7 +37,7 @@ namespace JayceSharpV2
         public static GameObjectProcessSpellCastEventArgs castEonQ = null;
         public static int castedTimeUnreach = 0;
 
-        public static Obj_SpellLineMissile myCastedQ = null;
+        public static MissileClient myCastedQ = null;
 
         public static Obj_AI_Hero lockedTarg = null;
 
@@ -531,7 +531,8 @@ namespace JayceSharpV2
             }
             else
             {
-                var v2 = Vector3.Normalize(pos - Player.ServerPosition) * 300;
+                var dpos = Player.Distance(pos);
+                var v2 = Vector3.Normalize(pos - Player.ServerPosition) * ((dpos<300)?dpos+10:300);
                 var bom = new Vector2(v2.X, v2.Y);
                 return Player.ServerPosition.To2D() + bom;
             }

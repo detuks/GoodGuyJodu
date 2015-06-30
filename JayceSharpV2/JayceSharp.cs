@@ -138,9 +138,9 @@ namespace JayceSharpV2
             {
             }
 
-            if (sender is Obj_SpellLineMissile)
+            if (sender is MissileClient)
             {
-                var mis = (Obj_SpellLineMissile)sender;
+                var mis = (MissileClient)sender;
                 if (mis.SpellCaster.IsMe)
                 {
                     //Console.WriteLine("My MIssle rdy");
