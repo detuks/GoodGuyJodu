@@ -53,6 +53,13 @@ namespace AzirSharp
             return MySoldiers.Where(sol => !sol.IsDead).OrderBy(sol => sol.Distance(pos, true)-((sol.IsMoving)?500:0)).FirstOrDefault();
         }
 
+        public static bool newSloiderSoon()
+        {
+            //Console.WriteLine("cd:"+(W.Instance.CooldownExpires-Game.Time));
+
+            return (W.Instance.CooldownExpires - Game.Time) > 0 && (W.Instance.CooldownExpires - Game.Time)<1.5f;
+        }
+
         public static void doCombo(Obj_AI_Hero targ)
         {
             if (Player.IsDead)
@@ -62,7 +69,7 @@ namespace AzirSharp
                 castWTarget(targ);
             }
             // if (getEnemiesInSolRange().Count == 0)
-            if (!W.IsReady(1600) && (!enemyInAzirRange(targ) || (targ.Health <= Q.GetDamage(targ) + DeathWalker.getRealAADmg(targ))) && AzirSharp.Config.Item("useQ").GetValue<bool>())
+            if (!newSloiderSoon() && (!enemyInAzirRange(targ) || (targ.Health <= Q.GetDamage(targ) + DeathWalker.getRealAADmg(targ))) && AzirSharp.Config.Item("useQ").GetValue<bool>())
                 castQTarget(targ);
 
             if (AzirSharp.Config.Item("useE").GetValue<bool>() )
