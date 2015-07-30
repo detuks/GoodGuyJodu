@@ -226,7 +226,7 @@ namespace DetuksSharp
                 lastAutoAttackMove-=100;
             }
             //Fire after attack!
-            if (sender.IsMeele)
+            if (sender.IsMelee)
                 Utility.DelayAction.Add(
                     (int)(sender.AttackCastDelay * 1000 + 40), () => FireAfterAttack(sender, (AttackableUnit)args.Target));
 
@@ -450,14 +450,14 @@ namespace DetuksSharp
                     {
                         if (sol == null || sol.IsDead)
                             continue;
-                        var solAarange = 325 + ene.BoundingRadius;
+                        var solAarange = 325;
                         solAarange *= solAarange;
                         if (ene.ServerPosition.Distance(sol.ServerPosition, true) < solAarange)
                         {
                             soliderHit = true;
                             return ene;
                         }
-                        foreach (var around in enemiesAround.Where(arou => arou != null && arou.IsValid && !arou.IsDead && arou.ServerPosition.Distance(sol.ServerPosition, true) <= ((325 + arou.BoundingRadius) * (325 + arou.BoundingRadius))))
+                        foreach (var around in enemiesAround.Where(arou => arou != null && arou.IsValid && !arou.IsDead && arou.ServerPosition.Distance(sol.ServerPosition, true) <= ((325 ) * (325))))
                         {
                             if (around == null || around.IsDead || ene == null)
                                 continue;
@@ -466,7 +466,7 @@ namespace DetuksSharp
                             try
                             {
 
-                                if (posi != null && posi.UnitPosition != null &&
+                                if (posi != null &&
                                     poly.pointInside(posi.UnitPosition.To2D()))
                                 {
                                     soliderHit = true;
@@ -543,7 +543,7 @@ namespace DetuksSharp
                 addTime+= (int)(((realDist - aaRange)*1000)/player.MoveSpeed);
             }
 
-            if (player.IsMeele || azir)
+            if (player.IsMelee || azir)
             {
                 return (int)(canAttackAfter() + player.AttackCastDelay * 1000) + addTime;
             }
@@ -660,8 +660,13 @@ namespace DetuksSharp
 
         public static int canMoveAfter()
         {
-            var after = lastAutoAttack + player.AttackCastDelay * 1000 - now + menu.Item("MovDelay").GetValue<Slider>().Value;
+            var after = lastAutoAttack + player.AttackCastDelay * 1000 - now + menu.Item("MovDelay").GetValue<Slider>().Value + ((hyperCharged()) ? 150 : 0);
             return (int)(after > 0 ? after : 0);
+        }
+
+        private static bool hyperCharged()
+        {
+            return player.Buffs.Any(buffs => buffs.Name == "jaycehypercharge");
         }
 
         public static void resetAutoAttackTimer()
@@ -834,7 +839,7 @@ namespace DetuksSharp
         {
             var solis = getActiveSoliders();
 
-            return !ene.IsDead && solis.Count != 0 && solis.Where(sol => !sol.IsMoving).Any(sol => ene.Distance(sol) < 325+ene.BoundingRadius);
+            return !ene.IsDead && solis.Count != 0 && solis.Where(sol => !sol.IsMoving).Any(sol => ene.Distance(sol) < 325);
         }
 
         public static int solidersAroundEnemy(Obj_AI_Base ene)

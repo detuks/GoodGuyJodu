@@ -318,7 +318,7 @@ namespace DetuksSharp.Prediction
                 {
 
                     dealDamage = (float) source.GetAutoAttackDamage(target, true);
-                    if (source.IsMeele)
+                    if (source.IsMelee)
                         cycle = (int) (source.AttackDelay*1000);
                     else
                     {
