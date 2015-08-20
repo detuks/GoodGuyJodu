@@ -91,6 +91,7 @@ namespace AzirSharp
 
                 //Drawings
                 Config.AddSubMenu(new Menu("Drawings Sharp", "draw"));
+                Config.SubMenu("draw").AddItem(new MenuItem("noDraw", "No Drawings")).SetValue(false);
                 Config.SubMenu("draw").AddItem(new MenuItem("drawQmax", "draw Q max")).SetValue(true);
                 Config.SubMenu("draw").AddItem(new MenuItem("drawW", "draw W")).SetValue(true);
                 Config.SubMenu("draw").AddItem(new MenuItem("drawR", "draw R")).SetValue(true);
@@ -216,6 +217,9 @@ namespace AzirSharp
 
         private static void onDraw(EventArgs args)
         {
+
+            if (Config.Item("noDraw").GetValue<bool>())
+                return;
             if(Config.Item("drawQmax").GetValue<bool>())
                 Render.Circle.DrawCircle(Azir.Player.Position, 1150, (DeathWalker.canAttack()) ? Color.Red : Color.Blue);
 
