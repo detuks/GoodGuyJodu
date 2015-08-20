@@ -208,7 +208,7 @@ namespace AzirSharp
             var closest = getClosestSolider(pos);
             var dist = Player.Distance(pos, true);
             if ((closest == null || (closest.Distance(pos, true) > dist)) && W.IsReady() &&
-                Qdata.CooldownExpires < Game.Time && E.IsReady(200))
+                Qdata.CooldownExpires < Game.Time && Edata.CooldownExpires < Game.Time)
             {
                 summonSolider(pos);
                 Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
