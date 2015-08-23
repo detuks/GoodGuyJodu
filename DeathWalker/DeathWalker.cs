@@ -251,7 +251,7 @@ namespace DetuksSharp
         {
             Utility.DrawCircle(player.Position, player.AttackRange + player.BoundingRadius, Color.Green);
 
-           // Drawing.DrawText(100, 100, Color.Red, " " + attPrec + " : " + canAttackAfter() + " : "+total);
+            Drawing.DrawText(100, 100, Color.Red, " "+CurrentMode);
             return;
             foreach (var enemy in ObjectManager.Get<Obj_AI_Base>().Where(ene => ene != null && ene.IsValidTarget(1000) && ene.IsEnemy && ene.Distance(player,true)<1000*1000))
             {
@@ -274,7 +274,7 @@ namespace DetuksSharp
         {
             try
             {
-                deathWalk(Game.CursorPos, CurrentMode != Mode.None ? getBestTarget() : getBestTarget(azir), CurrentMode == Mode.None);
+                deathWalk(Game.CursorPos, CurrentMode != Mode.None ? getBestTarget() : ((azir)?getBestTarget(azir):null), CurrentMode == Mode.None);
             }
             catch (Exception ex)
             {
@@ -302,7 +302,6 @@ namespace DetuksSharp
 
         public static void deathWalk(Vector3 goalPosition, AttackableUnit target = null, bool noMove = false)
         {
-
             if (target != null && canAttack() && inAutoAttackRange(target))
             {
                 doAttack(target);
@@ -457,7 +456,7 @@ namespace DetuksSharp
                             soliderHit = true;
                             return ene;
                         }
-                        foreach (var around in enemiesAround.Where(arou => arou != null && arou.IsValid && !arou.IsDead && arou.ServerPosition.Distance(sol.ServerPosition, true) <= ((325 ) * (325))))
+                        foreach (var around in enemiesAround.Where(arou => arou != null && arou.IsValid && !arou.IsDead && arou.Position.Distance(sol.Position, true) <= ((325) * (325))))
                         {
                             if (around == null || around.IsDead || ene == null)
                                 continue;
