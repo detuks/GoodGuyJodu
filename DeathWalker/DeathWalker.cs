@@ -251,17 +251,24 @@ namespace DetuksSharp
         {
             Utility.DrawCircle(player.Position, player.AttackRange + player.BoundingRadius, Color.Green);
 
-            Drawing.DrawText(100, 100, Color.Red, " "+CurrentMode);
-            return;
+            Drawing.DrawText(100, 100, Color.Red, " " + CurrentMode + " : " + HealthDeath.damagerSources.Count);
+
+          //  foreach (var towTar in HealthDeath.activeTowerTargets)
+         //   {
+           //     Utility.DrawCircle(towTar.Value.target.Position, 50, Color.DarkViolet);
+           // }
+          
+            //return;
             foreach (var enemy in ObjectManager.Get<Obj_AI_Base>().Where(ene => ene != null && ene.IsValidTarget(1000) && ene.IsEnemy && ene.Distance(player,true)<1000*1000))
             {
-                var timeToHit = timeTillDamageOn(enemy);
+                //var timeToHit = timeTillDamageOn(enemy);
 
                 //var pOut = Drawing.WorldToScreen(enemy.Position);
 
                // Drawing.DrawText(pOut.X,pOut.Y,Color.Red,"name: "+enemy.SkinName);
-
-                var hp = HealthDeath.getLastHitPredPeriodic(enemy, (int) timeToHit);
+                var hp2 = HealthPrediction.LaneClearHealthPrediction(enemy, (int) ((player.AttackDelay*1000)*2.3f),
+                    menu.Item("farmDelay").GetValue<Slider>().Value);
+                var hp = HealthDeath.getLaneClearPred(enemy, (int)((player.AttackDelay * 1000) * 2.2f));
                 if (hp <= getRealAADmg(enemy) && hp > 0)
                 {
                     Render.Circle.DrawCircle(enemy.Position,56,Color.Green);
@@ -357,7 +364,7 @@ namespace DetuksSharp
                 {
                     var towerShot = HealthDeath.attackedByTurret(targ);
                     if (towerShot == null) continue;
-                    var hpOnDmgPred = HealthPrediction.LaneClearHealthPrediction(targ, towerShot.hitOn+10-now);
+                    var hpOnDmgPred = HealthDeath.getLaneClearPred(targ, towerShot.hitOn+10-now);
 
                     var aa = getRealAADmg(targ);
                    // Console.WriteLine("AAdmg: " + aa + " Hp after: " + hpOnDmgPred + " hit: " + (towerShot.hitOn - now));
@@ -375,7 +382,7 @@ namespace DetuksSharp
             if (CurrentMode == Mode.Harass || CurrentMode == Mode.Lasthit || CurrentMode == Mode.LaneClear)
             {
                 //Last hit
-                foreach (var targ in enemiesAround)
+                foreach (var targ in enemiesAround.OrderByDescending(min => HealthDeath.getLastHitPred(min, timeTillDamageOn(min))))
                 {
                     var hpOnDmgPred = HealthDeath.getLastHitPredPeriodic(targ, timeTillDamageOn(targ));
                     if (hpOnDmgPred <= 0 && (lastAutoAttackUnit == null || lastAutoAttackUnit.NetworkId != targ.NetworkId))
@@ -397,6 +404,9 @@ namespace DetuksSharp
             if (hero != null && (!onlySolider || soliderHit))
                 return hero;
             if (!onlySolider)
+
+                if (ShouldWait())
+                    return null;
             /* turrets / inhibitors / nexus */
             if (CurrentMode == Mode.LaneClear)
             {
@@ -424,7 +434,7 @@ namespace DetuksSharp
 
             if (!onlySolider)
             //Laneclear
-            if (CurrentMode == Mode.LaneClear && !ShouldWait())
+            if (CurrentMode == Mode.LaneClear)
             {
                 best = enemiesAround
                     .OrderByDescending(targ => targ.Health+(enemyInAzirRange(targ)?1000:0)).FirstOrDefault();
@@ -506,14 +516,29 @@ namespace DetuksSharp
             if (enemySoonInRange)
                 return true;*/
 
+            foreach (var minion in enemiesAround)
+            {
+                if (minion.IsValidTarget())
+                {
+                    //var hpKillable = HealthDeath.getLastHitPredPeriodic(minion, timeTillDamageOn(minion));
+                   // if(hpKillable<0)
+                    //    continue;
+                    var dmgAt = timeTillDamageOn(minion);
+                    var hp = HealthDeath.getLaneClearPred(minion,(int) (player.AttackDelay+ dmgAt)+250);
+                    if (hp <= getRealAADmg(minion))
+                        return true;
+                }
+            }
+            return false;
             bool minDeadSoon =
                 ObjectManager.Get<Obj_AI_Minion>()
-            .Any(
-            minion =>
-            minion.IsValidTarget() && minion.Team != GameObjectTeam.Neutral &&
-            inAutoAttackRange(minion) &&
-            HealthPrediction.LaneClearHealthPrediction(
-            minion, (int)((player.AttackDelay * 1000) * 2.3f), menu.Item("farmDelay").GetValue<Slider>().Value) <= getRealAADmg(minion));
+                    .Any(
+                        minion =>
+                            minion.IsValidTarget() && minion.Team != GameObjectTeam.Neutral &&
+                            inAutoAttackRange(minion) &&
+                            //HealthPrediction.LaneClearHealthPrediction(minion, (int)((player.AttackDelay * 1000) * 2.3f), menu.Item("farmDelay").GetValue<Slider>().Value) <= getRealAADmg(minion));
+                            HealthDeath.getLaneClearPred(minion, (int) ((player.AttackDelay*1000)*2.0f)) <= getRealAADmg(minion));
+            
             return minDeadSoon;
         }
 
@@ -608,19 +633,43 @@ namespace DetuksSharp
                     player.ServerPosition.To2D()) <= myRange * myRange;
         }
 
+        public static bool inAutoAttackRange(Obj_AI_Base source, AttackableUnit target)
+        {
+            if (!target.IsValidTarget())
+            {
+                return false;
+            }
+
+            if (source.IsMe && azir && target is Obj_AI_Base && enemyInAzirRange((Obj_AI_Base)target))
+            {
+                return true;
+            }
+
+            var myRange = getRealAutoAttackRange(source,target);
+            return
+                Vector2.DistanceSquared(
+                    target.Position.To2D(),
+                    source.ServerPosition.To2D()) <= myRange * myRange;
+        }
+
         public static float getRealAutoAttackRange(AttackableUnit unit)
         {
-            var result = player.AttackRange + player.BoundingRadius;
-            if (unit.IsValidTarget())
+            return getRealAutoAttackRange(player,unit);
+        }
+
+        public static float getRealAutoAttackRange(Obj_AI_Base source,AttackableUnit target)
+        {
+            var result = source.AttackRange + source.BoundingRadius;
+            if (target.IsValidTarget())
             {
-                return result + unit.BoundingRadius;
+                return result + target.BoundingRadius;
             }
             return result;
         }
 
         public static void moveTo(Vector3 goalPosition)
         {
-            if (now - lastmove < 120)//Humanizer
+            if (now - lastmove < 80)//Humanizer
                 return;
             if (player.ServerPosition.Distance(goalPosition) < 70)
             {
@@ -676,8 +725,13 @@ namespace DetuksSharp
 
         public static float realDistanceTill(AttackableUnit unit)
         {
+            return realDistanceTill(player,unit);
+        }
+
+        public static float realDistanceTill(Obj_AI_Base source, AttackableUnit target)
+        {
             float dist = 0;
-            var dists = player.GetPath(unit.Position);
+            var dists = source.GetPath(target.Position);
             if (dists.Count() == 0)
                 return 0;
             Vector3 from = dists[0];

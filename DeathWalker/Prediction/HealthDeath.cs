@@ -16,8 +16,13 @@ namespace DetuksSharp.Prediction
 
         public static readonly Dictionary<int, DamageMaker> activeDamageMakers = new Dictionary<int, DamageMaker>();
 
+        public static Dictionary<int, Damager> damagerSources = new Dictionary<int, Damager>();
 
         public static readonly Dictionary<int, DamageMaker> activeTowerTargets = new Dictionary<int, DamageMaker>();
+
+        public static List<Obj_AI_Base> minionsAround = new List<Obj_AI_Base>();
+
+        private const int towerDamageDelay = 250;
 
         public static int now
         {
@@ -38,6 +43,8 @@ namespace DetuksSharp.Prediction
 
         private static void onMeleeStartAutoAttack(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
+
+
             if (sender is Obj_AI_Turret)
             {
                 activeTowerTargets.Remove(sender.NetworkId);
@@ -52,7 +59,24 @@ namespace DetuksSharp.Prediction
 
             }
 
-            if(!sender.IsMelee() || !args.SData.IsAutoAttack())
+            if (!args.SData.IsAutoAttack())
+                return;
+            if (args.Target != null && args.Target is Obj_AI_Base)
+            {
+
+                var tar = (Obj_AI_Base) args.Target;
+                if (damagerSources.ContainsKey(sender.NetworkId))
+                {
+                    damagerSources[sender.NetworkId].setTarget(tar);
+                }
+                else
+                {
+                    damagerSources.Add(sender.NetworkId, new Damager(sender, tar));
+                }
+            }
+
+
+            if(!sender.IsMelee())
                 return;
 
             if (args.Target is Obj_AI_Base)
@@ -91,15 +115,34 @@ namespace DetuksSharp.Prediction
         {
             //Some failsafe l8er if needed
 
+            //Hope it wont lag :S
+            minionsAround = MinionManager.GetMinions(1500, MinionTypes.All, MinionTeam.NotAlly, MinionOrderTypes.None);
+
+            foreach (var minion in minionsAround)
+            {
+                if(!damagerSources.ContainsKey(minion.NetworkId))
+                    damagerSources.Add(minion.NetworkId,new Damager(minion,null));
+            }
+
+           /* damagerSources.ToList()
+                .Where(pair => !pair.Value.isValidDamager())
+                .ToList()
+                .ForEach(pair => damagerSources.Remove(pair.Key));*/
+
             if (now - _lastTick <= 60 * 1000)
             {
                 return;
             }
 
+
             activeDamageMakers.ToList()
                 .Where(pair => pair.Value.createdTick < now - 60000)
                 .ToList()
                 .ForEach(pair => activeDamageMakers.Remove(pair.Key));
+
+
+
+
             _lastTick = now;
         }
 
@@ -123,6 +166,8 @@ namespace DetuksSharp.Prediction
 
         private static void onDelete(GameObject sender, EventArgs args)
         {
+            damagerSources.Remove(sender.NetworkId);
+
             if (sender is MissileClient || sender is Obj_SpellMissile)
             {
                 if (activeDamageMakers.ContainsKey(sender.NetworkId))
@@ -247,6 +292,34 @@ namespace DetuksSharp.Prediction
             return unit.Health - predDmg;
         }
 
+        public static float getLaneClearPred(AttackableUnit unit, int msTime, bool ignoreAlmostDead = true)
+        {
+            float predictedDamage = 0;
+            var damageDoneTill = now + msTime;
+            foreach (var damager in damagerSources.Values)
+            {
+                if(!damager.isValidDamager())
+                    continue;
+                var target = damager.getTarget();
+                if(target == null || target.NetworkId != unit.NetworkId || (ignoreAlmostDead && almostDead(damager.source)))
+                    continue;
+                if (damager.firstHitAt > damageDoneTill)
+                    continue;
+                predictedDamage += damager.damage;
+                //Console.WriteLine(damager.damage);
+                //Can be optimized??
+                var nextAA = damager.firstHitAt + damager.cycle;
+                while (damageDoneTill > nextAA)
+                {
+                    predictedDamage += damager.damage;
+                    nextAA += damager.cycle;
+                }
+            }
+            //if (predictedDamage > 0)
+               // Console.WriteLine("dmg: " + predictedDamage);
+            return unit.Health - predictedDamage;
+        }
+
         public static int misslesHeadedOn(AttackableUnit unit)
         {
             return activeDamageMakers.Count(un => un.Value.target.NetworkId == unit.NetworkId);
@@ -255,6 +328,109 @@ namespace DetuksSharp.Prediction
         public static float misslesHeadedOnDamage(AttackableUnit unit)
         {
             return activeDamageMakers.Where(un => un.Value.target.NetworkId == unit.NetworkId).Sum(un=> un.Value.dealDamage);
+        }
+        //Used for laneclear
+        public class Damager
+        {
+            public Obj_AI_Base source;
+
+            private Obj_AI_Base target;
+
+            public int createdTick;
+
+            public int cycle;
+
+            public int firstHitAt;
+
+            public float damage;
+
+            public Damager(Obj_AI_Base s, Obj_AI_Base t)
+            {
+                source = s;
+                target = t;
+                createdTick = now;
+                cycle = (int)(source.AttackDelay * 1000);
+                firstHitAt = hitOn;
+                damage = getDamage();
+            }
+
+            public bool isValidDamager()
+            {
+                return source != null && source.IsValid && source.IsDead;
+            }
+
+            public bool isValidTarget()
+            {
+                return target != null && target.IsValid && target.IsDead;
+            }
+
+            public void setTarget(Obj_AI_Base tar)
+            {
+                if (target != null && target.NetworkId == tar.NetworkId)
+                    return;
+                target = tar;
+                createdTick = now;
+                firstHitAt = hitOn;
+                damage = getDamage();
+
+            }
+
+            public Obj_AI_Base getTarget()
+            {
+                if (isValidTarget())
+                    return target;
+                return
+                    minionsAround.Where(min => min.IsValid && !min.IsDead)
+                        .OrderBy(min => min.Distance(source.Position, true))
+                        .FirstOrDefault();
+            }
+
+            private float getDamage()
+            {
+                var tar = getTarget();
+                if (tar == null || source == null)
+                    return 0;
+               // Console.WriteLine("Return damge");
+                return (float)source.GetAutoAttackDamage(tar, true);
+            }
+
+            private int hitOn
+            {
+                get
+                {
+                    try
+                    {
+                        if (source == null || !source.IsValid)
+                            return int.MaxValue;
+                        var tar = getTarget();
+                        if(tar == null)
+                            return int.MaxValue;
+                        int addTime = 0;
+                        if (DeathWalker.inAutoAttackRange(source, tar))//+ check if want to move to killabel minion and range it wants to
+                        {
+                            var realDist = DeathWalker.realDistanceTill(source,target);
+                            var aaRange = DeathWalker.getRealAutoAttackRange(source, tar);
+
+                            addTime += (int)(((realDist - aaRange) * 1000) / source.MoveSpeed);
+                        }
+
+                        if (source.IsMelee || DeathWalker.azir)
+                        {
+                            return (int)(createdTick + source.AttackCastDelay * 1000) + addTime;
+                        }
+                        else
+                        {
+                            return createdTick + (int)((source.Position.Distance(tar.Position) * 1000) / (source.BasicAttack.MissileSpeed)) + ((source is Obj_AI_Turret) ? towerDamageDelay : 0) + addTime;//lil delay cus dunno l8er could try to values what says delay of dmg dealing
+                        }
+
+                    }
+                    catch (Exception)
+                    {
+                        return int.MaxValue;
+                    }
+                }
+            }
+
         }
 
         public class DamageMaker
@@ -293,7 +469,7 @@ namespace DetuksSharp.Prediction
                         }
                         else
                         {
-                            return now + (int)((missle.Position.Distance(target.Position) * 1000) / ((source is Obj_AI_Turret) ? sData.MissileSpeed*0.8f : sData.MissileSpeed));//lil delay cus dunno l8er could try to values what says delay of dmg dealing
+                            return now + (int)((missle.Position.Distance(target.Position) * 1000) / (sData.MissileSpeed)) + ((source is Obj_AI_Turret)?towerDamageDelay:0);//lil delay cus dunno l8er could try to values what says delay of dmg dealing
                         }
 
                     }
