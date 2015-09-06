@@ -61,7 +61,7 @@ namespace DetuksSharp.Prediction
 
             if (!args.SData.IsAutoAttack())
                 return;
-            if (args.Target != null && args.Target is Obj_AI_Base)
+            if (args.Target != null && args.Target is Obj_AI_Base && !sender.IsMe)
             {
 
                 var tar = (Obj_AI_Base) args.Target;
@@ -108,7 +108,8 @@ namespace DetuksSharp.Prediction
             //Ranged aswell
             if (args.DestroyMissile && activeDamageMakers.ContainsKey(args.MissileNetworkId))
                 activeDamageMakers.Remove(args.MissileNetworkId);
-
+            if (damagerSources.ContainsKey(sender.Owner.NetworkId))
+                damagerSources[sender.Owner.NetworkId].setTarget(null);
         }
 
         private static void onUpdate(EventArgs args)
@@ -116,7 +117,7 @@ namespace DetuksSharp.Prediction
             //Some failsafe l8er if needed
 
             //Hope it wont lag :S
-            minionsAround = MinionManager.GetMinions(1500, MinionTypes.All, MinionTeam.NotAlly, MinionOrderTypes.None);
+            minionsAround = MinionManager.GetMinions(1700, MinionTypes.All, MinionTeam.NotAlly, MinionOrderTypes.None);
 
             foreach (var minion in minionsAround)
             {
@@ -124,10 +125,10 @@ namespace DetuksSharp.Prediction
                     damagerSources.Add(minion.NetworkId,new Damager(minion,null));
             }
 
-           /* damagerSources.ToList()
+            damagerSources.ToList()
                 .Where(pair => !pair.Value.isValidDamager())
                 .ToList()
-                .ForEach(pair => damagerSources.Remove(pair.Key));*/
+                .ForEach(pair => damagerSources.Remove(pair.Key));
 
             if (now - _lastTick <= 60 * 1000)
             {
@@ -298,13 +299,14 @@ namespace DetuksSharp.Prediction
             var damageDoneTill = now + msTime;
             foreach (var damager in damagerSources.Values)
             {
-                if(!damager.isValidDamager())
+                if(!damager.isValidDamager() || !(unit is Obj_AI_Base))
                     continue;
                 var target = damager.getTarget();
                 if(target == null || target.NetworkId != unit.NetworkId || (ignoreAlmostDead && almostDead(damager.source)))
                     continue;
                 if (damager.firstHitAt > damageDoneTill)
                     continue;
+                damager.firstHitAt = (damager.firstHitAt < now) ? now + damager.cycle : damager.firstHitAt;
                 predictedDamage += damager.damage;
                 //Console.WriteLine(damager.damage);
                 //Can be optimized??
@@ -342,6 +344,8 @@ namespace DetuksSharp.Prediction
 
             public int firstHitAt;
 
+            public int lastAATry;
+
             public float damage;
 
             public Damager(Obj_AI_Base s, Obj_AI_Base t)
@@ -352,20 +356,26 @@ namespace DetuksSharp.Prediction
                 cycle = (int)(source.AttackDelay * 1000);
                 firstHitAt = hitOn;
                 damage = getDamage();
+                lastAATry = now;
             }
 
             public bool isValidDamager()
             {
-                return source != null && source.IsValid && source.IsDead;
+                return source != null && source.IsValid && !source.IsDead;
             }
 
             public bool isValidTarget()
             {
-                return target != null && target.IsValid && target.IsDead;
+                return target != null && target.IsValid && !target.IsDead;
             }
 
             public void setTarget(Obj_AI_Base tar)
             {
+                if (tar == null)
+                {
+                    target = null;
+                    return;
+                }
                 if (target != null && target.NetworkId == tar.NetworkId)
                     return;
                 target = tar;
@@ -379,10 +389,11 @@ namespace DetuksSharp.Prediction
             {
                 if (isValidTarget())
                     return target;
-                return
-                    minionsAround.Where(min => min.IsValid && !min.IsDead)
+                var predTarget = minionsAround.Where(min => !min.IsDead)
                         .OrderBy(min => min.Distance(source.Position, true))
                         .FirstOrDefault();
+                setTarget(predTarget);
+                return predTarget;
             }
 
             private float getDamage()
@@ -394,6 +405,29 @@ namespace DetuksSharp.Prediction
                 return (float)source.GetAutoAttackDamage(tar, true);
             }
 
+            private int hitOnTar(Obj_AI_Base tar)
+            {
+                if (tar == null)
+                    return int.MaxValue;
+                int addTime = 0;
+                if (DeathWalker.inAutoAttackRange(source, tar))//+ check if want to move to killabel minion and range it wants to
+                {
+                    var realDist = DeathWalker.realDistanceTill(source, target);
+                    var aaRange = DeathWalker.getRealAutoAttackRange(source, tar);
+
+                    addTime += (int)(((realDist - aaRange) * 1000) / source.MoveSpeed);
+                }
+
+                if (source.IsMelee || DeathWalker.azir)
+                {
+                    return (int)(createdTick + source.AttackCastDelay * 1000) + addTime;
+                }
+                else
+                {
+                    return createdTick + (int)((source.Position.Distance(tar.Position) * 1000) / (source.BasicAttack.MissileSpeed)) + ((source is Obj_AI_Turret) ? towerDamageDelay : 0) + addTime;//lil delay cus dunno l8er could try to values what says delay of dmg dealing
+                }
+            }
+
             private int hitOn
             {
                 get
@@ -403,25 +437,7 @@ namespace DetuksSharp.Prediction
                         if (source == null || !source.IsValid)
                             return int.MaxValue;
                         var tar = getTarget();
-                        if(tar == null)
-                            return int.MaxValue;
-                        int addTime = 0;
-                        if (DeathWalker.inAutoAttackRange(source, tar))//+ check if want to move to killabel minion and range it wants to
-                        {
-                            var realDist = DeathWalker.realDistanceTill(source,target);
-                            var aaRange = DeathWalker.getRealAutoAttackRange(source, tar);
-
-                            addTime += (int)(((realDist - aaRange) * 1000) / source.MoveSpeed);
-                        }
-
-                        if (source.IsMelee || DeathWalker.azir)
-                        {
-                            return (int)(createdTick + source.AttackCastDelay * 1000) + addTime;
-                        }
-                        else
-                        {
-                            return createdTick + (int)((source.Position.Distance(tar.Position) * 1000) / (source.BasicAttack.MissileSpeed)) + ((source is Obj_AI_Turret) ? towerDamageDelay : 0) + addTime;//lil delay cus dunno l8er could try to values what says delay of dmg dealing
-                        }
+                        return hitOnTar(tar);
 
                     }
                     catch (Exception)

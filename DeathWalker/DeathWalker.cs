@@ -258,20 +258,23 @@ namespace DetuksSharp
            //     Utility.DrawCircle(towTar.Value.target.Position, 50, Color.DarkViolet);
            // }
           
-            //return;
+            return;
             foreach (var enemy in ObjectManager.Get<Obj_AI_Base>().Where(ene => ene != null && ene.IsValidTarget(1000) && ene.IsEnemy && ene.Distance(player,true)<1000*1000))
             {
                 //var timeToHit = timeTillDamageOn(enemy);
 
-                //var pOut = Drawing.WorldToScreen(enemy.Position);
-
-               // Drawing.DrawText(pOut.X,pOut.Y,Color.Red,"name: "+enemy.SkinName);
+                var pOut = Drawing.WorldToScreen(enemy.Position);
+                var count = HealthDeath.damagerSources.Count(ene => ene.Value.isValidDamager() && ene.Value.getTarget().NetworkId == enemy.NetworkId);
+                var dmg = HealthDeath.getLaneClearPred(enemy, 1000, true);
+                Drawing.DrawText(pOut.X, pOut.Y, Color.Red, "" + count);
                 var hp2 = HealthPrediction.LaneClearHealthPrediction(enemy, (int) ((player.AttackDelay*1000)*2.3f),
                     menu.Item("farmDelay").GetValue<Slider>().Value);
                 var hp = HealthDeath.getLaneClearPred(enemy, (int)((player.AttackDelay * 1000) * 2.2f));
+
+
                 if (hp <= getRealAADmg(enemy) && hp > 0)
                 {
-                    Render.Circle.DrawCircle(enemy.Position,56,Color.Green);
+                    Render.Circle.DrawCircle(enemy.Position,56,Color.Yellow);
                 }
             }
 
@@ -516,7 +519,7 @@ namespace DetuksSharp
             if (enemySoonInRange)
                 return true;*/
 
-            foreach (var minion in enemiesAround)
+            foreach (var minion in MinionManager.GetMinions(getTargetSearchDist(),MinionTypes.All))
             {
                 if (minion.IsValidTarget())
                 {
@@ -524,7 +527,7 @@ namespace DetuksSharp
                    // if(hpKillable<0)
                     //    continue;
                     var dmgAt = timeTillDamageOn(minion);
-                    var hp = HealthDeath.getLaneClearPred(minion,(int) (player.AttackDelay+ dmgAt)+250);
+                    var hp = HealthDeath.getLaneClearPred(minion, (int)((player.AttackDelay * 1000) * 2.06f));
                     if (hp <= getRealAADmg(minion))
                         return true;
                 }
@@ -669,7 +672,7 @@ namespace DetuksSharp
 
         public static void moveTo(Vector3 goalPosition)
         {
-            if (now - lastmove < 80)//Humanizer
+            if (now - lastmove < 120)//Humanizer
                 return;
             if (player.ServerPosition.Distance(goalPosition) < 70)
             {
