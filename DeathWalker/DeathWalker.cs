@@ -243,6 +243,7 @@ namespace DetuksSharp
         {
             if (args.SourceNetworkId != player.NetworkId)
                 return;
+            Console.WriteLine("dmg: "+sender.Health+"  : "+player.GetAutoAttackDamage((Obj_AI_Base)sender));
 
 
         }
@@ -408,7 +409,7 @@ namespace DetuksSharp
                 return hero;
             if (!onlySolider)
 
-                if (ShouldWait())
+                if (ShouldWaitAllTogether())
                     return null;
             /* turrets / inhibitors / nexus */
             if (CurrentMode == Mode.LaneClear)
@@ -439,7 +440,7 @@ namespace DetuksSharp
             //Laneclear
             if (CurrentMode == Mode.LaneClear)
             {
-                best = enemiesAround
+                best = enemiesAround.Where(min => !ShouldWaitMinion(min))
                     .OrderByDescending(targ => targ.Health+(enemyInAzirRange(targ)?1000:0)).FirstOrDefault();
             }
 
@@ -509,7 +510,7 @@ namespace DetuksSharp
             return enemy.Health / getRealAADmg(enemy);
         }
 
-        private static bool ShouldWait()
+        private static bool ShouldWaitAllTogether()
         {
            /* var cEnemy = getCloestEnemyChamp();
 
@@ -527,22 +528,20 @@ namespace DetuksSharp
                    // if(hpKillable<0)
                     //    continue;
                     var dmgAt = timeTillDamageOn(minion);
-                    var hp = HealthDeath.getLaneClearPred(minion, (int)((player.AttackDelay * 1000) * 2.06f));
+                    var hp = HealthDeath.getLaneClearPred(minion, (int)((player.AttackDelay * 1000) * 1.26f));
                     if (hp <= getRealAADmg(minion))
                         return true;
                 }
             }
             return false;
-            bool minDeadSoon =
-                ObjectManager.Get<Obj_AI_Minion>()
-                    .Any(
-                        minion =>
-                            minion.IsValidTarget() && minion.Team != GameObjectTeam.Neutral &&
-                            inAutoAttackRange(minion) &&
-                            //HealthPrediction.LaneClearHealthPrediction(minion, (int)((player.AttackDelay * 1000) * 2.3f), menu.Item("farmDelay").GetValue<Slider>().Value) <= getRealAADmg(minion));
-                            HealthDeath.getLaneClearPred(minion, (int) ((player.AttackDelay*1000)*2.0f)) <= getRealAADmg(minion));
-            
-            return minDeadSoon;
+        }
+
+        private static bool ShouldWaitMinion(Obj_AI_Base minion)
+        {
+            var hp = HealthDeath.getLaneClearPred(minion, (int)((player.AttackDelay * 1000) * 2.26f));
+            if (hp <= getRealAADmg(minion))
+                return true;
+            return false;
         }
 
         public static Obj_AI_Hero getCloestEnemyChamp()
@@ -821,7 +820,7 @@ namespace DetuksSharp
             Obj_AI_Base.OnProcessSpellCast += onStartAutoAttack;
             Spellbook.OnStopCast += onStopAutoAttack;
 
-            Obj_AI_Base.OnDamage += onDamage;
+            //Obj_AI_Base.OnDamage += onDamage;
 
             GameObject.OnCreate += onCreate;
             GameObject.OnDelete += onDelete;
