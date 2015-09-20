@@ -119,11 +119,19 @@ namespace MasterSharp
 
         }
 
+        public static bool isYiAA(DamageType type)
+        {
+            //if(type == )
+            return true;
+        }
+
         private static void onDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
         {
             try
             {
-                if (args.SourceNetworkId != MasterYi.player.NetworkId || !MasterYi.W.IsReady() || LXOrbwalker.CanAttack())
+                if (args.SourceNetworkId == MasterYi.player.NetworkId)
+                Console.WriteLine("type: " + args.Type + " : "+ args.HitType);
+                if (args.SourceNetworkId != MasterYi.player.NetworkId || !MasterYi.W.IsReady() || LXOrbwalker.CanAttack() || !isYiAA(args.Type))
                     return;
 
 

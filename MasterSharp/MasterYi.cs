@@ -179,14 +179,14 @@ namespace MasterSharp
 
         public static void evadeDamage(int useQ, int useW,GameObjectProcessSpellCastEventArgs psCast,int delay = 250)
         {
-            if (useQ != 0 && Q.IsReady() && jumpEnesAround() != 0)
+            if (useQ != 0 && Q.IsReady() && jumpEnesAround() != 0 && MasterSharp.Config.Item("smartQDogue").GetValue<bool>())
             {
                 if (delay != 0)
                     Utility.DelayAction.Add(delay, useQonBest);
                 else
                     useQonBest();
             }
-            else if (useW != 0 && W.IsReady())
+            else if (useW != 0 && W.IsReady() && MasterSharp.Config.Item("smartW").GetValue<bool>())
             {
                 //var dontMove = (psCast.TimeCast > 2) ? 2000 : psCast.TimeCast*1000;
                 LXOrbwalker.cantMoveTill = Environment.TickCount +(int) 500;
