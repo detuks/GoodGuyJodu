@@ -19,7 +19,6 @@ namespace Marksman
         public const string MenuSpace = "       "; //I'll remove after
         public const string Tab = "    ";
         public static Menu Config;
-        public static Menu OrbwalkerMenu;
         public static Menu QuickSilverMenu;
         
 //        public static Menu MenuInterruptableSpell;
@@ -133,8 +132,9 @@ namespace Marksman
             var targetSelectorMenu = new Menu("Target Selector", "Target Selector");
             TargetSelector.AddToMenu(targetSelectorMenu);
             Config.AddSubMenu(targetSelectorMenu);
+            Config.AddSubMenu(new Menu("DeathWalker", "Orbwalker"));
 
-            DeathWalker.AddToMenu(OrbwalkerMenu);
+            DeathWalker.AddToMenu(Config.SubMenu("Orbwalker"));
 
 
             /* Menu Summoners */
