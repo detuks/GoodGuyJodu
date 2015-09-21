@@ -366,21 +366,19 @@ namespace Marksman
 
         private static void Game_OnGameUpdate(EventArgs args)
         {
-
             if (Items.HasItem(3139) || Items.HasItem(3140))
                 CheckChampionBuff();
-
             //Update the combo and harass values.
-            CClass.ComboActive = CClass.Config.Item("Orbwalk").GetValue<KeyBind>().Active;
+            CClass.ComboActive = DeathWalker.CurrentMode == DeathWalker.Mode.Combo;
 
             var vHarassManaPer = Config.Item("HarassMana").GetValue<Slider>().Value;
-            CClass.HarassActive = CClass.Config.Item("Farm").GetValue<KeyBind>().Active &&
+            CClass.HarassActive = DeathWalker.CurrentMode == DeathWalker.Mode.Harass &&
                                   ObjectManager.Player.ManaPercent >= vHarassManaPer;
 
             CClass.ToggleActive = ObjectManager.Player.ManaPercent >= vHarassManaPer;
 
             var vLaneClearManaPer = Config.Item("LaneClearMana").GetValue<Slider>().Value;
-            CClass.LaneClearActive = CClass.Config.Item("LaneClear").GetValue<KeyBind>().Active &&
+            CClass.LaneClearActive = DeathWalker.CurrentMode == DeathWalker.Mode.LaneClear &&
                                      ObjectManager.Player.ManaPercent >= vLaneClearManaPer;
 
             CClass.Game_OnGameUpdate(args);
@@ -406,7 +404,7 @@ namespace Marksman
             var smiteReady = (SmiteSlot != SpellSlot.Unknown &&
                               ObjectManager.Player.Spellbook.CanUseSpell(SmiteSlot) == SpellState.Ready);
 
-            if (smiteReady && DeathWalker.CurrentMode == DeathWalker.Mode.Combo)
+            if (target != null && smiteReady && DeathWalker.CurrentMode == DeathWalker.Mode.Combo)
                 Smiteontarget(target as Obj_AI_Hero);
 
             if (botrk)

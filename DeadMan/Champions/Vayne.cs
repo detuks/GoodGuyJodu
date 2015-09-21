@@ -74,17 +74,18 @@ namespace Marksman.Champions
                 if (E.IsReady() && useE)
                 {
                     var t = TargetSelector.GetTarget(E.Range + Q.Range, TargetSelector.DamageType.Physical);
-                    for (var i = 1; i < 8; i++)
-                    {
-                        var targetBehind = t.Position
-                                           + Vector3.Normalize(t.ServerPosition - ObjectManager.Player.Position) * i
-                                           * 50;
-                        if (targetBehind.IsWall() && t.IsValidTarget(E.Range))
+                    if(t != null)
+                        for (var i = 1; i < 8; i++)
                         {
-                            E.CastOnUnit(t);
-                            return;
+                            var targetBehind = t.Position
+                                               + Vector3.Normalize(t.ServerPosition - ObjectManager.Player.Position) * i
+                                               * 50;
+                            if (targetBehind.IsWall() && t.IsValidTarget(E.Range))
+                            {
+                                E.CastOnUnit(t);
+                                return;
+                            }
                         }
-                    }
                     /*
                     foreach (var hero in
                         from hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValidTarget(550f))
