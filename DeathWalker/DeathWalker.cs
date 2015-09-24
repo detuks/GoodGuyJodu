@@ -99,6 +99,8 @@ namespace DetuksSharp
 
         public static int lastDmg = HealthDeath.now;
 
+        private static int previousAttack = 0;
+
         private static int lastAutoAttack = 0;
         private static int lastAutoAttackMove = 0;
         private static int lastmove = 0;
@@ -192,12 +194,28 @@ namespace DetuksSharp
 
         }
 
+        private static void onDoCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            if (sender.IsMe)
+            {
+                
+                var spell = player.Spellbook.GetSpell(args.Slot);
+                if (spell.IsAutoAttack() || args.SData.IsAutoAttack())
+                {
+                    lastAutoAttackMove = 0;
+                }
+
+            }
+        }
+
         private static void onStopAutoAttack(Spellbook sender, SpellbookStopCastEventArgs args)
         {
             if (sender.Owner.IsMe && args.DestroyMissile)
             {
-                lastAutoAttack = 0;
-                lastAutoAttackMove = 0;
+                Console.WriteLine("Cancel auto");
+                var resetTo = (menu.Item("betaStut").GetValue<bool>()) ? previousAttack : 0;
+                lastAutoAttack = resetTo;
+                lastAutoAttackMove = resetTo;
             }
         }
 
@@ -218,6 +236,7 @@ namespace DetuksSharp
 
             if (IsAutoAttack(args.SData.Name))
             {
+                previousAttack = lastAutoAttack;
                 lastAutoAttack = now;
                 lastAutoAttackMove = now;
             }
@@ -225,7 +244,7 @@ namespace DetuksSharp
             {
                 lastAutoAttackMove-=100;
             }
-            //Fire after attack!
+            //Fire after attack!a
             if (sender.IsMelee)
                 Utility.DelayAction.Add(
                     (int)(sender.AttackCastDelay * 1000 + 40), () => FireAfterAttack(sender, (AttackableUnit)args.Target));
@@ -299,6 +318,7 @@ namespace DetuksSharp
             {
                 FireBeforeAttack(target);
                 playerStoped = false;
+                previousAttack = lastAutoAttack;
                 lastAutoAttack = now;
                 lastAutoAttackMove = now;
                 lastAutoAttackUnit = target;
@@ -705,12 +725,12 @@ namespace DetuksSharp
 
         public static bool canMove()
         {
-            return canMoveAfter() == 0;
+            return canMoveAfter() == 0 && !player.IsAttackingPlayer;
         }
 
         public static int canMoveAfter()
         {
-            var after = lastAutoAttack + player.AttackCastDelay * 1000 - now + menu.Item("MovDelay").GetValue<Slider>().Value + ((hyperCharged()) ? 150 : 0);
+            var after = lastAutoAttackMove + player.AttackCastDelay * 1000 - now + menu.Item("MovDelay").GetValue<Slider>().Value + ((hyperCharged()) ? 150 : 0);
             return (int)(after > 0 ? after : 0);
         }
 
@@ -808,6 +828,7 @@ namespace DetuksSharp
             menuIn.AddItem(new MenuItem("MovDelay", "Move delay").SetValue(new Slider(0, -100, 250)));
             menuIn.AddItem(new MenuItem("farmDelay", "Farm delay").SetValue(new Slider(100, -100, 250)));
             menuIn.AddItem(new MenuItem("runCS", "Run CS distance").SetValue(new Slider(25, 0, 500)));
+            menuIn.AddItem(new MenuItem("betaStut", "Beta anti stut").SetValue(true));
 
             menu = menuIn;
 
@@ -820,15 +841,15 @@ namespace DetuksSharp
             Obj_AI_Base.OnProcessSpellCast += onStartAutoAttack;
             Spellbook.OnStopCast += onStopAutoAttack;
 
-            //Obj_AI_Base.OnDamage += onDamage;
+            Obj_AI_Base.OnDoCast += onDoCast;
 
             GameObject.OnCreate += onCreate;
             GameObject.OnDelete += onDelete;
-
             Obj_AI_Minion.OnPlayAnimation += Obj_AI_Minion_OnPlayAnimation;
 
             Game.OnUpdate += OnUpdate;
         }
+
 
         public static float getRealAADmg(Obj_AI_Base targ)
         {

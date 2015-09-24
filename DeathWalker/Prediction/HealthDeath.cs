@@ -36,10 +36,16 @@ namespace DetuksSharp.Prediction
             GameObject.OnCreate += onCreate;
             GameObject.OnDelete += onDelete;
 
+            Obj_AI_Base.OnDoCast += onDoCast;
+
             Obj_AI_Base.OnProcessSpellCast += onMeleeStartAutoAttack;
             Spellbook.OnStopCast += onMeleeStopAutoAttack;
         }
 
+        private static void onDoCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+
+        }
 
         private static void onMeleeStartAutoAttack(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
@@ -389,7 +395,7 @@ namespace DetuksSharp.Prediction
             {
                 if (isValidTarget())
                     return target;
-                var predTarget = minionsAround.Where(min => !min.IsDead)
+                var predTarget = minionsAround.Where(min => !min.IsDead && min.Distance(source,true)<650*650)
                         .OrderBy(min => min.Distance(source.Position, true))
                         .FirstOrDefault();
                 setTarget(predTarget);
