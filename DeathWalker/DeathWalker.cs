@@ -24,7 +24,7 @@ namespace DetuksSharp
         private static readonly string[] AttackResets =
         {
             "dariusnoxiantacticsonh", "fioraflurry", "garenq",
-            "hecarimrapidslash", "jaxempowertwo", "jaycehypercharge", "leonashieldofdaybreak", "luciane", "lucianw",
+            "hecarimrapidslash", "jaxempowertwo", "jaycehypercharge", "leonashieldofdaybreak", "luciane", "lucianw", "lucianq",
             "monkeykingdoubleattack", "mordekaisermaceofspades", "nasusq", "nautiluspiercinggaze", "netherblade",
             "parley", "poppydevastatingblow", "powerfist", "renektonpreexecute", "rengarq", "shyvanadoubleattack",
             "sivirw", "takedown", "talonnoxiandiplomacy", "trundletrollsmash", "vaynetumble", "vie", "volibearq",
@@ -101,6 +101,7 @@ namespace DetuksSharp
 
         private static int previousAttack = 0;
 
+        private static bool isTryingToAttack = false;
         private static int lastAutoAttack = 0;
         private static int lastAutoAttackMove = 0;
         private static int lastmove = 0;
@@ -175,7 +176,7 @@ namespace DetuksSharp
         {
             //Console.WriteLine("sender: "+sender.Name+" type: "+sender.Type);
 
-            if (sender is MissileClient)
+            /*if (sender is MissileClient)
             {
                 var mis = (MissileClient) sender;
 
@@ -183,7 +184,7 @@ namespace DetuksSharp
                 {
                     FireAfterAttack(player,(AttackableUnit) mis.Target);
                 }
-            }
+            }*/
             if(!azir) return;
             if (sender.Name == "AzirSoldier" && sender.IsAlly)
             {
@@ -194,15 +195,33 @@ namespace DetuksSharp
 
         }
 
+        private static void afterAttack(Obj_AI_Base sender, AttackableUnit target)
+        {
+            isTryingToAttack = false;
+            Console.WriteLine("Hit is rdy " + player.AttackDelay * 1000);
+            lastAutoAttackMove = 0;
+            FireAfterAttack(sender, target);
+        }
+
         private static void onDoCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
             if (sender.IsMe)
             {
-                
+                if (isAutoAttackReset(args.SData.Name))
+                {
+                    if(player.ChampionName == "Lucian")
+                        Utility.DelayAction.Add((int)350, resetAutoAttackTimer);
+                    else
+                        resetAutoAttackTimer();
+                    //
+                }
                 var spell = player.Spellbook.GetSpell(args.Slot);
                 if (spell.IsAutoAttack() || args.SData.IsAutoAttack())
                 {
-                    lastAutoAttackMove = 0;
+                    /*if(player.IsMelee)
+                        Utility.DelayAction.Add((int)(player.AttackDelay * 1000), delegate { afterAttack(sender, (AttackableUnit)args.Target); });
+                    else*/
+                        afterAttack(sender, (AttackableUnit)args.Target);
                 }
 
             }
@@ -229,10 +248,7 @@ namespace DetuksSharp
                 object value = descriptor.GetValue(args.SData);
                 Console.WriteLine("{0}={1}", name, value);
             }*/
-            if (isAutoAttackReset(args.SData.Name))
-            {
-                Utility.DelayAction.Add((int)250, resetAutoAttackTimer);
-            }
+            
 
             if (IsAutoAttack(args.SData.Name))
             {
@@ -245,9 +261,9 @@ namespace DetuksSharp
                 lastAutoAttackMove-=100;
             }
             //Fire after attack!a
-            if (sender.IsMelee)
+            /*if (sender.IsMelee)
                 Utility.DelayAction.Add(
-                    (int)(sender.AttackCastDelay * 1000 + 40), () => FireAfterAttack(sender, (AttackableUnit)args.Target));
+                    (int)(sender.AttackCastDelay * 1000 + 40), () => FireAfterAttack(sender, (AttackableUnit)args.Target));*/
 
             
         }
@@ -731,7 +747,8 @@ namespace DetuksSharp
         public static int canMoveAfter()
         {
             var after = lastAutoAttackMove + player.AttackCastDelay * 1000 - now + menu.Item("MovDelay").GetValue<Slider>().Value + ((hyperCharged()) ? 150 : 0);
-            return (int)(after > 0 ? after : 0);
+            var aaBefore = (isTryingToAttack)? (lastAutoAttack + 350) - now:0;
+            return (int)(after > 0 ? after : (aaBefore>0)?aaBefore:0);
         }
 
         private static bool hyperCharged()
@@ -741,6 +758,7 @@ namespace DetuksSharp
 
         public static void resetAutoAttackTimer()
         {
+            //Console.WriteLine("Reseet");
             lastAutoAttack = 0;
             lastAutoAttackMove = 0;
         }
@@ -786,6 +804,7 @@ namespace DetuksSharp
 
         private static void FireBeforeAttack(AttackableUnit target)
         {
+            isTryingToAttack = true;
             if (BeforeAttack != null)
             {
                 BeforeAttack(new BeforeAttackEventArgs

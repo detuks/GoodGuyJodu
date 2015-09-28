@@ -134,23 +134,27 @@ namespace LucianSharp
         public static void onAfterAttack(AttackableUnit target)
         {
             // DeathWalker._lastAATick = Environment.TickCount ;
-
+            Console.WriteLine("AFTERATTACK");
             var hero = target as Obj_AI_Hero;
-            if (hero == null || DeathWalker.CurrentMode != DeathWalker.Mode.Combo) return;
+            if (hero == null || !(target is Obj_AI_Hero) || DeathWalker.CurrentMode != DeathWalker.Mode.Combo) 
+                return;
 
             if (!useQonTarg(hero, QhitChance.hard) && LucianSharp.Config.Item("useE").GetValue<bool>())
-                eAwayFrom();
-
-            if (Q.IsReady())
             {
-                if(useQonTarg((Obj_AI_Hero)target, QhitChance.medium))
+                if(eAwayFrom())
+                    return;
+            }
+
+            if (Q.IsReady() && LucianSharp.Config.Item("useQ").GetValue<bool>())
+            {
+                if (useQonTarg(hero, QhitChance.medium))
                     return;
             }
 
             if (W.IsReady() && player.Mana>=120 && !tooEasyKill(hero) && LucianSharp.Config.Item("useW").GetValue<bool>())
             {
-                var output = W.GetPrediction((Obj_AI_Hero)target);
-                W.Cast(output.CastPosition);
+               // var output = W.GetPrediction((Obj_AI_Hero)target);
+                W.Cast(target.Position);
                 return;
             }
         }
@@ -194,10 +198,10 @@ namespace LucianSharp
             return new LucianMath.Polygon(points);
         }
 
-        public static void eAwayFrom()
+        public static bool eAwayFrom()
         {
             if(!E.IsReady())
-                return;
+                return false;
             Vector2 backTo = player.Position.To2D();
             Obj_AI_Hero targ = null;
             int count = 0;
@@ -215,8 +219,12 @@ namespace LucianSharp
             {
                 var awayTo = player.Position.To2D().Extend(backTo, 425);
                 if (!inTowerRange(awayTo))
+                {
                     E.Cast(awayTo);
+                    return true;
+                }
             }
+            return false;
         }
 
         public static float fullComboOn(Obj_AI_Base targ)
@@ -231,7 +239,7 @@ namespace LucianSharp
 
         public static bool tooEasyKill(Obj_AI_Base target)
         {
-            return target.Health < player.GetAutoAttackDamage(target)*1.5f;
+            return target.Health < player.GetAutoAttackDamage(target)*1.0f;
         }
 
         public static bool enemIsOnMe(Obj_AI_Base target)

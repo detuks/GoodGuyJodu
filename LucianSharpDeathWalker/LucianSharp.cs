@@ -87,7 +87,7 @@ namespace LucianSharp
                 GameObject.OnCreate += OnCreateObject;
                 GameObject.OnDelete += OnDeleteObject;
                 Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
-
+                Obj_AI_Base.OnDoCast += onDoCast;
                 DeathWalker.AfterAttack += AfterAttack;
 
                 DeathWalker.OnUnkillable += onUnkillable;
@@ -99,6 +99,17 @@ namespace LucianSharp
             {
                 Console.WriteLine(ex);
                 Game.PrintChat("Oops. Something went wrong with LucianSharp");
+            }
+        }
+
+        private static void onDoCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            if (!sender.IsMe)
+                return;
+            if (Lucian.gotPassiveRdy())
+            {
+                if(!args.SData.IsAutoAttack())
+                    Console.WriteLine("Basaadaa");
             }
         }
 
