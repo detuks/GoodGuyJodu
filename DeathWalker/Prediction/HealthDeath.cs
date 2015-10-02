@@ -229,11 +229,11 @@ namespace DetuksSharp.Prediction
             try
             {
 
-            var hitingUnitDamage = misslesHeadedOnDamage(unit);
-           // if (unit.Health < hitingUnitDamage * 0.65)
-            //    Console.WriteLine("Ignore cus almost dead!");
+                var hitingUnitDamage = misslesHeadedOnDamage(unit);
+               // if (unit.Health < hitingUnitDamage * 0.65)
+                //    Console.WriteLine("Ignore cus almost dead!");
 
-            return unit.Health < hitingUnitDamage * 0.65;
+                return unit.Health < hitingUnitDamage * 0.65;
             }
             catch (Exception)
             {
@@ -245,6 +245,7 @@ namespace DetuksSharp.Prediction
         public static float getLastHitPred(AttackableUnit unit, int msTime, bool ignoreAlmostDead = true)
         {
             var predDmg = 0f;
+            var predDmgPlus500ms = 0f;
 
             foreach (var attacks in activeDamageMakers.Values)
             {
@@ -259,6 +260,7 @@ namespace DetuksSharp.Prediction
                 {
                     hitOn = now +  (int)((attacks.missle.Position.Distance(unit.Position)*1000) / attacks.sData.MissileSpeed)+100;
                 }
+
                 if (now < hitOn && hitOn < now + msTime)
                 {
                     predDmg += attacks.dealDamage;

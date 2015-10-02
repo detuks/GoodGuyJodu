@@ -424,7 +424,7 @@ namespace DetuksSharp
                 //Last hit
                 foreach (var targ in enemiesAround.OrderByDescending(min => HealthDeath.getLastHitPred(min, timeTillDamageOn(min))))
                 {
-                    var hpOnDmgPred = HealthDeath.getLastHitPredPeriodic(targ, timeTillDamageOn(targ));
+                    var hpOnDmgPred = HealthDeath.getLastHitPred(targ, timeTillDamageOn(targ));
                     if (hpOnDmgPred <= 0 && (lastAutoAttackUnit == null || lastAutoAttackUnit.NetworkId != targ.NetworkId))
                         FireOnUnkillable(player, targ, HealthDeath.getTimeTillDeath(targ));
                     if (hpOnDmgPred <= 0 || hpOnDmgPred > (int)getRealAADmg(targ))
