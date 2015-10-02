@@ -422,7 +422,7 @@ namespace DetuksSharp
             if (CurrentMode == Mode.Harass || CurrentMode == Mode.Lasthit || CurrentMode == Mode.LaneClear)
             {
                 //Last hit
-                foreach (var targ in enemiesAround.OrderByDescending(min => HealthDeath.getLastHitPred(min, timeTillDamageOn(min))))
+                foreach (var targ in enemiesAround.OrderByDescending(min => HealthDeath.getLastHitPredPeriodic(min, timeTillDamageOn(min))))
                 {
                     var hpOnDmgPred = HealthDeath.getLastHitPred(targ, timeTillDamageOn(targ));
                     if (hpOnDmgPred <= 0 && (lastAutoAttackUnit == null || lastAutoAttackUnit.NetworkId != targ.NetworkId))
@@ -895,12 +895,12 @@ namespace DetuksSharp
 
         public static List<Obj_AI_Minion> getUsableSoliders()
         {
-            return azirSoldiers.Where(sol => !sol.IsDead && sol != null).ToList();
+            return azirSoldiers.Where(sol => !sol.IsDead && sol != null ).ToList();
         }
 
         public static List<Obj_AI_Minion> getActiveSoliders()
         {
-            return azirSoldiers.Where(s => s.IsValid && !s.IsDead && !s.IsMoving && s.ServerPosition.Distance(player.Position,true)<=900*900 /*(!Animations.ContainsKey(s.NetworkId) || Animations[s.NetworkId] != "Inactive")*/).ToList();
+            return azirSoldiers.Where(s => s.IsValid && !s.IsMoving && !s.IsDead && !s.IsMoving && s.ServerPosition.Distance(player.Position, true) <= 850 * 850 /*(!Animations.ContainsKey(s.NetworkId) || Animations[s.NetworkId] != "Inactive")*/).ToList();
         }
 
         public static bool solisAreStill()
@@ -934,7 +934,7 @@ namespace DetuksSharp
         {
             var solis = getActiveSoliders();
 
-            return !ene.IsDead && solis.Count != 0 && solis.Where(sol => !sol.IsMoving).Any(sol => ene.Distance(sol) < 325);
+            return !ene.IsDead && solis.Count != 0 && solis.Where(sol => !sol.IsMoving && !sol.IsDashing()).Any(sol => ene.Distance(sol) < 305);
         }
 
         public static int solidersAroundEnemy(Obj_AI_Base ene)

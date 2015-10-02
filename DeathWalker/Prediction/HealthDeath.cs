@@ -277,7 +277,7 @@ namespace DetuksSharp.Prediction
 
             foreach (var attacks in activeDamageMakers.Values)
             {
-                if (attacks.target == null || attacks.target.NetworkId != unit.NetworkId || (ignoreAlmostDead && almostDead(attacks.source)))
+                if (attacks.target == null || attacks.target.NetworkId != unit.NetworkId || (ignoreAlmostDead && almostDead(attacks.source)) || attacks.source.IsMe)
                     continue;
                 int hitOn = 0;
                 if (attacks.missle == null || attacks.sData.MissileSpeed == 0)

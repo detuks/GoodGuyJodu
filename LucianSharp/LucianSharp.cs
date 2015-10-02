@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using LeagueSharp;
 using LeagueSharp.Common;
+using DetuksSharp;
 /*
  * ToDo:
  * 
@@ -37,9 +38,9 @@ namespace LucianSharp
             try
             {
 
-                Config = new Menu("LucianSharp", "Lucian", true);
+                Config = new Menu("LucianSharp [DeathWalker]", "Lucian", true);
                 var orbwalkerMenu = new Menu("Lucian Orbwalker", "my_Orbwalker");
-                LXOrbwalker.AddToMenu(orbwalkerMenu);
+                DeathWalker.AddToMenu(orbwalkerMenu);
                 Config.AddSubMenu(orbwalkerMenu);
                 //TS
                 var TargetSelectorMenu = new Menu("Target Selector", "Target Selector");
@@ -50,6 +51,7 @@ namespace LucianSharp
                 Config.SubMenu("combo").AddItem(new MenuItem("useQ", "Use Q")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useW", "Use W")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useE", "Use E from melee")).SetValue(true);
+                Config.SubMenu("combo").AddItem(new MenuItem("Wvisib", "W to get vision")).SetValue(true);
 
                 //LastHit
                 Config.AddSubMenu(new Menu("LastHit Sharp", "lHit"));
@@ -86,8 +88,11 @@ namespace LucianSharp
                 GameObject.OnCreate += OnCreateObject;
                 GameObject.OnDelete += OnDeleteObject;
                 Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
+                Obj_AI_Base.OnDoCast += onDoCast;
+                DeathWalker.AfterAttack += AfterAttack;
 
-                LXOrbwalker.AfterAttack += AfterAttack;
+                DeathWalker.OnUnkillable += onUnkillable;
+                Obj_AI_Hero.OnLeaveVisiblityClient += onLeaveVisibility;
 
                 Lucian.setSkillShots();
 
@@ -99,7 +104,42 @@ namespace LucianSharp
             }
         }
 
-        private static void AfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
+        private static void onLeaveVisibility(AttackableUnit sender, EventArgs args)
+        {
+            if (sender.IsEnemy && sender is Obj_AI_Hero && Config.Item("Wvisib").GetValue<bool>())
+            {
+                var sen = sender as Obj_AI_Hero;
+                if (Lucian.W.CanCast(sen))
+                {
+                    Lucian.W.Cast(sen.Position);
+                }
+            }
+        }
+
+        private static void onDoCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            if (!sender.IsMe)
+                return;
+            if (Lucian.gotPassiveRdy())
+            {
+                if(!args.SData.IsAutoAttack())
+                    Console.WriteLine("Basaadaa");
+            }
+        }
+
+
+        private static void onUnkillable(AttackableUnit unit, AttackableUnit target, int msTillDead)
+        {
+            if (target.Health < 30)
+                return;
+            if (target is Obj_AI_Base && !target.MagicImmune && msTillDead-200>(int)(Lucian.Qdata.SData.OverrideCastTime*1000))
+            {
+                Lucian.useQonTarg((Obj_AI_Base) target, Lucian.QhitChance.medium);
+            }
+
+        }
+
+        private static void AfterAttack(AttackableUnit unit, AttackableUnit target)
         {
             try
             {
@@ -125,13 +165,13 @@ namespace LucianSharp
                 Console.WriteLine(Lucian.gotPassiveRdy());*/
             }
 
-            if (LXOrbwalker.CurrentMode == LXOrbwalker.Mode.Combo)
+            if (DeathWalker.CurrentMode == DeathWalker.Mode.Combo)
             {
                 Obj_AI_Hero target = TargetSelector.GetTarget(1100, TargetSelector.DamageType.Physical);
                 Lucian.doCombo(target);
             }
 
-            if (LXOrbwalker.CurrentMode == LXOrbwalker.Mode.Harass || LXOrbwalker.CurrentMode == LXOrbwalker.Mode.LaneClear)
+            if (DeathWalker.CurrentMode == DeathWalker.Mode.Harass || DeathWalker.CurrentMode == DeathWalker.Mode.LaneClear)
             {
                 Obj_AI_Hero target = TargetSelector.GetTarget(1100, TargetSelector.DamageType.Physical);
                 Lucian.doHarass(target);
@@ -168,7 +208,7 @@ namespace LucianSharp
                 var mis = (Obj_SpellMissile)sender;
                 if (mis.SpellCaster.IsMe && mis.SData.Name.Contains("Attack"))
                 {
-                    LXOrbwalker._lastAATick = 0;
+                   // DeathWalker.lastAATick = 0;
                     //Lucian.onAfterAttack((Obj_AI_Base)mis.Target);
                 }
             }

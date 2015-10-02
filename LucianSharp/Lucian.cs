@@ -4,6 +4,7 @@ using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DetuksSharp;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
@@ -49,8 +50,8 @@ namespace LucianSharp
 
             if (target == null || !target.IsValid)
                 return;
-            if (LXOrbwalker.ForcedTarget != null && LXOrbwalker.ForcedTarget is Obj_AI_Hero)
-                target = (Obj_AI_Hero)LXOrbwalker.ForcedTarget;
+            if (DeathWalker.ForcedTarget != null && DeathWalker.ForcedTarget is Obj_AI_Hero)
+                target = (Obj_AI_Hero)DeathWalker.ForcedTarget;
             useItems(target);
             if(target.Distance(player)>750 && !player.IsDashing() && LucianSharp.Config.Item("useQ").GetValue<bool>())
                 useQonTarg(target,QhitChance.medium);
@@ -70,7 +71,7 @@ namespace LucianSharp
                 return;
 
 
-            if (!LXOrbwalker.InAutoAttackRange(target))
+            if (!DeathWalker.inAutoAttackRange(target))
                 useQonTarg(target, QhitChance.medium);
         }
 
@@ -100,7 +101,7 @@ namespace LucianSharp
 
         public static bool useQonTarg(Obj_AI_Base target, QhitChance hitChance)
         {
-            if (!Q.IsReady() ||  !LucianSharp.Config.Item("useQ").GetValue<bool>())
+            if (!Q.IsReady() ||  !LucianSharp.Config.Item("useQ").GetValue<bool>() || target == null)
                 return false;
 
             if (targValidForQ(target))
@@ -108,41 +109,54 @@ namespace LucianSharp
                 Q.CastOnUnit(target);
                 return true;
             }
-
-            var bestQon =
-                ObjectManager.Get<Obj_AI_Base>()
-                    .Where(targValidForQ)
-                    .OrderBy(hit => hitChOnTarg(target, hit))
-                    .FirstOrDefault();
-            if (bestQon != null && hitChOnTarg(target, bestQon) <= hitChance)
+            try
             {
-                Q.CastOnUnit(bestQon);
-                return true;
+                var bestQon =
+                    ObjectManager.Get<Obj_AI_Base>()
+                        .Where(targValidForQ)
+                        .OrderBy(hit => hitChOnTarg(target, hit))
+                        .FirstOrDefault();
+                if (bestQon != null && hitChOnTarg(target, bestQon) <= hitChance)
+                {
+                    Q.CastOnUnit(bestQon);
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                
             }
             return false;
         }
 
 
 
-        public static void onAfterAttack(Obj_AI_Base target)
+        public static void onAfterAttack(AttackableUnit target)
         {
-            // LXOrbwalker._lastAATick = Environment.TickCount ;
-
+            // DeathWalker._lastAATick = Environment.TickCount ;
+            Console.WriteLine("AFTERATTACK");
             var hero = target as Obj_AI_Hero;
-            if (hero == null || LXOrbwalker.CurrentMode != LXOrbwalker.Mode.Combo) return;
+            if (hero == null || !(target is Obj_AI_Hero) || DeathWalker.CurrentMode != DeathWalker.Mode.Combo) 
+                return;
+            if(LucianSharp.Config.Item("useE").GetValue<bool>())
+                if (eAwayFrom())
+                    return;
 
-            if (!useQonTarg(hero, QhitChance.hard) && LucianSharp.Config.Item("useE").GetValue<bool>())
-                eAwayFrom();
-
-            if (Q.IsReady())
+            if (!useQonTarg(hero, QhitChance.hard) )
             {
-                if(useQonTarg((Obj_AI_Hero)target, QhitChance.medium))
+
+            }
+
+            if (Q.IsReady() && LucianSharp.Config.Item("useQ").GetValue<bool>())
+            {
+                if (useQonTarg(hero, QhitChance.medium))
                     return;
             }
 
             if (W.IsReady() && player.Mana>=120 && !tooEasyKill(hero) && LucianSharp.Config.Item("useW").GetValue<bool>())
             {
-                W.Cast(hero.Position);
+               var output = W.GetPrediction((Obj_AI_Hero)target);
+               W.Cast(output.UnitPosition);
                 return;
             }
         }
@@ -186,10 +200,10 @@ namespace LucianSharp
             return new LucianMath.Polygon(points);
         }
 
-        public static void eAwayFrom()
+        public static bool eAwayFrom()
         {
             if(!E.IsReady())
-                return;
+                return false;
             Vector2 backTo = player.Position.To2D();
             Obj_AI_Hero targ = null;
             int count = 0;
@@ -207,8 +221,12 @@ namespace LucianSharp
             {
                 var awayTo = player.Position.To2D().Extend(backTo, 425);
                 if (!inTowerRange(awayTo))
+                {
                     E.Cast(awayTo);
+                    return true;
+                }
             }
+            return false;
         }
 
         public static float fullComboOn(Obj_AI_Base targ)
@@ -223,7 +241,7 @@ namespace LucianSharp
 
         public static bool tooEasyKill(Obj_AI_Base target)
         {
-            return target.Health < player.GetAutoAttackDamage(target)*1.5f;
+            return target.Health < player.GetAutoAttackDamage(target)*1.0f;
         }
 
         public static bool enemIsOnMe(Obj_AI_Base target)
@@ -284,7 +302,7 @@ namespace LucianSharp
                 if (useE && qDmg - 20 > tHP && E.IsReady() && Q.IsReady() && dist < 1100 + E.Range && dist > Q.Range + 100)
                 {
                     doProKillSteal(target);
-                    LXOrbwalker.Orbwalk(Game.CursorPos, target);
+                    DeathWalker.deathWalk(Game.CursorPos, target);
                 }
 
                 if (useQ && qDmg > tHP && Q.IsReady() && dist < 1150)
