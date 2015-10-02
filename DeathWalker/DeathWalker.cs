@@ -741,7 +741,7 @@ namespace DetuksSharp
 
         public static bool canMove()
         {
-            return canMoveAfter() == 0 && !player.IsAttackingPlayer;
+            return canMoveAfter() == 0 /*&& !player.IsAttackingPlayer*/;
         }
 
         public static int canMoveAfter()
@@ -760,7 +760,7 @@ namespace DetuksSharp
         {
             //Console.WriteLine("Reseet");
             lastAutoAttack = 0;
-            lastAutoAttackMove = 0;
+            //lastAutoAttackMove = 0;
         }
 
         public static float realDistanceTill(AttackableUnit unit)
