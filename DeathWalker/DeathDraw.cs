@@ -38,7 +38,7 @@ namespace DetuksSharp
             AppDomain.CurrentDomain.ProcessExit += CurrentDomainOnDomainUnload;
             windowsH = dxDevice.Viewport.Height;
             windowsW = dxDevice.Viewport.Width;
-            Console.WriteLine("Xtest: " + dxDevice.Viewport.Width + " : " + dxDevice.Viewport.Height);
+            //Console.WriteLine("Xtest: " + dxDevice.Viewport.Width + " : " + dxDevice.Viewport.Height);
 
         }
 
@@ -80,8 +80,8 @@ namespace DetuksSharp
 
         public void draw(int percent)
         {
-
-
+            if ((DeathWalker.menu.Item("nobar").GetValue<bool>()))
+                return;
             dxLine.Begin();
             var tPos = sPos + new Vector2(((windowsW * percent) / (500)), 0);
             var tPosFull = sPos + new Vector2(windowsW/5-5, 0);

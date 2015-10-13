@@ -330,9 +330,9 @@ namespace DetuksSharp
 
         public static void doAttack(AttackableUnit target)
         {
+            FireBeforeAttack(target);
             if (player.IssueOrder(GameObjectOrder.AttackUnit, target))
             {
-                FireBeforeAttack(target);
                 playerStoped = false;
                 previousAttack = lastAutoAttack;
                 lastAutoAttack = now;
@@ -538,7 +538,7 @@ namespace DetuksSharp
                 hitsToKill = killHits;
             }
             soliderHit = false;
-            return hitsToKill < 4 ? killableEnemy : TargetSelector.GetTarget(player.AttackRange+player.BoundingRadius + 100, TargetSelector.DamageType.Physical);
+            return hitsToKill < 4 ? killableEnemy : TargetSelector.GetTarget(player.AttackRange+player.BoundingRadius, TargetSelector.DamageType.Physical);
         }
 
         private static double CountKillhits(Obj_AI_Hero enemy)
@@ -848,6 +848,7 @@ namespace DetuksSharp
             menuIn.AddItem(new MenuItem("farmDelay", "Farm delay").SetValue(new Slider(100, -100, 250)));
             menuIn.AddItem(new MenuItem("runCS", "Run CS distance").SetValue(new Slider(25, 0, 500)));
             menuIn.AddItem(new MenuItem("betaStut", "Beta anti stut").SetValue(true));
+            menuIn.AddItem(new MenuItem("nobar", "Disable greenBar").SetValue(false));
 
             menu = menuIn;
 
