@@ -320,7 +320,7 @@ namespace DetuksSharp
         {
             try
             {
-                deathWalk(Game.CursorPos, CurrentMode != Mode.None ? getBestTarget() : ((azir)?getBestTarget(azir):null), CurrentMode == Mode.None);
+                deathWalk(Game.CursorPos, CurrentMode != Mode.None ? getBestTarget() : ((azir && player.HealthPercent>30)?getBestTarget(azir):null), CurrentMode == Mode.None);
             }
             catch (Exception ex)
             {
@@ -506,11 +506,11 @@ namespace DetuksSharp
                             soliderHit = true;
                             return ene;
                         }
-                        foreach (var around in enemiesAround.Where(arou => arou != null && arou.IsValid && !arou.IsDead && arou.Position.Distance(sol.Position, true) <= ((325) * (325))))
+                        foreach (var around in enemiesAround.Where(arou => arou != null && arou.IsValid && !arou.IsDead && arou.Position.Distance(sol.Position, true) <= ((azirSoliderRange) * (azirSoliderRange))))
                         {
                             if (around == null || around.IsDead || ene == null)
                                 continue;
-                            DeathMath.Polygon poly = DeathMath.getPolygonOn(sol, around, 50 + ene.BoundingRadius / 2, 375 + ene.BoundingRadius / 2);
+                            DeathMath.Polygon poly = DeathMath.getPolygonOn(sol, around, 50 + ene.BoundingRadius / 2, azirSoliderRange + ene.BoundingRadius / 2);
                             var posi = LeagueSharp.Common.Prediction.GetPrediction(ene, player.AttackCastDelay);
                             try
                             {
@@ -889,6 +889,9 @@ namespace DetuksSharp
 
 
         //Azir stuff
+
+        public static int azirSoliderReach= 375;
+        public static int azirSoliderRange = 325;
         //Tnx Kortatu ;)
         private static Dictionary<int, string> Animations = new Dictionary<int, string>();
 
@@ -901,7 +904,7 @@ namespace DetuksSharp
 
         public static List<Obj_AI_Minion> getActiveSoliders()
         {
-            return azirSoldiers.Where(s => s.IsValid && !s.IsMoving && !s.IsDead && !s.IsMoving && s.ServerPosition.Distance(player.Position, true) <= 850 * 850 /*(!Animations.ContainsKey(s.NetworkId) || Animations[s.NetworkId] != "Inactive")*/).ToList();
+            return azirSoldiers.Where(s => s.IsValid && !s.IsMoving && !s.IsDead && !s.IsMoving && s.ServerPosition.Distance(player.Position, true) <= 875 * 875 /*(!Animations.ContainsKey(s.NetworkId) || Animations[s.NetworkId] != "Inactive")*/).ToList();
         }
 
         public static bool solisAreStill()
@@ -921,7 +924,7 @@ namespace DetuksSharp
             {
                 foreach (var sol in solis)
                 {
-                    if (ene.Distance(sol) < 350)
+                    if (ene.Distance(sol,true) < azirSoliderRange* azirSoliderRange)
                     {
                         inRange.Add(ene);
                         break;
@@ -935,14 +938,14 @@ namespace DetuksSharp
         {
             var solis = getActiveSoliders();
 
-            return !ene.IsDead && solis.Count != 0 && solis.Where(sol => !sol.IsMoving && !sol.IsDashing()).Any(sol => ene.Distance(sol) < 305);
+            return !ene.IsDead && solis.Count != 0 && solis.Where(sol => !sol.IsMoving && !sol.IsDashing()).Any(sol => ene.Distance(sol,true) < azirSoliderRange* azirSoliderRange);
         }
 
         public static int solidersAroundEnemy(Obj_AI_Base ene)
         {
             var solis = getActiveSoliders();
 
-            return solis.Count(sol => ene.Distance(sol) < 350);
+            return solis.Count(sol => ene.Distance(sol,true) < azirSoliderRange* azirSoliderRange);
         }
 
         static void Obj_AI_Minion_OnPlayAnimation(GameObject sender, GameObjectPlayAnimationEventArgs args)

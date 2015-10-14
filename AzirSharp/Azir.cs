@@ -40,7 +40,7 @@ namespace AzirSharp
             R = new Spell(SpellSlot.R, 250);
             Q.SetSkillshot(0.0f, 65f, 1500f, false, SkillshotType.SkillshotLine);
             E.SetSkillshot(0.0f, 65f, 1500f, false, SkillshotType.SkillshotLine);
-            R.SetSkillshot(0.5f, 700, 1400, false, SkillshotType.SkillshotLine);
+            R.SetSkillshot(0.5f, 400, 1400, false, SkillshotType.SkillshotLine);
         }
 
         public static List<Obj_AI_Minion> getUsableSoliders()
@@ -57,7 +57,7 @@ namespace AzirSharp
         {
             //Console.WriteLine("cd:"+(W.Instance.CooldownExpires-Game.Time));
 
-            return (W.Instance.CooldownExpires - Game.Time) > 0 && (W.Instance.CooldownExpires - Game.Time)<1.5f;
+            return (W.Instance.CooldownExpires - Game.Time) > 0 && (W.Instance.CooldownExpires - Game.Time)<0.5f;
         }
 
         public static void doCombo(Obj_AI_Hero targ)
@@ -272,28 +272,41 @@ namespace AzirSharp
 
 
         }
-
+        
         public static void goFullIn(Obj_AI_Hero target)
         {
             //R logic here!
 
             try
             {
+                if (!R.IsReady() && target.IsDashing())
+                {
+                    if (W.IsReady())
+                    {
+                        summonSolider(target.GetDashInfo().EndPos.To3D());
+                    }
+                }
+
                 if(E.IsReady())
                     castETarget(target);
                 var dist = Player.Distance(target);
-                if (R.IsReady() && !Player.IsDashing())
+                if (R.IsReady())
                 {
                     
                     Obj_AI_Base tower = ObjectManager.Get<Obj_AI_Turret>().Where(tur => tur.IsAlly && tur.Health > 0).OrderBy(tur => Player.Distance(tur)).First();
                     if (tower != null)
                     {
-                        var pol = DeathMath.getPolygonOn(Player.Position.Extend(tower.Position, -155).To2D(), tower.Position.To2D(), R.Width,260);
-                        if(DeathWalker.AllEnemys.Any(ene => ene.IsValid && !ene.IsDead && pol.pointInside(ene.Position.To2D())))
-                        //if(pol.pointInside(target.Position.To2D()))
+                        var pol = DeathMath.getPolygonOn(Player.Position.Extend(tower.Position, -155).To2D(), tower.Position.To2D(), 300+R.Level*100,270);
+                        if (
+                            DeathWalker.AllEnemys.Any(
+                                ene => ene.IsValid && !ene.IsDead && pol.pointInside(ene.Position.To2D())))
+                        {
                             R.Cast(tower.Position);
+                        }
+                        //if(pol.pointInside(target.Position.To2D()))
                     }
                 }
+
                 var aprTime = dist / E.Speed;
                 var output = Prediction.GetPrediction(target, aprTime);
                 if (Player.Distance(output.UnitPosition,true)<1050*1050)
@@ -307,6 +320,29 @@ namespace AzirSharp
         }
 
 
+        public static void autoRunderTower()
+        {
+            if (!R.IsReady())
+                return;
+            Obj_AI_Base tower = ObjectManager.Get<Obj_AI_Turret>().Where(tur => tur.IsAlly && tur.Health > 0).OrderBy(tur => Player.Distance(tur)).First();
+            if (tower != null)
+            {
+                var distTower = tower.Distance(Player);
+                
+                if (distTower < 1200 && distTower > 200 && tower.CountEnemiesInRange(tower.AttackRange) == 0)
+                {
+                    var pol = DeathMath.getPolygonOn(Player.Position.Extend(tower.Position, -155).To2D(),
+                        tower.Position.To2D(), R.Width, 240);
+                    if (
+                        DeathWalker.AllEnemys.Any(
+                            ene => ene.IsValid && !ene.IsDead && pol.pointInside(ene.Position.To2D())))
+                    {
+                        R.Cast(tower.Position);
+                    }
+                }
+                //if(pol.pointInside(target.Position.To2D()))
+            }
+        }
 
         public static float getFullDmgOn(Obj_AI_Hero target)
         {

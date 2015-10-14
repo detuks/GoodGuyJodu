@@ -88,7 +88,8 @@ namespace AzirSharp
                 //Extra
                 Config.AddSubMenu(new Menu("Extra Sharp", "extra"));
                 Config.SubMenu("extra").AddItem(new MenuItem("wasteR", "dont Waste R")).SetValue(true);
-
+                Config.SubMenu("extra").AddItem(new MenuItem("autoTower", "auto R undet turr")).SetValue(true);
+                
                 //Drawings
                 Config.AddSubMenu(new Menu("Drawings Sharp", "draw"));
                 Config.SubMenu("draw").AddItem(new MenuItem("noDraw", "No Drawings")).SetValue(false);
@@ -199,6 +200,8 @@ namespace AzirSharp
                 {
                     Azir.doFlyToMouse(Game.CursorPos);
                 }
+                if (Config.Item("autoTower").GetValue<bool>())
+                    Azir.autoRunderTower();
 
                 if (Config.Item("fullin").GetValue<KeyBind>().Active)
                 {
@@ -217,7 +220,6 @@ namespace AzirSharp
 
         private static void onDraw(EventArgs args)
         {
-
             if (Config.Item("noDraw").GetValue<bool>())
                 return;
             if(Config.Item("drawQmax").GetValue<bool>())
@@ -248,7 +250,7 @@ namespace AzirSharp
                 if (tower != null)
                 {
                     var pol = DeathMath.getPolygonOn(Azir.Player.Position.Extend(tower.Position, -125).To2D(),
-                        tower.Position.To2D(), Azir.R.Width, 270);
+                        tower.Position.To2D(), 300 + Azir.R.Level * 100, 270);
                     pol.Draw(Color.Yellow);
                 }
             }
