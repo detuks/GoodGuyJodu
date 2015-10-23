@@ -9,11 +9,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MasterSharp</RootNamespace>
     <AssemblyName>MasterSharp</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PreBuildEvent />
     <PostBuildEvent />
     <OutputPath>bin\Release</OutputPath>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -38,6 +39,9 @@
     <Reference Include="clipper_library, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Users\DETUKS\Desktop\ToolSet\L#Loader++\LeagueSharp\System\clipper_library.dll</HintPath>
+    </Reference>
+    <Reference Include="DeathWalker">
+      <HintPath>C:\Users\DETUKS\Desktop\ToolSet\L#Loader++\LeagueSharp\System\DeathWalker.dll</HintPath>
     </Reference>
     <Reference Include="LeagueSharp">
       <HintPath>C:\Users\DETUKS\Desktop\ToolSet\L#Loader++\LeagueSharp\System\LeagueSharp.dll</HintPath>
@@ -71,7 +75,6 @@
     <Compile Include="Evade\SpellData.cs" />
     <Compile Include="Evade\SpellDatabase.cs" />
     <Compile Include="Evade\Utils.cs" />
-    <Compile Include="LXOrbwalker.cs" />
     <Compile Include="MasterSharp.cs" />
     <Compile Include="MasterYi.cs" />
     <Compile Include="Program.cs" />

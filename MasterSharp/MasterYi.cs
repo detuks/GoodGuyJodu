@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
+using DetuksSharp;
 
 namespace MasterSharp
 {
@@ -78,7 +79,7 @@ namespace MasterSharp
                     sumItems.cast(SummonerItems.ItemIds.BotRK, target);
                 }
 
-                if(MasterSharp.Config.Item("useQ").GetValue<bool>())
+                if(MasterSharp.Config.Item("useQ").GetValue<bool>() && (DeathWalker.canMove() || Q.IsKillable(target)))
                     useQSmart(target);
                 if (MasterSharp.Config.Item("useE").GetValue<bool>())
                     useESmart(target);
@@ -100,13 +101,13 @@ namespace MasterSharp
 
         public static void useESmart(Obj_AI_Base target)
         {
-            if (LXOrbwalker.InAutoAttackRange(target) && E.IsReady() && (aaToKill(target)>2 || iAmLow()))
+            if (DeathWalker.inAutoAttackRange(target) && E.IsReady() && (aaToKill(target)>2 || iAmLow()))
                 E.Cast(MasterSharp.Config.Item("packets").GetValue<bool>());
         }
 
         public static void useRSmart(Obj_AI_Base target)
         {
-            if (LXOrbwalker.InAutoAttackRange(target) && R.IsReady() && aaToKill(target) > 5)
+            if (DeathWalker.inAutoAttackRange(target) && R.IsReady() && aaToKill(target) > 5)
                 R.Cast(MasterSharp.Config.Item("packets").GetValue<bool>());
         }
 
@@ -123,7 +124,7 @@ namespace MasterSharp
                 if (distToNext <= dist)
                     return;
                 var msDif = player.MoveSpeed - target.MoveSpeed;
-                if (msDif <= 0 && !LXOrbwalker.InAutoAttackRange(target) && LXOrbwalker.CanAttack())
+                if (msDif <= 0 && !DeathWalker.inAutoAttackRange(target) && DeathWalker.canAttack())
                     Q.Cast(target);
 
                 var reachIn = dist/msDif;
@@ -170,7 +171,7 @@ namespace MasterSharp
             else if (W.IsReady() && (!Q.IsReady() || jumpEnesAround() != 0 )&& buf.EndTime - Game.Time < 0.4f)
             {
                 var dontMove = 400;
-                LXOrbwalker.cantMoveTill = Environment.TickCount + (int)dontMove;
+                DeathWalker.disableMovementFor(dontMove);
                 W.Cast();
             }
 
@@ -189,7 +190,7 @@ namespace MasterSharp
             else if (useW != 0 && W.IsReady() && MasterSharp.Config.Item("smartW").GetValue<bool>())
             {
                 //var dontMove = (psCast.TimeCast > 2) ? 2000 : psCast.TimeCast*1000;
-                LXOrbwalker.cantMoveTill = Environment.TickCount +(int) 500;
+                DeathWalker.disableMovementFor(500);
                 W.Cast();
             }
 
@@ -206,7 +207,7 @@ namespace MasterSharp
         public static void evadeSkillShot(Skillshot sShot)
         {
             var sd = SpellDatabase.GetByMissileName(sShot.SpellData.MissileSpellName);
-            if (LXOrbwalker.CurrentMode == LXOrbwalker.Mode.Combo && (MasterSharp.skillShotMustBeEvaded(sd.MenuItemName) || MasterSharp.skillShotMustBeEvadedW(sd.MenuItemName)))
+            if (DeathWalker.CurrentMode == DeathWalker.Mode.Combo && (MasterSharp.skillShotMustBeEvaded(sd.MenuItemName) || MasterSharp.skillShotMustBeEvadedW(sd.MenuItemName)))
             {
                 float spellDamage = (float)sShot.Unit.GetSpellDamage(player, sd.SpellName);
                 int procHp = (int)((spellDamage / player.MaxHealth) * 100);
@@ -217,12 +218,12 @@ namespace MasterSharp
                 }
                 else if ((!Q.IsReady(150) || !MasterSharp.skillShotMustBeEvaded(sd.MenuItemName)) && W.IsReady() && (MasterSharp.skillShotMustBeEvadedW(sd.MenuItemName) || willKill))
                 {
-                    LXOrbwalker.cantMoveTill = Environment.TickCount + 500;
+                    DeathWalker.disableMovementFor(500);
                     W.Cast();
                 }
             }
 
-            if (LXOrbwalker.CurrentMode != LXOrbwalker.Mode.None && (MasterSharp.skillShotMustBeEvadedAllways(sd.MenuItemName) || MasterSharp.skillShotMustBeEvadedWAllways(sd.MenuItemName)))
+            if (DeathWalker.CurrentMode != DeathWalker.Mode.None && (MasterSharp.skillShotMustBeEvadedAllways(sd.MenuItemName) || MasterSharp.skillShotMustBeEvadedWAllways(sd.MenuItemName)))
             {
                 float spellDamage = (float)sShot.Unit.GetSpellDamage(player, sd.SpellName);
                 bool willKill = player.Health <= spellDamage;
@@ -233,7 +234,7 @@ namespace MasterSharp
                 }
                 else if ((!Q.IsReady() || !MasterSharp.skillShotMustBeEvadedAllways(sd.MenuItemName)) && W.IsReady() && (MasterSharp.skillShotMustBeEvadedWAllways(sd.MenuItemName) || willKill))
                 {
-                    LXOrbwalker.cantMoveTill = Environment.TickCount + 500;
+                    DeathWalker.disableMovementFor(500);
                     W.Cast();
                     return;
                 }

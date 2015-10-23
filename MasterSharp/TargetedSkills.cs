@@ -18,22 +18,15 @@ namespace MasterSharp
             public int delay = 250;
             public GameObjectProcessSpellCastEventArgs spell;
 
-            public TargSkill(string name, int q, int w,int d)
+            public TargSkill(string name, int useq, int usew,int dangerlevel, int delayIn=250)
             {
                 sName = name;
-                useQ = q;
-                useW = w;
-                danger = d;
+                useQ = useq;
+                useW = usew;
+                danger = dangerlevel;
+                delay = delayIn;
             }
-
-            public TargSkill(string name, int q, int w, int d,int del)
-            {
-                sName = name;
-                useQ = q;
-                useW = w;
-                danger = d;
-                delay = del;
-            }
+            
         }
 
 
@@ -54,6 +47,12 @@ namespace MasterSharp
             dagerousBuffs.Add(new TargSkill("timebombenemybuff", 1, 1, 1, 300));
             dagerousBuffs.Add(new TargSkill("karthusfallenonetarget", 1, 1, 1, 300));
             dagerousBuffs.Add(new TargSkill("NocturneUnspeakableHorror", 1, 0, 1, 500));
+            dagerousBuffs.Add(new TargSkill("virknockup", 1, 0, 1, 300));
+            dagerousBuffs.Add(new TargSkill("tristanaechargesound", 1, 1, 1, 300));
+            dagerousBuffs.Add(new TargSkill("zedulttargetmark", 1, 1, 1, 300));
+            dagerousBuffs.Add(new TargSkill("fizzmarinerdoombomb", 1, 1, 1, 300));
+            dagerousBuffs.Add(new TargSkill("soulshackles", 1, 1, 1, 300));
+            dagerousBuffs.Add(new TargSkill("vladimirhemoplague", 1, 1, 1, 300));
 
             // name of spellName, Q use, W use --- 2-prioritize more , 1- prioritize less 0 dont use
             targetedSkillsAll.Add(new TargSkill("SyndraR", 0, 1, 1));

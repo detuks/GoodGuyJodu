@@ -106,6 +106,8 @@ namespace DetuksSharp
         private static int lastAutoAttackMove = 0;
         private static int lastmove = 0;
 
+        private static int cantMoveTill = 0;
+
         private static bool attack = true;
 
         private static bool disableNextAttack = false;
@@ -273,6 +275,11 @@ namespace DetuksSharp
            // lastAutoAttack = (lastAutoAttack < now + ms) ? now + ms : lastAutoAttack;
         }
 
+        public static void disableMovementFor(int ms)
+        {
+            cantMoveTill = now + ms;
+        }
+
 
         private static void onDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
         {
@@ -287,7 +294,7 @@ namespace DetuksSharp
         {
             Utility.DrawCircle(player.Position, player.AttackRange + player.BoundingRadius, Color.Green);
 
-            Drawing.DrawText(100, 100, Color.Red, " " + CurrentMode + " : " + HealthDeath.damagerSources.Count);
+            //Drawing.DrawText(100, 100, Color.Red, " " + CurrentMode + " : " + HealthDeath.damagerSources.Count);
 
           //  foreach (var towTar in HealthDeath.activeTowerTargets)
          //   {
@@ -493,7 +500,7 @@ namespace DetuksSharp
             {
                 foreach (var ene in AllEnemys.OrderBy(enemy => enemy.Health))
                 {
-                    if (ene == null || ene.IsDead)
+                    if (ene == null || ene.IsDead || !ene.IsTargetable || ene.IsInvulnerable)
                         continue;
                     foreach (var sol in getActiveSoliders())
                     {
@@ -707,7 +714,7 @@ namespace DetuksSharp
 
         public static void moveTo(Vector3 goalPosition)
         {
-            if (now - lastmove < 120)//Humanizer
+            if (now - lastmove <  0)//Humanizer
                 return;
             if (player.ServerPosition.Distance(goalPosition) < 70)
             {
@@ -730,7 +737,7 @@ namespace DetuksSharp
 
         public static bool canAttack()
         {
-            return canAttackAfter() == 0 && attack;
+            return canAttackAfter() == 0 && attack && cantMoveTill < now;
         }
 
         public static int canAttackAfter()
@@ -741,7 +748,7 @@ namespace DetuksSharp
 
         public static bool canMove()
         {
-            return canMoveAfter() == 0 /*&& !player.IsAttackingPlayer*/;
+            return canMoveAfter() == 0 && cantMoveTill<now;
         }
 
         public static int canMoveAfter()
@@ -858,9 +865,10 @@ namespace DetuksSharp
 
             Drawing.OnEndScene += OnEndScene;
 
+
             Obj_AI_Base.OnProcessSpellCast += onStartAutoAttack;
             Spellbook.OnStopCast += onStopAutoAttack;
-
+            
             Obj_AI_Base.OnDoCast += onDoCast;
 
             GameObject.OnCreate += onCreate;
@@ -950,6 +958,12 @@ namespace DetuksSharp
 
         static void Obj_AI_Minion_OnPlayAnimation(GameObject sender, GameObjectPlayAnimationEventArgs args)
         {
+            if (sender.IsMe && player.IsMelee && args.Animation.StartsWith("Attack"))
+            {
+                isTryingToAttack = false;
+                lastAutoAttackMove = now;
+            }
+
             if (!azir) return;
             if (sender.Name == "AzirSoldier" && sender.IsAlly)
             {
