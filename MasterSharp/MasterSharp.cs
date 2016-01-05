@@ -85,6 +85,7 @@ namespace MasterSharp
                 //SmartW
                 Config.SubMenu("aShots").AddItem(new MenuItem("smartW", "Smart W if cantQ")).SetValue(true);
                 Config.SubMenu("aShots").AddItem(new MenuItem("smartQDogue", "Q use dogue")).SetValue(true);
+                Config.SubMenu("aShots").AddItem(new MenuItem("useWatHP", "use W below HP")).SetValue(new Slider(100,0,100));
                 Config.SubMenu("aShots").AddItem(new MenuItem("wqOnDead", "W or Q if will kill")).SetValue(false);
                 skillShotMenuq = getSkilshotMenuQ();
                 Config.SubMenu("aShots").AddSubMenu(skillShotMenuq);
@@ -162,7 +163,7 @@ namespace MasterSharp
 
         private static void afterAttack(AttackableUnit unit, AttackableUnit target)
         {
-            if (MasterYi.W.IsReady() && Config.Item("comboWreset").GetValue<bool>() && target is Obj_AI_Hero && DeathWalker.CurrentMode == DeathWalker.Mode.Combo)
+            if (MasterYi.W.IsReady() && Config.Item("comboWreset").GetValue<bool>() && Config.Item("useWatHP").GetValue<Slider>().Value>=MasterYi.player.HealthPercent && target is Obj_AI_Hero && DeathWalker.CurrentMode == DeathWalker.Mode.Combo)
             {
                 MasterYi.W.Cast();
                 Utility.DelayAction.Add(100, delegate { DeathWalker.resetAutoAttackTimer(); });
