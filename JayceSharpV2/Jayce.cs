@@ -81,7 +81,6 @@ namespace JayceSharpV2
             {
                 //if (castEonQ != null)
                 //    castEonSpell(target);
-
                 //DO QE combo first
                 if (E1.IsReady() && Q1.IsReady() && gotManaFor(true, false, true))
                 {
@@ -508,13 +507,13 @@ namespace JayceSharpV2
 
         public static void checkForm()
         {
-            isHammer = !Qdata.SData.Name.Contains("jayceshockblast");
+            isHammer = !Qdata.SData.Name.ToLower().Contains("jayceshockblast");
         }
 
 
         public static bool gotSpeedBuff()//jaycehypercharge
         {
-            return Player.Buffs.Any(bi => bi.Name.Contains("jaycehypercharge"));
+            return Player.Buffs.Any(bi => bi.Name.ToLower().Contains("jaycehypercharge"));
         }
 
         public static Vector2 getParalelVec(Vector3 pos)
@@ -581,11 +580,11 @@ namespace JayceSharpV2
                 if (spell.SData.Name == "JayceThunderingBlow")
                     hamECD = Game.Time + calcRealCD(hamTrueEcd[E2.Level - 1]);
 
-                if (spell.SData.Name == "jayceshockblast")
+                if (spell.SData.Name.ToLower() == "jayceshockblast")
                     rangQCD = Game.Time + calcRealCD(rangTrueQcd[Q1.Level - 1]);
-                if (spell.SData.Name == "jaycehypercharge")
+                if (spell.SData.Name.ToLower() == "jaycehypercharge")
                     rangWCD = Game.Time + calcRealCD(rangTrueWcd[W1.Level - 1]);
-                if (spell.SData.Name == "jayceaccelerationgate")
+                if (spell.SData.Name.ToLower() == "jayceaccelerationgate")
                     rangECD = Game.Time + calcRealCD(rangTrueEcd[E1.Level - 1]);
             }
             catch (Exception ex)
