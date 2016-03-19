@@ -46,13 +46,13 @@ namespace JayceSharpV2
         public static Vector3 castQon = new Vector3(0, 0, 0);
 
         /* COOLDOWN STUFF */
-        public static float[] rangTrueQcd = { 8, 8, 8, 8, 8 };
-        public static float[] rangTrueWcd = { 14, 12, 10, 8, 6 };
-        public static float[] rangTrueEcd = { 16, 16, 16, 16, 16 };
+        public static float[] rangTrueQcd = { 8, 8, 8, 8, 8, 8 };
+        public static float[] rangTrueWcd = { 13, 11.4f, 9.8f, 8.2f, 6.6f, 5 };
+        public static float[] rangTrueEcd = { 16, 16, 16, 16, 16, 16 };
 
-        public static float[] hamTrueQcd = { 16, 14, 12, 10, 8 };
-        public static float[] hamTrueWcd = { 10, 10, 10, 10, 10 };
-        public static float[] hamTrueEcd = { 14, 12, 12, 11, 10 };
+        public static float[] hamTrueQcd = { 16, 14, 12, 10, 8, 6 };
+        public static float[] hamTrueWcd = { 10, 10, 10, 10, 10, 10 };
+        public static float[] hamTrueEcd = { 15, 14, 13, 12, 11, 10 };
 
         public static float rangQCD = 0, rangWCD = 0, rangECD = 0;
         public static float hamQCD = 0, hamWCD = 0, hamECD = 0;
