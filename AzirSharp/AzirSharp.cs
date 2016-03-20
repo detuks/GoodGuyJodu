@@ -43,6 +43,7 @@ namespace AzirSharp
 
         public static HpBarIndicator hpi = new HpBarIndicator();
 
+        public static Vector3 tempTestPos = new Vector3();
         public AzirSharp()
         {
             Console.WriteLine("Azir started");
@@ -78,12 +79,13 @@ namespace AzirSharp
                 Config.SubMenu("combo").AddItem(new MenuItem("useE", "use E")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useR", "use R")).SetValue(false);
                 Config.SubMenu("combo").AddItem(new MenuItem("fly", "fly to mouse")).SetValue(new KeyBind('T', KeyBindType.Press, false));
+                Config.SubMenu("combo").AddItem(new MenuItem("glide", "Inject closest")).SetValue(new KeyBind('Y', KeyBindType.Press, false));
 
                 //LastHit
-               // Config.AddSubMenu(new Menu("LastHit Sharp", "lHit"));
-               
+                // Config.AddSubMenu(new Menu("LastHit Sharp", "lHit"));
+
                 //LaneClear
-               // Config.AddSubMenu(new Menu("LaneClear Sharp", "lClear"));
+                // Config.AddSubMenu(new Menu("LaneClear Sharp", "lClear"));
 
                 //Extra
                 Config.AddSubMenu(new Menu("Extra Sharp", "extra"));
@@ -102,7 +104,7 @@ namespace AzirSharp
 
                 //Debug
                 Config.AddSubMenu(new Menu("Debug", "debug"));
-                Config.SubMenu("debug").AddItem(new MenuItem("db_targ", "Debug Target")).SetValue(new KeyBind('Y', KeyBindType.Press, false));
+                Config.SubMenu("debug").AddItem(new MenuItem("db_targ", "Debug Target")).SetValue(new KeyBind('U', KeyBindType.Press, false));
 
 
                 Config.AddToMainMenu();
@@ -200,6 +202,19 @@ namespace AzirSharp
                 {
                     Azir.doFlyToMouse(Game.CursorPos);
                 }
+
+                if (Config.Item("db_targ").GetValue<KeyBind>().Active)
+                {
+                    tempTestPos = Game.CursorPos;
+                }
+
+                if (Config.Item("glide").GetValue<KeyBind>().Active)
+                {
+                    Obj_AI_Hero target = TargetSelector.GetTarget(1200, TargetSelector.DamageType.Magical);
+                    if(target != null)
+                        Azir.doGlideToMouse(target.Position);
+                }
+
                 if (Config.Item("autoTower").GetValue<bool>())
                     Azir.autoRunderTower();
 

@@ -197,6 +197,47 @@ namespace AzirSharp
             }
         }
 
+        private static Vector3 startPos = new Vector3();
+
+        public static void doGlideToMouse(Vector3 pos)
+        {
+            if (!Q.IsReady() && R.IsReady())
+            {
+                Obj_AI_Base tower = ObjectManager.Get<Obj_AI_Turret>().Where(tur => tur.IsAlly && tur.Health > 0).OrderBy(tur => Player.Distance(tur)).First();
+                if (tower != null)
+                {
+                    var pol = DeathMath.getPolygonOn(Player.Position.Extend(tower.Position, -255).To2D(), tower.Position.To2D(), 300 + R.Level * 100, 270);
+                    if (
+                        DeathWalker.AllEnemys.Any(
+                            ene => ene.IsValid && !ene.IsDead && pol.pointInside(ene.Position.To2D())))
+                    {
+                        R.Cast(tower.Position);
+                    }
+                }
+            }
+
+            var closest = getClosestSolider(pos);
+
+            
+            if (closest == null || closest.Distance(pos)>400)
+                return;
+
+            if (E.IsReady())
+            {
+                startPos = Player.Position;
+                E.CastOnUnit(closest);
+            }
+
+            var playToSoli = Player.Distance(closest);
+
+            if (Player.IsDashing() && playToSoli < 400)
+            {
+                if (Q.IsReady())
+                    Q.Cast(Player.Position.Extend(startPos,1234));
+            }
+
+        }
+
         public static void doFlyToMouse(Vector3 pos)
         {
             /* E use if soli dist targ < 250
@@ -406,6 +447,7 @@ namespace AzirSharp
                 return -1;
             foreach (var sol in solis)
             {
+                //sol.
                 float dist = sol.Distance(target.ServerPosition);
                 allRange += dist;
             }
