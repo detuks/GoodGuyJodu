@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2E15025F-3561-4660-AC4B-479E6B12016F}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ARAMDetFull</RootNamespace>
+    <AssemblyName>ARAMDetFull</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <OutputPath>bin\Release</OutputPath>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>ARAMDetFull.Program</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="LeagueSharp">
+      <HintPath>C:\Users\DETUKS\Desktop\ToolSet\L#Loader++\LeagueSharp\System\LeagueSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="LeagueSharp.Common">
+      <HintPath>C:\Users\DETUKS\Desktop\ToolSet\L#Loader++\LeagueSharp\System\LeagueSharp.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX">
+      <HintPath>C:\Users\DETUKS\Desktop\ToolSet\L#Loader++\LeagueSharp\System\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9, Version=2.6.3.0, Culture=neutral, PublicKeyToken=345b829e6e492981, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Users\DETUKS\Desktop\ToolSet\L#Loader++\LeagueSharp\System\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Aggresivity.cs" />
+    <Compile Include="ARAMDetFull.cs" />
+    <Compile Include="ARAMSimulator.cs" />
+    <Compile Include="ARAMTargetSelector.cs" />
+    <Compile Include="AutoLevel.cs" />
+    <Compile Include="AutoShopper.cs" />
+    <Compile Include="Champions\Aatrox.cs" />
+    <Compile Include="Champions\Ahri.cs" />
+    <Compile Include="Champions\Amumu.cs" />
+    <Compile Include="Champions\Anivia.cs" />
+    <Compile Include="Champions\Annie.cs" />
+    <Compile Include="Champions\Ashe.cs" />
+    <Compile Include="Champions\Azir.cs" />
+    <Compile Include="Champions\Blitzcrank.cs" />
+    <Compile Include="Champions\Brad.cs" />
+    <Compile Include="Champions\Brand.cs" />
+    <Compile Include="Champions\Cassiopeia.cs" />
+    <Compile Include="Champions\Champion.cs" />
+    <Compile Include="Champions\Darius.cs" />
+    <Compile Include="Champions\Diana.cs" />
+    <Compile Include="Champions\Draven.cs" />
+    <Compile Include="Champions\Ekko.cs" />
+    <Compile Include="Champions\Elise.cs" />
+    <Compile Include="Champions\Evelynn.cs" />
+    <Compile Include="Champions\Ezreal.cs" />
+    <Compile Include="Champions\Fiddlestick.cs" />
+    <Compile Include="Champions\Fiora.cs" />
+    <Compile Include="Champions\Fizz.cs" />
+    <Compile Include="Champions\Galio.cs" />
+    <Compile Include="Champions\Gangplank.cs" />
+    <Compile Include="Champions\Garen.cs" />
+    <Compile Include="Champions\Gnar.cs" />
+    <Compile Include="Champions\Gragas.cs" />
+    <Compile Include="Champions\Graves.cs" />
+    <Compile Include="Champions\Hecarim.cs" />
+    <Compile Include="Champions\Heimerdinger.cs" />
+    <Compile Include="Champions\Jarvan.cs" />
+    <Compile Include="Champions\Jayce.cs" />
+    <Compile Include="Champions\Jinx.cs" />
+    <Compile Include="Champions\Kalista.cs" />
+    <Compile Include="Champions\Karma.cs" />
+    <Compile Include="Champions\Karthus.cs" />
+    <Compile Include="Champions\Kassadin.cs" />
+    <Compile Include="Champions\Katarina.cs" />
+    <Compile Include="Champions\Kayle.cs" />
+    <Compile Include="Champions\Khazix.cs" />
+    <Compile Include="Champions\Kogmaw.cs" />
+    <Compile Include="Champions\LeeSin.cs" />
+    <Compile Include="Champions\Leona.cs" />
+    <Compile Include="Champions\Lucian.cs" />
+    <Compile Include="Champions\Lulu.cs" />
+    <Compile Include="Champions\Malphite.cs" />
+    <Compile Include="Champions\Malzahar.cs" />
+    <Compile Include="Champions\Maokai.cs" />
+    <Compile Include="Champions\MasterYi.cs" />
+    <Compile Include="Champions\MissFortune.cs" />
+    <Compile Include="Champions\Mordekaiser.cs" />
+    <Compile Include="Champions\Nami.cs" />
+    <Compile Include="Champions\Nautilus.cs" />
+    <Compile Include="Champions\Nocturne.cs" />
+    <Compile Include="Champions\Nunu.cs" />
+    <Compile Include="Champions\Olaf.cs" />
+    <Compile Include="Champions\Orianna.cs" />
+    <Compile Include="Champions\Pantheon.cs" />
+    <Compile Include="Champions\Poppy.cs" />
+    <Compile Include="Champions\Quinn.cs" />
+    <Compile Include="Champions\RekSai.cs" />
+    <Compile Include="Champions\RekSai2.cs" />
+    <Compile Include="Champions\Renekton.cs" />
+    <Compile Include="Champions\Ryze.cs" />
+    <Compile Include="Champions\Sejuani.cs" />
+    <Compile Include="Champions\Shaco.cs" />
+    <Compile Include="Champions\Shen.cs" />
+    <Compile Include="Champions\Shyvana.cs" />
+    <Compile Include="Champions\Singed.cs" />
+    <Compile Include="Champions\Sion.cs" />
+    <Compile Include="Champions\Soraka.cs" />
+    <Compile Include="Champions\Syndra.cs" />
+    <Compile Include="Champions\Tahmkench.cs" />
+    <Compile Include="Champions\Talon.cs" />
+    <Compile Include="Champions\Taric.cs" />
+    <Compile Include="Champions\Thresh.cs" />
+    <Compile Include="Champions\Tristana.cs" />
+    <Compile Include="Champions\TwistedFate.cs" />
+    <Compile Include="Champions\Twitch.cs" />
+    <Compile Include="Champions\Udyr.cs" />
+    <Compile Include="Champions\Urgot.cs" />
+    <Compile Include="Champions\Varus.cs" />
+    <Compile Include="Champions\Vayne.cs" />
+    <Compile Include="Champions\Veigar.cs" />
+    <Compile Include="Champions\Vi.cs" />
+    <Compile Include="Champions\Viktor.cs" />
+    <Compile Include="Champions\Vladimir.cs" />
+    <Compile Include="Champions\Volibear.cs" />
+    <Compile Include="Champions\Warwick.cs" />
+    <Compile Include="Champions\Wukong.cs" />
+    <Compile Include="Champions\Xerath.cs" />
+    <Compile Include="Champions\XinZhao.cs" />
+    <Compile Include="Champions\Yasuo.cs" />
+    <Compile Include="Champions\Zed.cs" />
+    <Compile Include="Champions\Ziggs.cs" />
+    <Compile Include="Champions\Zilean.cs" />
+    <Compile Include="Champions\Zyra.cs" />
+    <Compile Include="Console.cs" />
+    <Compile Include="FullItem.cs" />
+    <Compile Include="FullItemsData.cs" />
+    <Compile Include="ItemHandler.cs" />
+    <Compile Include="Items.cs" />
+    <Compile Include="LXOrbwalker.cs" />
+    <Compile Include="MapControl.cs" />
+    <Compile Include="Polygon.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sector.cs" />
+    <Compile Include="SpellData.cs" />
+    <Compile Include="SpellDatabase.cs" />
+    <Compile Include="SummonerItems.cs" />
+    <Compile Include="SummonerSpells.cs" />
+    <Compile Include="TargetSpell.cs" />
+    <Compile Include="TargetSpellDatabase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="todo.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
