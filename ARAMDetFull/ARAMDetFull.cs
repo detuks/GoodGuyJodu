@@ -109,6 +109,7 @@ namespace ARAMDetFull
         private static void onDraw(EventArgs args)
         {
             Drawing.DrawText(100, 100, Color.Red, "bal: " + ARAMSimulator.balance + " time: " );
+            return;
            // ((Jayce)ARAMSimulator.champ).drawCD();
             foreach (var hel in ObjectManager.Get<Obj_AI_Base>().Where(r => r.IsValid && !r.IsDead && r.Name.Contains("ealth")))
             {
@@ -153,13 +154,13 @@ namespace ARAMDetFull
         private static Random rng = null;
         private static void OnGameUpdate(EventArgs args)
         {
-            if (lastTick + tickTimeRng > now)
-                return;
+            //if (lastTick + tickTimeRng > now)
+            //    return;
 
-            if(rng == null)
-                rng = new Random();
+            //if(rng == null)
+             //   rng = new Random();
 
-            tickTimeRng = rng.Next(70, 140);
+            //tickTimeRng = rng.Next(70, 140);
             lastTick = now;
             ARAMSimulator.updateArmaPlay();
         }

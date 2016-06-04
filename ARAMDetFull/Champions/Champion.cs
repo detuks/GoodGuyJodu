@@ -26,7 +26,7 @@ namespace ARAMDetFull.Champions
         public bool safeGap(Vector2 position)
         {
             return player.HealthPercent < 18 || (!Sector.inTowerRange(position) &&
-                   (MapControl.balanceAroundPoint(position, 700) >= -1)) || position.Distance(ARAMSimulator.fromNex.Position, true) < player.Position.Distance(ARAMSimulator.fromNex.Position, true);
+                   (MapControl.balanceAroundPointAdvanced(position, 700) > 0)) || position.Distance(ARAMSimulator.fromNex.Position, true) < player.Position.Distance(ARAMSimulator.fromNex.Position, true);
         }
 
         public static Obj_AI_Hero player = ObjectManager.Player;
