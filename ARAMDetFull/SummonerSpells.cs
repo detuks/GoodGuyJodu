@@ -114,7 +114,7 @@ namespace ARAMDetFull
                 {
                     if (snowed != null)
                     {
-                        if (player.HealthPercent > 30 && snowed.HealthPercent < 65 && MapControl.balanceAroundPointAdvanced(snowed.Position.To2D(), 850) > -20)
+                        if (player.HealthPercent > 30 && snowed.HealthPercent < 65 && MapControl.balanceAroundPointAdvanced(snowed.Position.To2D(), 450) > -20)
                             spell.Cast();
                     }
                 }

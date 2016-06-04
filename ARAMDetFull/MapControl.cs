@@ -26,11 +26,7 @@ namespace ARAMDetFull
             public float dangerReach = 0;
 
             public int activeDangers = 0;
-
-
-
-
-
+            
             protected List<SpellData> champSkillShots = new List<SpellData>();
             protected List<TargetSpellData> champTargSpells = new List<TargetSpellData>();
 
@@ -341,16 +337,19 @@ namespace ARAMDetFull
             return balance;
         }
 
-        public static int balanceAroundPointAdvanced(Vector2 point, float range)
+        public static int balanceAroundPointAdvanced(Vector2 point, float rangePlus)
         {
             int balance = (point.To3D().UnderTurret(true)) ? -80 : (point.To3D().UnderTurret(false)) ? 80 : 0;
             foreach (var ene in enemy_champions)
             {
-                if (!ene.hero.IsDead && ene.hero.Distance(point, true) < range*range && !unitIsUseless(ene.hero))
-                    balance -= (int)((ene.hero.HealthPercent + 20 - ene.hero.Deaths * 4 + ene.hero.ChampionsKilled * 4) *
-                               ((ARAMSimulator.player.Level < 7)
-                        ? 1.3f
-                        : 1f));
+                var reach = ene.reach + rangePlus;
+                if (!ene.hero.IsDead && ene.hero.Distance(point, true) < reach* reach && !unitIsUseless(ene.hero) && !notVisibleAndMostLieklyNotThere(ene.hero))
+                {
+                    balance -= (int) ((ene.hero.HealthPercent + 20 - ene.hero.Deaths*4 + ene.hero.ChampionsKilled*4)*
+                                      ((ARAMSimulator.player.Level < 7)
+                                          ? 1.3f
+                                          : 1f));
+                }
             }
 
 
@@ -380,6 +379,14 @@ namespace ARAMDetFull
         public static bool unitIsUseless(Obj_AI_Base unit)
         {
             return unitIsUselessFor(unit) > 0.7;
+        }
+
+        public static bool notVisibleAndMostLieklyNotThere(Obj_AI_Base unit)
+        {
+            var distEneNex = ARAMSimulator.toNex.Position.Distance(unit.Position);
+            var distEneNexDeepest = ARAMSimulator.toNex.Position.Distance(ARAMSimulator.deepestAlly.Position);
+
+            return distEneNexDeepest +1500 < distEneNex;
         }
 
         public static ChampControl getByObj(Obj_AI_Base champ)

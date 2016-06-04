@@ -830,7 +830,7 @@ namespace ARAMDetFull
             {
                 haveSeenMinion =
                     ObjectManager.Get<Obj_AI_Minion>().Any(min => min.IsTargetable && min.IsAlly && min.Health > 50) ||
-                    ARAMDetFull.gameStart + 54*1000 < ARAMDetFull.now;
+                    ARAMDetFull.gameStart + 44*1000 < ARAMDetFull.now;
             }
             if (!haveSeenMinion)
                 return;
@@ -852,9 +852,9 @@ namespace ARAMDetFull
                 champ.alwaysCheck();
             }
 
-            if(player.IsDead)
-                return;
             setRambo();
+            if (player.IsDead)
+                return;
 
             var closestEnemy = HeroManager.Enemies.Where(ene => !ene.IsDead && ene.IsTargetable && !ARAMTargetSelector.IsInvulnerable(ene)).OrderBy(ene =>  player.Position.Distance(ene.Position, true)).FirstOrDefault();
             if (closestEnemy != null && ramboMode)
@@ -864,7 +864,7 @@ namespace ARAMDetFull
             }
             agrobalance = Aggresivity.getAgroBalance();
 
-            balance = (ARAMTargetSelector.IsInvulnerable(player) || player.IsZombie) ? 250 : MapControl.balanceAroundPointAdvanced(player.Position.To2D(), 1800 - agrobalance * 5) - tankBal + agrobalance;
+            balance = (ARAMTargetSelector.IsInvulnerable(player) || player.IsZombie) ? 250 : MapControl.balanceAroundPointAdvanced(player.Position.To2D(), 380 - agrobalance * 5) - tankBal + agrobalance;
             LXOrbwalker.inDanger = balance < 0;
 
             if (champ != null)
@@ -937,7 +937,7 @@ namespace ARAMDetFull
             {
                 LXOrbwalker.CustomOrbwalkMode = false;
                // Game.PrintChat("ouch tower!");
-                LXOrbwalker.OrbwalkTo(player.Position.To2D().Extend(fromNex.Position.To2D(), 600).To3D(),true);
+                LXOrbwalker.OrbwalkTo(player.Position.To2D().Extend(fromNex.Position.To2D(), 600).To3D(), false);
                 return;
             }
 
@@ -958,7 +958,7 @@ namespace ARAMDetFull
             {
                 var fightOn = MapControl.fightIsOn();
 
-                if (fightOn != null && MapControl.balanceAroundPointAdvanced(fightOn.Position.To2D(),800) > (-180) && fightOn.Distance(player, true) < 2500 * 2500 && (!player.IsMelee() || !Sector.inTowerRange(fightOn.Position.To2D())))
+                if (fightOn != null && MapControl.balanceAroundPointAdvanced(fightOn.Position.To2D(),280) > (-180) && fightOn.Distance(player, true) < 2500 * 2500 && (!player.IsMelee() || !Sector.inTowerRange(fightOn.Position.To2D())))
                 {
                     if (!Aggresivity.getIgnoreMinions())
                         Aggresivity.addAgresiveMove(new AgresiveMove(40,1500,true));

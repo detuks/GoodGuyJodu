@@ -154,13 +154,8 @@ namespace ARAMDetFull.Champions
                 W.Cast(pos.To3D(), true);
                 UseSecondWT = Utils.TickCount;
             }
-
-
-            target = ARAMTargetSelector.getBestTarget(Q3.Range);
-
-            if(target == null)
-                Farm(true);
-
+            
+            
         }
 
         public override void setUpSpells()
@@ -254,14 +249,10 @@ namespace ARAMDetFull.Champions
             }
         }
 
-        private void Farm(bool laneClear)
+        public override void farm()
         {
-            if (!Orbwalking.CanMove(40))
-            {
-                return;
-            }
-            if (60 >
-                ObjectManager.Player.Mana / ObjectManager.Player.MaxMana * 100)
+            var laneClear = true;
+            if (player.ManaPercent<65)
             {
                 return;
             }
@@ -271,8 +262,10 @@ namespace ARAMDetFull.Champions
             var allMinions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q2.Range);
 
             var useQi = 2;
-            var useEi = 0;
+            var useWi = 2;
+            var useEi = 2;
             var useQ = (laneClear && (useQi == 1 || useQi == 2)) || (!laneClear && (useQi == 0 || useQi == 2));
+            var useW = (laneClear && (useWi == 1 || useWi == 2)) || (!laneClear && (useWi == 0 || useWi == 2));
             var useE = (laneClear && (useEi == 1 || useEi == 2)) || (!laneClear && (useEi == 0 || useEi == 2));
 
             if (laneClear)
@@ -287,6 +280,19 @@ namespace ARAMDetFull.Champions
                     if (bLocation.MinionsHit > 0)
                     {
                         Q2.Cast(bLocation.Position.To3D());
+                    }
+                }
+
+                if (W.IsReady() && useW)
+                {
+                    var dmgpct = new[] { 25, 27.5, 30, 32.5, 35 }[W.Level - 1];
+
+                    var killableTurret =
+                        ObjectManager.Get<Obj_AI_Turret>()
+                            .Find(x => x.IsEnemy && ObjectManager.Player.Distance(x.Position) <= W.Range && x.HealthPercent < dmgpct);
+                    if (killableTurret != null)
+                    {
+                        W.Cast(killableTurret.Position);
                     }
                 }
 

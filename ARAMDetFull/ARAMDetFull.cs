@@ -109,7 +109,6 @@ namespace ARAMDetFull
         private static void onDraw(EventArgs args)
         {
             Drawing.DrawText(100, 100, Color.Red, "bal: " + ARAMSimulator.balance + " time: " );
-            return;
            // ((Jayce)ARAMSimulator.champ).drawCD();
             foreach (var hel in ObjectManager.Get<Obj_AI_Base>().Where(r => r.IsValid && !r.IsDead && r.Name.Contains("ealth")))
             {

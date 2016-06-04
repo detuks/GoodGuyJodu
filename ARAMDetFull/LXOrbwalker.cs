@@ -78,6 +78,7 @@ namespace ARAMDetFull
             _movementPrediction = new Spell(SpellSlot.Unknown, GetAutoAttackRange());
             _movementPrediction.SetTargetted(MyHero.BasicAttack.SpellCastTime, MyHero.BasicAttack.MissileSpeed);
             Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
+            Obj_AI_Base.OnDoCast += onDoCast;
             GameObject.OnCreate += MissileClient_OnCreate;
 
             AllEnemys = ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsEnemy).ToList();
@@ -88,6 +89,31 @@ namespace ARAMDetFull
             EnemyBarracs = ObjectManager.Get<Obj_BarracksDampener>().Where(tow => tow.IsEnemy).ToList();
 
             EnemyHQ = ObjectManager.Get<Obj_HQ>().Where(tow => tow.IsEnemy).ToList();
+        }
+
+        private static void onDoCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            if (sender.IsMe)
+            {
+                if (IsAutoAttackReset(args.SData.Name))
+                {
+                    if (MyHero.ChampionName == "Lucian")
+                        Utility.DelayAction.Add((int)350, delegate { ResetAutoAttackTimer(); });
+                    else
+                        ResetAutoAttackTimer();
+                    //
+                }
+                var spell = MyHero.Spellbook.GetSpell(args.Slot);
+                if (spell.IsAutoAttack() || args.SData.IsAutoAttack())
+                {
+                    /*if(player.IsMelee)
+                        Utility.DelayAction.Add((int)(player.AttackDelay * 1000), delegate { afterAttack(sender, (AttackableUnit)args.Target); });
+                    else*/
+                    if(args.Target is Obj_AI_Base)
+                        FireAfterAttack(sender, (Obj_AI_Base)args.Target);
+                }
+
+            }
         }
 
         private static void MissileClient_OnCreate(GameObject sender, EventArgs args)
