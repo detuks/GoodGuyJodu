@@ -147,7 +147,7 @@ namespace ARAMDetFull
             }
         }
 
-        public static int moveDelay = 600;
+        public static int moveDelay = 444;
 
         private static void MoveTo(Vector3 position, float holdAreaRadius = -1, bool useDelay = true)
         {

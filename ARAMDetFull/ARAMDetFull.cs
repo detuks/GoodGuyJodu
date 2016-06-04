@@ -148,12 +148,19 @@ namespace ARAMDetFull
             }
         }
 
-        public static int lastTick = now;
+        private static int lastTick = now;
 
+        private static int tickTimeRng = 77;
+        private static Random rng = null;
         private static void OnGameUpdate(EventArgs args)
         {
-            if (lastTick + 200 > now)
+            if (lastTick + tickTimeRng > now)
                 return;
+
+            if(rng == null)
+                rng = new Random();
+
+            tickTimeRng = rng.Next(70, 140);
             lastTick = now;
             ARAMSimulator.updateArmaPlay();
         }
