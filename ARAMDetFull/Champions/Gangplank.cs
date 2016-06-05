@@ -32,6 +32,7 @@ namespace ARAMDetFull.Champions
         public Gangplank()
         {
             GameObject.OnCreate += GameObjectOnOnCreate;
+            GameObject.OnDelete += GameObject_OnDelete;
             Obj_AI_Hero.OnProcessSpellCast += processSpells;
 
             ARAMSimulator.champBuild = new Build
