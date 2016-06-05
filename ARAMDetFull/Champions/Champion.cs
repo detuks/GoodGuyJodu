@@ -20,13 +20,12 @@ namespace ARAMDetFull.Champions
 
         public bool safeGap(Obj_AI_Base target)
         {
-            return safeGap(target.Position.To2D()) || MapControl.fightIsOn(target);
+            return MapControl.safeGap(target);
         }
 
         public bool safeGap(Vector2 position)
         {
-            return player.HealthPercent < 18 || (!Sector.inTowerRange(position) &&
-                   (MapControl.balanceAroundPointAdvanced(position, 700) > 0)) || position.Distance(ARAMSimulator.fromNex.Position, true) < player.Position.Distance(ARAMSimulator.fromNex.Position, true);
+            return MapControl.safeGap(position);
         }
 
         public static Obj_AI_Hero player = ObjectManager.Player;

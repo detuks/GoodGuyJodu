@@ -147,7 +147,7 @@ namespace ARAMDetFull.Champions
             if (!E1.IsReady() && !isHammer)
                 castQon = new Vector3(0, 0, 0);
             else if (castQon.X != 0 && !isHammer)
-                shootQE(castQon);
+                shootQE(castQon, true);
             //Must fix
            // if (castEonQ != null && castEonQ.)
            //     castEonQ = null;
@@ -343,14 +343,14 @@ namespace ARAMDetFull.Champions
             PredictionOutput po = Q1.GetPrediction(target);
             if (po.Hitchance >= HitChance.High && player.Distance(po.UnitPosition) < (Q1.Range + target.BoundingRadius))
             {
-                Q1.Cast(po.CastPosition);
+                shootQE(po.CastPosition, true);
             }
             else if (po.Hitchance == HitChance.Collision)
             {
                 Obj_AI_Base fistCol = po.CollisionObjects.OrderBy(unit => unit.Distance(player.ServerPosition)).First();
                 if (fistCol.Distance(po.UnitPosition) < (180 - fistCol.BoundingRadius / 2) && fistCol.Distance(target.ServerPosition) < (100 - fistCol.BoundingRadius / 2))
                 {
-                    Q1.Cast(po.CastPosition);
+                    shootQE(po.CastPosition, true);
                 }
 
             }
@@ -405,7 +405,7 @@ namespace ARAMDetFull.Champions
         }
 
 
-        public bool shootQE(Vector3 pos)
+        public bool shootQE(Vector3 pos, bool man = false)
         {
             try
             {
@@ -413,13 +413,13 @@ namespace ARAMDetFull.Champions
                     R2.Cast();
                 if (!E1.IsReady() || !Q1.IsReady() || isHammer)
                     return false;
-
+                
                 Vector3 bPos = player.ServerPosition - Vector3.Normalize(pos - player.ServerPosition) * 50;
 
                 player.IssueOrder(GameObjectOrder.MoveTo, bPos);
                 Q1.Cast(pos);
-
-                E1.Cast(getParalelVec(pos));
+                if (man)
+                    E1.Cast(getParalelVec(pos));
 
             }
             catch (Exception ex)
