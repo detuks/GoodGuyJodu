@@ -360,17 +360,17 @@ namespace ARAMDetFull
                 {
                     coreItems = new List<ConditionalItem>
                     {
-                        new ConditionalItem(ItemId.The_Bloodthirster),
-                        new ConditionalItem(ItemId.Berserkers_Greaves),
                         new ConditionalItem(ItemId.Infinity_Edge),
-                        new ConditionalItem(ItemId.Blade_of_the_Ruined_King),
-                        new ConditionalItem(ItemId.Last_Whisper),
-                        new ConditionalItem((ItemId)3046),
+                        new ConditionalItem(ItemId.Berserkers_Greaves),
+                        new ConditionalItem(ItemId.Phantom_Dancer),
+                        new ConditionalItem(ItemId.Essence_Reaver),
+                        new ConditionalItem(ItemId.Maw_of_Malmortius,ItemId.The_Bloodthirster,ItemCondition.ENEMY_AP),
+                        new ConditionalItem((ItemId)ItemId.Blade_of_the_Ruined_King),
                        // new ConditionalItem(ItemId.Banshees_Veil,ItemId.Thornmail,ItemCondition.ENEMY_MR),
                     },
                     startingItems = new List<ItemId>
                     {
-                        ItemId.Boots_of_Speed,ItemId.Vampiric_Scepter,
+                        ItemId.Boots_of_Speed,ItemId.Long_Sword,ItemId.Long_Sword,
                     }
                 };
                 
@@ -867,7 +867,7 @@ namespace ARAMDetFull
             }
             agrobalance = Aggresivity.getAgroBalance();
 
-            balance = (ARAMTargetSelector.IsInvulnerable(player) || player.IsZombie) ? 250 : MapControl.balanceAroundPointAdvanced(player.Position.To2D(), 380 - agrobalance * 5) - tankBal + agrobalance;
+            balance = (ARAMTargetSelector.IsInvulnerable(player) || player.IsZombie) ? 250 : MapControl.balanceAroundPointAdvanced(player.Position.To2D(), 380 - agrobalance * 5) + agrobalance;
             LXOrbwalker.inDanger = balance < 0;
 
             if (champ != null)
@@ -915,7 +915,7 @@ namespace ARAMDetFull
             var lookRange = player.AttackRange + ((player.IsMelee) ? 160 : 35);
             var easyKill =
                HeroManager.Enemies.FirstOrDefault(ene => !ene.IsDead && ene.Distance(player, true) < lookRange * lookRange &&
-                                                         !ARAMTargetSelector.IsInvulnerable(ene) && ene.Health / 2.5 < player.GetAutoAttackDamage(ene));
+                                                         !ARAMTargetSelector.IsInvulnerable(ene) && ene.Health / 1.5 < player.GetAutoAttackDamage(ene));
 
             if (easyKill != null)
             {

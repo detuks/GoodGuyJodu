@@ -256,7 +256,7 @@ namespace ARAMDetFull
                 int timeFear = (ARAMDetFull.gameStart + 300*1000 < ARAMDetFull.now) ? 0 : -250;
                 int healthFear = (int)(-(100 - myControler.hero.HealthPercent)*2);
                 int score = kdaScore + timeFear + healthFear+100;
-                return (score < -350) ? -350 : ((score > 500) ? 500 : score);
+                return (score < -250) ? -250 : ((score > 500) ? 500 : score);
             }
         }
 
@@ -374,7 +374,7 @@ namespace ARAMDetFull
             {
                 var reach = aly.reach + 500;
                 if (!aly.hero.IsDead && aly.hero.Distance(point, true) < reach * reach &&
-                    aly.hero.Distance(ARAMSimulator.toNex.Position) < (point.Distance(ARAMSimulator.toNex.Position) + fearDistance + (ARAMSimulator.tankBal * -5) + (ARAMSimulator.agrobalance * 3)))
+                    (aly.hero.Distance(ARAMSimulator.toNex.Position) < (point.Distance(ARAMSimulator.toNex.Position) + fearDistance + (ARAMSimulator.tankBal * -5) + (ARAMSimulator.agrobalance * 3))|| fightIsOn(aly.hero)))
                     balance += ((int)aly.hero.HealthPercent + 20 + 20 - aly.hero.Deaths * 4 + aly.hero.ChampionsKilled * 4);
             }
             var myBal = ((int)myControler.hero.HealthPercent + 20 + 20 - myControler.hero.Deaths * 10 +

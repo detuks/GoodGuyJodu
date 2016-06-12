@@ -75,7 +75,8 @@ namespace ARAMDetFull
                 Config.AddSubMenu(new Menu("Harass Sharp", "harass"));
 
                 //Extra
-                Config.AddSubMenu(new Menu("Extra Sharp", "extra"));
+                Config.AddSubMenu(new Menu("Drawing Sharp", "drawing"));
+                Config.SubMenu("drawing").AddItem(new MenuItem("debugDraw", "Debug draw")).SetValue(true);
 
 
                 //Debug
@@ -108,6 +109,8 @@ namespace ARAMDetFull
 
         private static void onDraw(EventArgs args)
         {
+            if (!Config.Item("debugDraw").GetValue<bool>())
+                return;
             Drawing.DrawText(100, 100, Color.Red, "bal: " + ARAMSimulator.balance + " fear: "+MapControl.fearDistance );
            //return;
            // ((Jayce)ARAMSimulator.champ).drawCD();
@@ -128,7 +131,10 @@ namespace ARAMDetFull
 
             foreach (var ene in MapControl.enemy_champions)
             {
+                var spos = Drawing.WorldToScreen(ene.hero.Position);
                 Utility.DrawCircle(ene.hero.Position, ene.getReach() , Color.Green);
+                
+                Drawing.DrawText(spos.X, spos.Y, Color.Green,"Gold: "+ene.hero.Gold);
             }
             return;
 

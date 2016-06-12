@@ -13,6 +13,7 @@ namespace ARAMDetFull.Champions
 
         public MasterYi()
         {
+            LXOrbwalker.farmRange = 750;
             ARAMSimulator.champBuild = new Build
             {
                 coreItems = new List<ConditionalItem>
@@ -20,9 +21,9 @@ namespace ARAMDetFull.Champions
                     new ConditionalItem(ItemId.Blade_of_the_Ruined_King),
                     new ConditionalItem(ItemId.Mercurys_Treads),
                     new ConditionalItem(ItemId.Youmuus_Ghostblade),
-                    new ConditionalItem(ItemId.Last_Whisper),
-                    new ConditionalItem(ItemId.Spirit_Visage, ItemId.Randuins_Omen, ItemCondition.ENEMY_AP),
                     new ConditionalItem(ItemId.Phantom_Dancer),
+                    new ConditionalItem(ItemId.Spirit_Visage, ItemId.Randuins_Omen, ItemCondition.ENEMY_AP),
+                    new ConditionalItem(ItemId.The_Black_Cleaver),
                 },
                 startingItems = new List<ItemId>
                 {
@@ -60,7 +61,7 @@ namespace ARAMDetFull.Champions
             if (!R.IsReady() || target == null)
                 return;
             if(R.Cast())
-                Aggresivity.addAgresiveMove(new AgresiveMove(265,6000,true));
+                Aggresivity.addAgresiveMove(new AgresiveMove(565,6000,true));
         }
 
         public override void useSpells()
@@ -82,6 +83,22 @@ namespace ARAMDetFull.Champions
             W = new Spell(SpellSlot.W, 500);
             E = new Spell(SpellSlot.E, 200);
             R = new Spell(SpellSlot.R, 250);
+        }
+
+        public override void farm()
+        {
+            if (!Q.IsReady())
+                return;
+            if (player.ManaPercent < 45)
+                return;
+
+            var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q.Range);
+
+            foreach (var minion in minions.Where(minion => minion.IsValidTarget(Q.Range) && minion.Health < Q.GetDamage(minion)))
+            {
+                Q.Cast(minion);
+                return;
+            }
         }
     }
 }

@@ -19,16 +19,16 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                 {
-                    new ConditionalItem(ItemId.Blade_of_the_Ruined_King),
-                    new ConditionalItem(ItemId.Mercurys_Treads),
                     new ConditionalItem(ItemId.Statikk_Shiv),
+                    new ConditionalItem(ItemId.Mercurys_Treads),
                     new ConditionalItem(ItemId.Infinity_Edge),
-                    new ConditionalItem(ItemId.Last_Whisper),
-                    new ConditionalItem(ItemId.Banshees_Veil),
+                    new ConditionalItem(ItemId.Phantom_Dancer),
+                    new ConditionalItem(ItemId.Blade_of_the_Ruined_King),
+                    new ConditionalItem(ItemId.Ravenous_Hydra_Melee_Only,ItemId.Banshees_Veil,ItemCondition.ENEMY_LOSING),
                 },
                 startingItems = new List<ItemId>
                 {
-                    ItemId.Vampiric_Scepter,ItemId.Boots_of_Speed
+                    ItemId.Long_Sword,ItemId.Boots_of_Speed,ItemId.Dagger
                 }
             };
         }

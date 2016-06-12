@@ -212,7 +212,7 @@ namespace ARAMDetFull
 
         private static bool IsAllowedToAttack()
         {
-            if (!_attack || (MyHero.HealthPercent<25 && ARAMSimulator.balance<-150))
+            if (!_attack )
                 return false;
            
             return true;

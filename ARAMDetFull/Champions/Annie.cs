@@ -101,7 +101,7 @@ namespace ARAMDetFull.Champions
         {
             if (!R.IsReady() || target == null)
                 return;
-            if ((R.CastIfWillHit(target, 2) && haveStun) || (R.CastIfWillHit(target, 3)) || R.IsKillable(target))
+            if ((R.CastIfWillHit(target, 2) && haveStun) || (R.CastIfWillHit(target, 3)) || R.IsKillable(target) || player.HealthPercent<20)
                 R.Cast(target);
         }
 

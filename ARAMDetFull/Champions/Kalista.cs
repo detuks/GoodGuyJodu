@@ -128,7 +128,7 @@ namespace ARAMDetFull.Champions
 
             if (E.IsReady())
             {
-                foreach (var targ in ObjectManager.Get<Obj_AI_Hero>().Where(o => o.IsValidTarget(E.Range) && !o.IsDead))
+                foreach (var targ in ObjectManager.Get<Obj_AI_Base>().Where(o => o.IsValidTarget(E.Range) && !o.IsDead))
                 {
                     if (targ.Health < player.GetSpellDamage(targ, SpellSlot.E))
                     {
