@@ -138,12 +138,15 @@ namespace LucianSharp
             var hero = target as Obj_AI_Hero;
             if (hero == null || !(target is Obj_AI_Hero) || DeathWalker.CurrentMode != DeathWalker.Mode.Combo) 
                 return;
-
-            if (!useQonTarg(hero, QhitChance.hard) && LucianSharp.Config.Item("useE").GetValue<bool>())
-            {
-                if(eAwayFrom())
+            if(LucianSharp.Config.Item("useE").GetValue<bool>())
+                if (eAwayFrom())
                     return;
+
+            if (!useQonTarg(hero, QhitChance.hard) )
+            {
+
             }
+
 
             if (Q.IsReady() && LucianSharp.Config.Item("useQ").GetValue<bool>())
             {
@@ -151,10 +154,10 @@ namespace LucianSharp
                     return;
             }
 
-            if (W.IsReady() && player.Mana>=120 && !tooEasyKill(hero) && LucianSharp.Config.Item("useW").GetValue<bool>())
+            if (W.IsReady() && !tooEasyKill(hero) && LucianSharp.Config.Item("useW").GetValue<bool>())
             {
-               // var output = W.GetPrediction((Obj_AI_Hero)target);
-                W.Cast(target.Position);
+               var output = W.GetPrediction((Obj_AI_Hero)target);
+               W.Cast(output.UnitPosition);
                 return;
             }
         }

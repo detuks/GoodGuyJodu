@@ -51,6 +51,7 @@ namespace LucianSharp
                 Config.SubMenu("combo").AddItem(new MenuItem("useQ", "Use Q")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useW", "Use W")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useE", "Use E from melee")).SetValue(true);
+                Config.SubMenu("combo").AddItem(new MenuItem("Wvisib", "W to get vision")).SetValue(true);
 
                 //LastHit
                 Config.AddSubMenu(new Menu("LastHit Sharp", "lHit"));
@@ -91,6 +92,7 @@ namespace LucianSharp
                 DeathWalker.AfterAttack += AfterAttack;
 
                 DeathWalker.OnUnkillable += onUnkillable;
+                Obj_AI_Hero.OnLeaveLocalVisiblityClient += onLeaveVisibility;
 
                 Lucian.setSkillShots();
 
@@ -99,6 +101,18 @@ namespace LucianSharp
             {
                 Console.WriteLine(ex);
                 Game.PrintChat("Oops. Something went wrong with LucianSharp");
+            }
+        }
+
+        private static void onLeaveVisibility(AttackableUnit sender, EventArgs args)
+        {
+            if (sender.IsEnemy && sender is Obj_AI_Hero && Config.Item("Wvisib").GetValue<bool>())
+            {
+                var sen = sender as Obj_AI_Hero;
+                if (Lucian.W.CanCast(sen))
+                {
+                    Lucian.W.Cast(sen.Position);
+                }
             }
         }
 
@@ -118,7 +132,7 @@ namespace LucianSharp
         {
             if (target.Health < 30)
                 return;
-            if (target is Obj_AI_Base && !target.MagicImmune && msTillDead-100>(int)(Lucian.Qdata.SData.OverrideCastTime*1000))
+            if (target is Obj_AI_Base && !target.MagicImmune && msTillDead-200>(int)(Lucian.Qdata.SData.OverrideCastTime*1000))
             {
                 Lucian.useQonTarg((Obj_AI_Base) target, Lucian.QhitChance.medium);
             }
