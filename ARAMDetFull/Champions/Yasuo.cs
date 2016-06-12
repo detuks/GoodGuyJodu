@@ -64,7 +64,7 @@ namespace ARAMDetFull.Champions
         {
             if (!R.IsReady() || target == null)
                 return;
-            if (safeGap(target))
+            if (safeGap(target) || MapControl.fightIsOn(target))
                  R.Cast();
         }
 

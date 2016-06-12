@@ -104,7 +104,7 @@ namespace ARAMDetFull
         class SnowBall : SumSpell
         {
             Obj_AI_Hero snowed;
-
+            private int lastCast = 0;
             public override void useSpell()
             {
                 if (!spell.IsReady())
@@ -114,16 +114,17 @@ namespace ARAMDetFull
                 {
                     if (snowed != null)
                     {
-                        if (MapControl.safeGap(snowed.Position.To2D()))
-                            spell.Cast();
+                       // if (MapControl.fightIsOn(snowed))
+                       //     spell.Cast();
                     }
                 }
                 else
                 {
                     var tar = ARAMTargetSelector.getBestTarget(spell.Range);
-                    if (tar != null)
+                    if (tar != null && lastCast+500< LXOrbwalker.now)
                     {
-                        spell.Cast(tar);
+                        lastCast = LXOrbwalker.now;
+                       // spell.Cast(tar);
                         snowed = tar;
                     }
                 }

@@ -383,7 +383,7 @@ namespace ARAMDetFull
         public static void setChamp()
         {
            // Game.PrintChat("Support DeTuKs on his new adventures on LeagueSmurfs.com");
-            Game.PrintChat(player.ChampionName);
+            Game.PrintChat("Champion hero: "+player.ChampionName);
             switch (player.ChampionName)
             {
                 case "Cassiopeia":
@@ -653,7 +653,10 @@ namespace ARAMDetFull
                 case "Vladimir":
                     champ = new Vladimir();
                     break;
-                //Vladimir
+                case "Taliyah":
+                    champ = new Taliyah();
+                    break;
+                    //Taliyah
             }
         }
 

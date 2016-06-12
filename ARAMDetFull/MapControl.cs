@@ -247,7 +247,12 @@ namespace ARAMDetFull
         {
             get
             {
-                int kdaScore = myControler.hero.ChampionsKilled*50 + myControler.hero.Assists*10 - myControler.hero.Deaths*50;
+                int assistValue = (ARAMSimulator.getType() == ARAMSimulator.ChampType.Support
+                                   || ARAMSimulator.getType() == ARAMSimulator.ChampType.Tank ||
+                                   ARAMSimulator.getType() == ARAMSimulator.ChampType.TankAS)
+                    ? 25
+                    : 10;
+                int kdaScore = myControler.hero.ChampionsKilled*50 + myControler.hero.Assists* assistValue - myControler.hero.Deaths*50;
                 int timeFear = (ARAMDetFull.gameStart + 300*1000 < ARAMDetFull.now) ? 0 : -250;
                 int healthFear = (int)(-(100 - myControler.hero.HealthPercent)*2);
                 int score = kdaScore + timeFear + healthFear+100;

@@ -141,6 +141,7 @@
     <Compile Include="Champions\Soraka.cs" />
     <Compile Include="Champions\Syndra.cs" />
     <Compile Include="Champions\Tahmkench.cs" />
+    <Compile Include="Champions\Taliyah.cs" />
     <Compile Include="Champions\Talon.cs" />
     <Compile Include="Champions\Taric.cs" />
     <Compile Include="Champions\Thresh.cs" />
