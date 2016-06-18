@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using LeagueSharp;
 using LeagueSharp.Common;
-using LeagueSharp.Common.DWIntegration;
 using SharpDX;
 using Geometry = LeagueSharp.Common.Geometry;
 using SkillshotType = LeagueSharp.Common.SkillshotType;
