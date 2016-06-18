@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using ARAMDetFull.Champions;
 using LeagueSharp;
 using LeagueSharp.Common;
+using LeagueSharp.SDK;
+using KeyBindType = LeagueSharp.Common.KeyBindType;
 
 namespace ARAMDetFull
 {
@@ -38,9 +40,9 @@ namespace ARAMDetFull
         public ARAMDetFull()
         {
             Console.WriteLine("Aram det full started!");
-            CustomEvents.Game.OnGameLoad += onLoad;
+            Events.OnLoad += onLoad;
         }
-
+        
         public static int gameStart = 0;
 
         public static Menu Config;
@@ -50,33 +52,20 @@ namespace ARAMDetFull
             get { return (int)DateTime.Now.TimeOfDay.TotalMilliseconds; }
         }
 
-        private static void onLoad(EventArgs args)
+        private static void onLoad(object sender, EventArgs e)
         {
             gameStart = now;
 
             Game.PrintChat("ARAm - Sharp by DeTuKs");
-
             try
             {
 
                 Config = new Menu("ARAM", "Yasuo", true);
-
-                //Combo
-                Config.AddSubMenu(new Menu("Combo Sharp", "combo"));
-                Config.SubMenu("combo").AddItem(new MenuItem("comboItems", "Use Items")).SetValue(true);
-
-                //LastHit
-                Config.AddSubMenu(new Menu("LastHit Sharp", "lHit"));
-
-                //LaneClear
-                Config.AddSubMenu(new Menu("LaneClear Sharp", "lClear"));
-
-                //Harass
-                Config.AddSubMenu(new Menu("Harass Sharp", "harass"));
-
+                
                 //Extra
-                Config.AddSubMenu(new Menu("Drawing Sharp", "drawing"));
-                Config.SubMenu("drawing").AddItem(new MenuItem("debugDraw", "Debug draw")).SetValue(true);
+                Config.AddSubMenu(new Menu("Extra Sharp", "extra"));
+                Config.SubMenu("extra").AddItem(new MenuItem("debugDraw", "Debug draw")).SetValue(false);
+                Config.SubMenu("extra").AddItem(new MenuItem("supportChampPlus", "Support unsupported champs")).SetValue(false);
 
 
                 //Debug
@@ -109,38 +98,45 @@ namespace ARAMDetFull
 
         private static void onDraw(EventArgs args)
         {
-            if (!Config.Item("debugDraw").GetValue<bool>())
-                return;
-            Drawing.DrawText(100, 100, Color.Red, "bal: " + ARAMSimulator.balance + " fear: "+MapControl.fearDistance );
-           //return;
-           // ((Jayce)ARAMSimulator.champ).drawCD();
-            foreach (var hel in ObjectManager.Get<Obj_AI_Base>().Where(r => r.IsValid && !r.IsDead && r.Name.Contains("ealth")))
+            try
             {
-                var spos = Drawing.WorldToScreen(hel.Position);
-                Drawing.DrawText(spos.X, spos.Y, Color.Brown, " : " + hel.Name);
-                Drawing.DrawText(spos.X, spos.Y+25, Color.Brown, hel.IsDead + " : " + hel.Type+ " : " + hel.IsValid+ " : " + hel.IsVisible);
-            }
-            var tar = ARAMTargetSelector.getBestTarget(5100);
-            if (tar != null)
-                Utility.DrawCircle(tar.Position, 150, Color.Violet);
+                if (!Config.Item("debugDraw").GetValue<bool>())
+                    return;
+                Drawing.DrawText(100, 100, Color.Red, "bal: " + ARAMSimulator.balance+ " fear: "+MapControl.fearDistance );
+               //return;
+               // ((Jayce)ARAMSimulator.champ).drawCD();
+                foreach (var hel in ObjectManager.Get<Obj_AI_Base>().Where(r => r.IsValid && !r.IsDead && r.Name.Contains("ealth")))
+                {
+                    var spos = Drawing.WorldToScreen(hel.Position);
+                    Drawing.DrawText(spos.X, spos.Y, Color.Brown, " : " + hel.Name);
+                    Drawing.DrawText(spos.X, spos.Y+25, Color.Brown, hel.IsDead + " : " + hel.Type+ " : " + hel.IsValid+ " : " + hel.IsVisible);
+                }
+                var tar = ARAMTargetSelector.getBestTarget(5100);
+                if (tar != null)
+                    Utility.DrawCircle(tar.Position, 150, Color.Violet);
 
-            foreach (var sec in ARAMSimulator.sectors)
-            {
-                sec.draw();
-            }
+                foreach (var sec in ARAMSimulator.sectors)
+                {
+                    sec.draw();
+                }
 
-            foreach (var ene in MapControl.enemy_champions)
-            {
-                var spos = Drawing.WorldToScreen(ene.hero.Position);
-                Utility.DrawCircle(ene.hero.Position, ene.getReach() , Color.Green);
+                foreach (var ene in MapControl.enemy_champions)
+                {
+                    var spos = Drawing.WorldToScreen(ene.hero.Position);
+                    Utility.DrawCircle(ene.hero.Position, ene.getReach() , Color.Green);
                 
-                Drawing.DrawText(spos.X, spos.Y, Color.Green,"Gold: "+ene.hero.Gold);
-            }
-            return;
+                    Drawing.DrawText(spos.X, spos.Y, Color.Green,"Gold: "+ene.hero.Gold);
+                }
+                return;
 
-            foreach (var ene in MapControl.enemy_champions)
+                foreach (var ene in MapControl.enemy_champions)
+                {
+                    Utility.DrawCircle(ene.hero.Position, ene.reach, Color.Violet);
+                }
+            }
+            catch (Exception ex)
             {
-                Utility.DrawCircle(ene.hero.Position, ene.reach, Color.Violet);
+                Console.WriteLine(ex);
             }
         }
         public static void getAllBuffs()
@@ -160,15 +156,44 @@ namespace ARAMDetFull
         private static Random rng = null;
         private static void OnGameUpdate(EventArgs args)
         {
-            //if (lastTick + tickTimeRng > now)
-            //    return;
+            try
+            {
+                if (Config.Item("db_targ").GetValue<KeyBind>().Active)
+                {
+                    var player = HeroManager.Player;
+                    foreach (var spell in
+                   SpellDatabase.Spells.Where(
+                       s =>
+                           s.ChampionName.Equals(player.ChampionName)))
+                    {
+                        Console.WriteLine("-----Spell: " + spell.Slot + "---------------- ");
+                        if(spell.SpellTags != null)
+                            foreach (var tag in spell.SpellTags)
+                            {
+                                Console.WriteLine("--tag: " + tag);
+                            }
+                        if (spell.CastType != null)
+                            foreach (var ctype in spell.CastType)
+                            {
+                                Console.WriteLine("--casttype: " + ctype);
+                            }
+                    }
 
-            //if(rng == null)
-             //   rng = new Random();
+                }
+                //if (lastTick + tickTimeRng > now)
+                //    return;
 
-            //tickTimeRng = rng.Next(70, 140);
-            lastTick = now;
-            ARAMSimulator.updateArmaPlay();
+                //if(rng == null)
+                //   rng = new Random();
+
+                //tickTimeRng = rng.Next(70, 140);
+                lastTick = now;
+                ARAMSimulator.updateArmaPlay();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
     }
 }

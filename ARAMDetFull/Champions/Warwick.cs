@@ -87,7 +87,6 @@ namespace ARAMDetFull.Champions
 
         public override void farm()
         {
-            base.farm();
         }
 
         public override void setUpSpells()

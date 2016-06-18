@@ -17,16 +17,16 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                         {
-                            new ConditionalItem(ItemId.Trinity_Force),
-                            new ConditionalItem(ItemId.Mercurys_Treads),
-                            new ConditionalItem(ItemId.Blade_of_the_Ruined_King),
-                            new ConditionalItem(ItemId.Last_Whisper),
-                            new ConditionalItem(ItemId.The_Bloodthirster),
+                            new ConditionalItem(ItemId.Trinity_Force,ItemId.Iceborn_Gauntlet, ItemCondition.ENEMY_AP),
+                            new ConditionalItem(ItemId.Mercurys_Treads,ItemId.Ninja_Tabi,ItemCondition.ENEMY_AP),
+                            new ConditionalItem(ItemId.Spirit_Visage,ItemId.Sunfire_Cape,ItemCondition.ENEMY_AP),
+                            new ConditionalItem(ItemId.Ravenous_Hydra_Melee_Only,ItemId.The_Black_Cleaver,ItemCondition.ENEMY_LOSING),
+                            new ConditionalItem(ItemId.Warmogs_Armor),
                             new ConditionalItem(ItemId.Banshees_Veil),
                         },
                 startingItems = new List<ItemId>
                         {
-                            ItemId.Phage
+                            ItemId.Ruby_Crystal,ItemId.Cloth_Armor,ItemId.Long_Sword
                         }
             };
         }
@@ -35,7 +35,7 @@ namespace ARAMDetFull.Champions
         {
             if (!Q.IsReady() || target == null)
                 return;
-            Q.Cast();
+            Q.CastIfHitchanceEquals(target, HitChance.High);
         }
 
         public override void useW(Obj_AI_Base target)
@@ -60,7 +60,7 @@ namespace ARAMDetFull.Champions
             if (!R.IsReady() || target == null)
                 return;
             //if (player.HealthPercent < 35)
-                R.CastOnUnit(target);
+            R.CastIfHitchanceEquals(target, HitChance.Medium);
         }
 
         public override void useSpells()
@@ -81,10 +81,13 @@ namespace ARAMDetFull.Champions
         public override void setUpSpells()
         {
             //Create the spells
-            Q = new Spell(SpellSlot.Q,125);
+            Q = new Spell(SpellSlot.Q,400);
+            Q.SetSkillshot(0.55f, 90f, float.MaxValue, false, SkillshotType.SkillshotLine);
             W = new Spell(SpellSlot.W,250);
             E = new Spell(SpellSlot.E, 525);
             R = new Spell(SpellSlot.R, 250);
+            R.SetSkillshot(0.5f, 90f, 1400, true, SkillshotType.SkillshotLine);
+            R.SetCharged("PoppyR", "PoppyR", 425, 1000, 1.0f);
         }
     }
 }

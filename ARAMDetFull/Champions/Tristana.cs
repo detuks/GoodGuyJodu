@@ -19,10 +19,10 @@ namespace ARAMDetFull.Champions
                         {
                             new ConditionalItem(ItemId.Infinity_Edge),
                             new ConditionalItem(ItemId.Berserkers_Greaves),
-                            new ConditionalItem(ItemId.Phantom_Dancer),
-                            new ConditionalItem(ItemId.The_Bloodthirster),
-                            new ConditionalItem(ItemId.Last_Whisper),
-                            new ConditionalItem(ItemId.Banshees_Veil),
+                            new ConditionalItem(ItemId.Runaans_Hurricane_Ranged_Only),
+                            new ConditionalItem((ItemId)3094),
+                            new ConditionalItem(ItemId.Blade_of_the_Ruined_King),
+                            new ConditionalItem(ItemId.Guinsoos_Rageblade),
                         },
                 startingItems = new List<ItemId>
                         {
@@ -36,6 +36,7 @@ namespace ARAMDetFull.Champions
             if (!Q.IsReady())
                 return;
             Q.Cast();
+            Aggresivity.addAgresiveMove(new AgresiveMove(90));
         }
 
         public override void useW(Obj_AI_Base target)
@@ -59,8 +60,8 @@ namespace ARAMDetFull.Champions
         {
             if (!R.IsReady())
                 return;
-            if (R.GetDamage(target) > target.Health)
-            R.CastOnUnit(target);
+            if (R.GetDamage(target) > target.Health || (player.HealthPercent < 40 || target.Distance(player)<400))
+                R.CastOnUnit(target);
         }
 
         public override void setUpSpells()

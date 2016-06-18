@@ -500,7 +500,7 @@ namespace ARAMDetFull
                 case "Wukong":
                     champ = new Wukong();
                     break;
-                case "Syndra":
+                case "Syndra"://TODO put back
                     champ = new Syndra();
                     break;
                 case "Jayce":
@@ -596,7 +596,7 @@ namespace ARAMDetFull
                 case "MasterYi":
                     champ = new MasterYi();
                     break;
-                case "Annie":
+                case "Annie ":
                     champ = new Annie();
                     break;
                 case "Ekko":
@@ -856,7 +856,7 @@ namespace ARAMDetFull
             }
 
             setRambo();
-            if (player.IsDead)
+            if (player.IsDead || player.IsChannelingImportantSpell())
                 return;
 
             var closestEnemy = HeroManager.Enemies.Where(ene => !ene.IsDead && ene.IsTargetable && !ARAMTargetSelector.IsInvulnerable(ene)).OrderBy(ene =>  player.Position.Distance(ene.Position, true)).FirstOrDefault();
@@ -885,9 +885,7 @@ namespace ARAMDetFull
                     Console.WriteLine(ex);
                 }
             }
-
-           
-
+            
             if (!Sector.inTowerRange(player.Position.To2D()) || towerAttackedAlly || player.HealthPercent < 25)
             {
                 try
@@ -900,9 +898,9 @@ namespace ARAMDetFull
                     }
                     else
                     {
-                        MapControl.myControler.useSkillshots();
-                        MapControl.myControler.useNonSkillshots();
-
+                        MapControl.myControler.useSpells();
+                        if(player.MaxMana<350 || player.ManaPercent>50)
+                            MapControl.myControler.useSpellsOnMinions();
                     }
                 }
                 catch (Exception ex)

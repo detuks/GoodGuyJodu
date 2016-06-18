@@ -43,7 +43,11 @@ namespace ARAMDetFull.Champions
         public abstract void useSpells();
 
         public virtual void escape(){ }
-        public virtual void farm() { }
+
+        public virtual void farm()
+        {
+            MapControl.myControler.useSpellsOnMinions();
+        }
         public virtual void killSteal() { }
         public virtual void alwaysCheck() { }
 

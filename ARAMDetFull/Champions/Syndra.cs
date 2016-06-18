@@ -26,16 +26,16 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                         {
-                            new ConditionalItem(ItemId.Morellonomicon),
+                            new ConditionalItem(ItemId.Rod_of_Ages),
                             new ConditionalItem(ItemId.Sorcerers_Shoes),
+                            new ConditionalItem(ItemId.Liandrys_Torment),
                             new ConditionalItem(ItemId.Rabadons_Deathcap),
-                            new ConditionalItem(ItemId.Zhonyas_Hourglass),
-                            new ConditionalItem(ItemId.Void_Staff ),
-                            new ConditionalItem(ItemId.Banshees_Veil),
+                            new ConditionalItem(ItemId.Void_Staff),
+                            new ConditionalItem(ItemId.Banshees_Veil,ItemId.Zhonyas_Hourglass,ItemCondition.ENEMY_AP),
                         },
                 startingItems = new List<ItemId>
                         {
-                            ItemId.Fiendish_Codex,ItemId.Boots_of_Speed
+                            ItemId.Catalyst_the_Protector
                         }
             };
         }
@@ -90,7 +90,7 @@ namespace ARAMDetFull.Champions
 
         public override void useSpells()
         {
-            var tar = ARAMTargetSelector.getBestTarget(Q.Range+250);
+            var tar = ARAMTargetSelector.getBestTarget(W.Range+250);
             if(tar != null)
                 useSyndraSpells(true, true, true, true, true, true, false);
             else if(player.ManaPercentage()>40)
@@ -207,24 +207,19 @@ namespace ARAMDetFull.Champions
             //W
             if (useW)
             {
-                if (wTarget != null &&W.IsReady() && player.Spellbook.GetSpell(SpellSlot.W).ToggleState == 1)
-                {
-                    W.Cast(wTarget);
-                }
                 if (player.Spellbook.GetSpell(SpellSlot.W).ToggleState == 1 && W.IsReady() && qeTarget != null)
                 {
-                    //WObject
                     var gObjectPos = GetGrabableObjectPos(wTarget == null);
 
-                    if (gObjectPos.To2D().IsValid() && Utils.TickCount - W.LastCastAttemptT > Game.Ping + 300 &&
-                        Utils.TickCount - E.LastCastAttemptT > Game.Ping + 300)
+                    if (gObjectPos.To2D().IsValid() && Utils.TickCount - W.LastCastAttemptT > Game.Ping + 300
+                        && Utils.TickCount - E.LastCastAttemptT > Game.Ping + 600)
                     {
                         W.Cast(gObjectPos);
                         W.LastCastAttemptT = Utils.TickCount;
                     }
                 }
-                else if (wTarget != null && player.Spellbook.GetSpell(SpellSlot.W).ToggleState != 1 && W.IsReady() &&
-                         Utils.TickCount - W.LastCastAttemptT > Game.Ping + 100)
+                else if (wTarget != null && player.Spellbook.GetSpell(SpellSlot.W).ToggleState != 1 && W.IsReady()
+                         && Utils.TickCount - W.LastCastAttemptT > Game.Ping + 100)
                 {
                     if (OrbManager.WObject(false) != null)
                     {
@@ -256,7 +251,7 @@ namespace ARAMDetFull.Champions
 
 
             //QE
-            if ( qeTarget != null && Q.IsReady() && E.IsReady() && useQE)
+            if ( qeTarget != null && Q.IsReady() && E.IsReady() && useQE && player.Mana>150)
                 UseQE(qeTarget);
 
             //WE

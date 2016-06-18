@@ -179,7 +179,6 @@ namespace ARAMDetFull.Champions
 
         public override void farm()
         {
-            base.farm();
             if (FishBoneActive && Q.IsReady())
                 Q.Cast();
         }

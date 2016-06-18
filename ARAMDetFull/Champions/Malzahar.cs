@@ -71,11 +71,7 @@ namespace ARAMDetFull.Champions
                 return;
             if (target.IsValidTarget(W.Range))
             {
-                if (!W.CastIfWillHit(target, 2))
-                {
-                    if (target.IsStunned || target.IsRooted || target.IsImmovable)
-                        W.Cast(target);
-                }
+                W.Cast();
             }
         }
 
@@ -96,12 +92,10 @@ namespace ARAMDetFull.Champions
 
         public override void useSpells()
         {
+            if (player.IsChannelingImportantSpell())
+                return;
             var tar = ARAMTargetSelector.getBestTarget(Q.Range);
             if (tar != null) useQ(tar);
-            else
-            {
-                farm();
-            };
             tar = ARAMTargetSelector.getBestTarget(W.Range);
             if (tar != null) useW(tar);
             tar = ARAMTargetSelector.getBestTarget(E.Range);
@@ -122,7 +116,7 @@ namespace ARAMDetFull.Champions
             W.SetSkillshot(0.5f, 240, 20, false, SkillshotType.SkillshotCircle);
         }
 
-        public void farm()
+        public override void farm()
         {
             if(player.ManaPercent<40)
                 return;

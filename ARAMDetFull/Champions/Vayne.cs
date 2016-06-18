@@ -29,7 +29,7 @@ namespace ARAMDetFull.Champions
                             new ConditionalItem(ItemId.Phantom_Dancer),
                             new ConditionalItem(ItemId.Infinity_Edge),
                             new ConditionalItem(ItemId.Last_Whisper),
-                            new ConditionalItem(ItemId.Banshees_Veil),
+                            new ConditionalItem(ItemId.Guinsoos_Rageblade,ItemId.Banshees_Veil,ItemCondition.ENEMY_LOSING),
                         },
                 startingItems = new List<ItemId>
                         {
@@ -208,7 +208,7 @@ namespace ARAMDetFull.Champions
                     .Where(h => h.IsValid && !h.IsDead && h.Distance(player.Position) <= 900 && h.IsEnemy).ToList();
             if (R.IsReady() && EnemiesList.Count >= EnMin)
             {
-                Aggresivity.addAgresiveMove(new AgresiveMove(160,8000,true));
+                Aggresivity.addAgresiveMove(new AgresiveMove(160,10000,true));
                 R.Cast();
             }
             if(!customPos){CastTumble(target);}else{CastTumble(Pos,target);}

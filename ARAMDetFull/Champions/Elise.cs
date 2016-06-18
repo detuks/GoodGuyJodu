@@ -230,7 +230,6 @@ namespace ARAMDetFull.Champions
 
         public override void farm()
         {
-            base.farm();
             if(player.ManaPercent<40)
                 return;
             CheckSpells();

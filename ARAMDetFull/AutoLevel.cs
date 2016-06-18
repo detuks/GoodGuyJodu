@@ -32,7 +32,7 @@ namespace ARAMDetFull
             {
                 lastLevelup = LXOrbwalker.now;
                 //return;
-                if (ObjectManager.Player.SpellTrainingPoints > 0)
+                if (ObjectManager.Player.SpellTrainingPoints > 0 && ObjectManager.Player.SpellTrainingPoints <= ObjectManager.Player.Level)
                     for (var i = ObjectManager.Player.Level - ObjectManager.Player.SpellTrainingPoints;
                         i < ObjectManager.Player.Level;
                         i++)
@@ -173,7 +173,7 @@ namespace ARAMDetFull
                     sequence = new[] { 1, 3, 2, 1, 1, 4, 1, 2, 1, 2, 4, 2, 2, 3, 3, 4, 3, 3 };
                     break;
                 case "Karma":
-                    sequence = new[] { 1, 3, 1, 2, 3, 1, 3, 1, 3, 1, 3, 1, 3, 2, 2, 2, 2, 2 };
+                    sequence = new[] { 1, 3, 2, 1, 1, 4, 1, 1, 3, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
                     break;
                 case "Karthus":
                     sequence = new[] { 1, 3, 2, 1, 1, 4, 1, 1, 3, 3, 4, 3, 3, 2, 2, 4, 2, 2 };

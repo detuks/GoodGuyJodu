@@ -23,12 +23,12 @@ namespace ARAMDetFull.Champions
                     new ConditionalItem(ItemId.Mercurys_Treads),
                     new ConditionalItem(ItemId.Infinity_Edge),
                     new ConditionalItem(ItemId.Phantom_Dancer),
-                    new ConditionalItem(ItemId.Blade_of_the_Ruined_King),
+                    new ConditionalItem(ItemId.Warmogs_Armor),
                     new ConditionalItem(ItemId.Ravenous_Hydra_Melee_Only,ItemId.Banshees_Veil,ItemCondition.ENEMY_LOSING),
                 },
                 startingItems = new List<ItemId>
                 {
-                    ItemId.Long_Sword,ItemId.Boots_of_Speed,ItemId.Dagger
+                    ItemId.Zeal
                 }
             };
         }
@@ -83,7 +83,6 @@ namespace ARAMDetFull.Champions
 
         public override void farm()
         {
-            base.farm();
             if (Q.IsReady())
             {
                 var farmL = Q.GetLineFarmLocation(MinionManager.GetMinions(player.ServerPosition, Q.Range, MinionTypes.All, MinionTeam.Enemy, MinionOrderTypes.Health));

@@ -188,7 +188,6 @@ namespace ARAMDetFull.Champions
 
         public override void farm()
         {
-            base.farm();
             if (E.IsReady())
                 E.Cast();
         }

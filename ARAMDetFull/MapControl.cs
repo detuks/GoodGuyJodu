@@ -8,7 +8,15 @@ using System.Text;
 using System.Threading.Tasks;
 using LeagueSharp;
 using LeagueSharp.Common;
+using LeagueSharp.Common.DWIntegration;
 using SharpDX;
+using Geometry = LeagueSharp.Common.Geometry;
+using SkillshotType = LeagueSharp.Common.SkillshotType;
+using Spell = LeagueSharp.Common.Spell;
+using ARAMDetFull.SpellsSDK;
+using LeagueSharp.Data.DataTypes;
+using LeagueSharp.Data.Enumerations;
+using SpellDatabase = LeagueSharp.SDK.SpellDatabase;
 
 namespace ARAMDetFull
 {
@@ -27,16 +35,18 @@ namespace ARAMDetFull
 
             public int activeDangers = 0;
             
-            protected List<SpellData> champSkillShots = new List<SpellData>();
-            protected List<TargetSpellData> champTargSpells = new List<TargetSpellData>();
+            protected List<SpellDatabaseEntry> champSpells = new List<SpellDatabaseEntry>();
 
             public ChampControl(Obj_AI_Hero champ)
             {
                 hero = champ;
-                champSkillShots = SpellDatabase.getChampionSkillshots(champ.ChampionName);
-                champTargSpells = TargetSpellDatabase.getChampionTargSpell(champ.ChampionName);
-
-
+                foreach (var spell in
+                SpellDatabase.Spells.Where(
+                    s =>
+                        s.ChampionName.Equals(champ.ChampionName)))
+                {
+                    champSpells.Add(spell);
+                }
 
                 getReach();
             }
@@ -91,28 +101,14 @@ namespace ARAMDetFull
 
             public int getccCount()
             {
-                int count = champSkillShots.Count(sShot => sShot.IsDangerous);
-                count += champTargSpells.Count(tSpell => tSpell.Type != SpellType.Skillshot && (tSpell.CcType == CcType.Fear || tSpell.CcType == CcType.Stun || tSpell.CcType == CcType.Pull || tSpell.CcType == CcType.Snare));
-
-                return count;
-            }
-
-            public bool isDangerousTarg(TargetSpellData tSpell)
-            {
-                if(tSpell.Type == SpellType.Skillshot)
-                    return false;
-
-                if (tSpell.CcType == CcType.Stun || tSpell.CcType == CcType.Snare || tSpell.CcType == CcType.Fear ||
-                    tSpell.CcType == CcType.Pull || tSpell.CcType == CcType.Taunt)
-                    return true;
-                return false;
+                return champSpells.Count(sShot => sShot.IsDangerous);
             }
         }
 
         internal class MyControl : ChampControl
         {
 
-            private Dictionary<SpellSlot, Spell> spells = new Dictionary<SpellSlot, Spell>();
+            private Dictionary<SpellDatabaseEntry, Spell> spells = new Dictionary<SpellDatabaseEntry, Spell>();
 
             public static Spellbook sBook = ObjectManager.Player.Spellbook;
             public static SpellDataInst Qdata = sBook.GetSpell(SpellSlot.Q);
@@ -124,38 +120,22 @@ namespace ARAMDetFull
             {
                 try
                 {
-                    spells.Add(SpellSlot.Q, new Spell(SpellSlot.Unknown));
-                    spells.Add(SpellSlot.W, new Spell(SpellSlot.Unknown));
-                    spells.Add(SpellSlot.E, new Spell(SpellSlot.Unknown));
-                    spells.Add(SpellSlot.R, new Spell(SpellSlot.Unknown));
-
                     hero = champ;
-                    champSkillShots = SpellDatabase.getChampionSkillshots(champ.ChampionName);
-                    champTargSpells = TargetSpellDatabase.getChampionTargSpell(champ.ChampionName);
-
-
-                    getReach();
-
-                    foreach (var tSpell in champTargSpells)
-                    {
-                        if (spells[tSpell.Spellslot] != null)
-                            spells[tSpell.Spellslot] = new Spell(tSpell.Spellslot, tSpell.Range);
-                    }
-
-                    foreach (var sShot in champSkillShots)
-                    {
-                        if (spells[sShot.Slot] != null)
-                            spells[sShot.Slot] = new Spell(sShot.Slot, sShot.Range);
-                    }
-
-                    foreach (var sShot in champSkillShots)
-                    {
-                        if (spells[sShot.Slot] != null)
+                    if(ARAMDetFull.Config.Item("supportChampPlus").GetValue<bool>())
+                    { 
+                        foreach (var spell in champSpells)
                         {
-                            bool coll = sShot.CollisionObjects.Contains(SpellDatabase.CollisionObjectTypes.Minion);
-                            spells[sShot.Slot].SetSkillshot(sShot.Delay, sBook.GetSpell(sShot.Slot).SData.LineWidth, sShot.MissileSpeed, coll, getSSType(sShot));
+                            var spl= new Spell(spell.Slot, spell.Range);
+                            if ( spell.CastType.IsSkillShot())
+                            {
+                                bool coll = spell.CollisionObjects.Length>1;
+                                spl.SetSkillshot(spell.Delay,spell.Width,spell.MissileSpeed,coll,spell.SpellType.GetSkillshotType());
+                            }
+                            spells.Add(spell, spl);
                         }
+                        getReach();
                     }
+                    LXOrbwalker.farmRange = reach;
                 }
                 catch (Exception ex)
                 {
@@ -163,55 +143,159 @@ namespace ARAMDetFull
                 }
             }
 
-            public SkillshotType getSSType(SpellData sData)
+            private int lastMinionSpellUse = LXOrbwalker.now;
+            public void useSpellsOnMinions()
             {
-                if(sData.Type == SpellData.SkillShotType.SkillshotCircle)
-                    return SkillshotType.SkillshotCircle;
-
-                if (sData.Type == SpellData.SkillShotType.SkillshotCone)
-                    return SkillshotType.SkillshotCone;
-
-                return SkillshotType.SkillshotLine;
-            }
-
-            public void useSkillshots()
-            {
-                foreach (var sShot in champSkillShots)
+                try
                 {
-                    Obj_AI_Hero bTarg = ARAMTargetSelector.getBestTarget(sShot.Range + sShot.Radius/2);
-                    if (bTarg == null || spells[sShot.Slot] == null)
-                        continue;
-                    if (spells[sShot.Slot].IsReady())
-                        spells[sShot.Slot].Cast(bTarg);
-                }
-            }
-
-            public void useNonSkillshots()
-            {
-                foreach (var tSkill in champTargSpells)
-                {
-                    float range = (tSkill.Range != 0) ? tSkill.Range : 500;
-                    if (tSkill.Type == SpellType.Self)
+                    if (lastMinionSpellUse + 277 > LXOrbwalker.now)
+                        return;
+                    lastMinionSpellUse = LXOrbwalker.now;
+                    foreach (var spell in spells)
                     {
-                        var bTarg = ARAMTargetSelector.getBestTarget(range, true);
-                        if (bTarg != null && spells[tSkill.Spellslot] != null)
+                        if (spell.Value.Instance.Cooldown > 15 || !spell.Value.IsReady() || spell.Value.ManaCost > hero.Mana || spell.Key.SpellTags == null || !spell.Key.SpellTags.Contains(SpellTags.Damage))
+                            continue;
+                        var minions = MinionManager.GetMinions((spell.Value.Range != 0) ? spell.Value.Range : 500);
+                        foreach (var minion in minions)
                         {
-                            if (spells[tSkill.Spellslot].IsReady())
-                                spells[tSkill.Spellslot].Cast();
+                            if(minion.Health > spell.Value.GetDamage(minion))
+                                continue;
+                            var movementSpells = new List<SpellTags> { SpellTags.Dash, SpellTags.Blink, SpellTags.Teleport };
+                            if (spell.Value.IsSkillshot)
+                            {
+                                if (!(spell.Key.SpellTags != null && spell.Key.SpellTags.Any(movementSpells.Contains)) || safeGap(minion))
+                                {
+                                    Console.WriteLine("Cast farm location: " + spell.Key.Slot);
+                                    spell.Value.Cast(minion.Position);
+                                    return;
+                                }
+                            }
+                            else 
+                            {
+                                float range = (spell.Value.Range != 0) ? spell.Value.Range : 500;
+                                if (spell.Key.CastType.Contains(CastType.Self))
+                                {
+                                    var bTarg = ARAMTargetSelector.getBestTarget(range, true);
+                                    if (bTarg != null)
+                                    {
+                                        Console.WriteLine("Cast farm self: " + spell.Key.Slot);
+                                         spell.Value.Cast();
+                                        return;
+                                    }
+                                }
+                                else if (spell.Key.CastType.Contains(CastType.EnemyMinions))
+                                {
+                                    if (minion != null)
+                                    {
+                                        if (!(spell.Key.SpellTags != null && spell.Key.SpellTags.Any(movementSpells.Contains)) || safeGap(minion))
+                                        {
+                                            Console.WriteLine("Cast farm target: " + spell.Key.Slot);
+                                            spell.Value.CastOnUnit(minion);
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+
                         }
                     }
-                    else if (tSkill.Type == SpellType.Targeted)
-                    {
-                        var bTarg = ARAMTargetSelector.getBestTarget(range);
-                        if (bTarg != null && spells[tSkill.Spellslot] != null)
-                        {
-                            if (spells[tSkill.Spellslot].IsReady())
-                                spells[tSkill.Spellslot].Cast(bTarg);
-                        }
-                    }
                 }
+                catch (Exception)
+                {}
+
             }
 
+            private int lastSpellUse = LXOrbwalker.now;
+            public void useSpells()
+            {
+                try
+                {
+                    if (lastSpellUse + 277 > LXOrbwalker.now)
+                        return;
+                    lastSpellUse = LXOrbwalker.now;
+                    foreach (var spell in spells)
+                    {
+                        if(!spell.Value.IsReady() || spell.Value.ManaCost > hero.Mana )
+                            continue;
+                        var movementSpells = new List<SpellTags> { SpellTags.Dash, SpellTags.Blink,SpellTags.Teleport };
+                        var supportSpells = new List<SpellTags> { SpellTags.Shield, SpellTags.Heal, SpellTags.DamageAmplifier,
+                            SpellTags.SpellShield, SpellTags.RemoveCrowdControl, };
+                        if (spell.Value.IsSkillshot)
+                        {
+                                if (spell.Key.SpellTags != null && spell.Key.SpellTags.Any(movementSpells.Contains))
+                                {
+                                    if (hero.HealthPercent < 25 && hero.CountEnemiesInRange(400)>0)
+                                {
+                                    Console.WriteLine("Cast esacpe location: " + spell.Key.Slot);
+                                    spell.Value.Cast(hero.Position.Extend(ARAMSimulator.fromNex.Position, 1235));
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        var bTarg = ARAMTargetSelector.getBestTarget(spell.Value.Range, true);
+                                        if (bTarg != null && safeGap(bTarg))
+                                    {
+                                        Console.WriteLine("Cast attack location gap: " + spell.Key.Slot);
+                                        spell.Value.CastIfHitchanceEquals(bTarg, HitChance.High);
+                                            return;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    var bTarg = ARAMTargetSelector.getBestTarget(spell.Value.Range, true);
+                                    if (bTarg != null)
+                                {
+                                    Console.WriteLine("Cast attack location: " + spell.Key.Slot);
+                                    spell.Value.CastIfHitchanceEquals(bTarg, HitChance.High);
+                                        return;
+                                    }
+                                }
+                        }
+                        else
+                        {
+                            float range = (spell.Value.Range != 0) ? spell.Value.Range : 500;
+                            if (spell.Key.CastType.Contains(CastType.Self) || spell.Key.CastType.Contains(CastType.Activate))
+                            {
+                                var bTarg = ARAMTargetSelector.getBestTarget(range, true);
+                                if (bTarg != null)
+                                {
+                                    Console.WriteLine("Cast self: " + spell.Key.Slot);
+                                    spell.Value.Cast();
+                                    return;
+                                }
+                            }
+                            else if(spell.Key.CastType.Contains(CastType.AllyChampions) && spell.Key.SpellTags != null && spell.Key.SpellTags.Any(supportSpells.Contains))
+                            {
+                                var bTarg = ARAMTargetSelector.getBestTargetAly(range, false);
+                                if (bTarg != null)
+                                {
+                                    Console.WriteLine("Cast ally: " + spell.Key.Slot);
+                                    spell.Value.CastOnUnit(bTarg);
+                                    return;
+                                }
+                            }
+                            else if (spell.Key.CastType.Contains(CastType.EnemyChampions))
+                            {
+                                var bTarg = ARAMTargetSelector.getBestTarget(range, true);
+                                if (bTarg != null)
+                                {
+                                    if (!(spell.Key.SpellTags != null && spell.Key.SpellTags.Any(movementSpells.Contains)) || safeGap(bTarg))
+                                    {
+                                        Console.WriteLine("Cast enemy: " + spell.Key.Slot);
+                                        spell.Value.CastOnUnit(bTarg);
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+                catch (Exception)
+                { }
+            }
+            
             public float canDoDmgTo(Obj_AI_Base target)
             {
                 float dmgreal = 0;
@@ -253,10 +337,10 @@ namespace ARAMDetFull
                     ? 25
                     : 10;
                 int kdaScore = myControler.hero.ChampionsKilled*50 + myControler.hero.Assists* assistValue - myControler.hero.Deaths*50;
-                int timeFear = (ARAMDetFull.gameStart + 300*1000 < ARAMDetFull.now) ? 0 : -250;
+                int timeFear = (ARAMDetFull.gameStart + 300*1000 < ARAMDetFull.now) ? 0 : -350;
                 int healthFear = (int)(-(100 - myControler.hero.HealthPercent)*2);
-                int score = kdaScore + timeFear + healthFear+100;
-                return (score < -250) ? -250 : ((score > 500) ? 500 : score);
+                int score = kdaScore + timeFear +100;
+                return (score < -550) ? -550 + healthFear : ((score > 500) ? 500 : score)+ healthFear;
             }
         }
 
@@ -285,8 +369,8 @@ namespace ARAMDetFull
 
         public static bool inDanger()
         {
-            int enesAround = enemy_champions.Count(ene => !ene.hero.IsDead && ene.hero.IsValidTarget(1300));
-            int allyAround = ally_champions.Count(aly => !aly.hero.IsDead && aly.hero.IsValidTarget(700));
+            int enesAround = enemy_champions.Count(ene => !ene.hero.IsDead && Utility.IsValidTarget(ene.hero, 1300));
+            int allyAround = ally_champions.Count(aly => !aly.hero.IsDead && Utility.IsValidTarget(aly.hero, 700));
             return (enesAround - allyAround) > 1;
         }
 
@@ -322,7 +406,7 @@ namespace ARAMDetFull
 
         public static bool fightIsOn(Obj_AI_Base target)
         {
-            if (myControler.canDoDmgTo(target) > target.Health)
+            if (myControler.canDoDmgTo(target)*0.75 > target.Health)
                     return true;
 
                 if (ally_champions.Where(ene => !ene.hero.IsDead && !ene.hero.IsMe).Any(ally => target.Distance(ally.hero, true) < 300 * 300))
@@ -359,7 +443,7 @@ namespace ARAMDetFull
             int balance = (point.To3D().UnderTurret(true)) ? -80 : (point.To3D().UnderTurret(false)) ? 80 : 0;
             foreach (var ene in enemy_champions)
             {
-                var reach = ene.reach + rangePlus;
+                var reach = (ARAMDetFull.gameStart + 1000 * 1000 < ARAMDetFull.now)?100:ene.reach + rangePlus;
                 if (!ene.hero.IsDead && ene.hero.Distance(point, true) < reach* reach && !unitIsUseless(ene.hero) && !notVisibleAndMostLieklyNotThere(ene.hero))
                 {
                     balance -= (int) ((ene.hero.HealthPercent + 20 - ene.hero.Deaths*4 + ene.hero.ChampionsKilled*4)*
@@ -372,9 +456,9 @@ namespace ARAMDetFull
 
             foreach (var aly in ally_champions)
             {
-                var reach = aly.reach + 500;
-                if (!aly.hero.IsDead && aly.hero.Distance(point, true) < reach * reach &&
-                    (aly.hero.Distance(ARAMSimulator.toNex.Position) < (point.Distance(ARAMSimulator.toNex.Position) + fearDistance + (ARAMSimulator.tankBal * -5) + (ARAMSimulator.agrobalance * 3))|| fightIsOn(aly.hero)))
+                var reach = (aly.reach-200<500)?500:(aly.reach - 200);
+                if (!aly.hero.IsDead && /*aly.hero.Distance(point, true) < reach * reach &&*/
+                    (Geometry.Distance(aly.hero, ARAMSimulator.toNex.Position) + reach < (Geometry.Distance(point, ARAMSimulator.toNex.Position) + fearDistance + (ARAMSimulator.tankBal * -5) + (ARAMSimulator.agrobalance * 3))))
                     balance += ((int)aly.hero.HealthPercent + 20 + 20 - aly.hero.Deaths * 4 + aly.hero.ChampionsKilled * 4);
             }
             var myBal = ((int)myControler.hero.HealthPercent + 20 + 20 - myControler.hero.Deaths * 10 +
@@ -402,8 +486,8 @@ namespace ARAMDetFull
 
         public static bool notVisibleAndMostLieklyNotThere(Obj_AI_Base unit)
         {
-            var distEneNex = ARAMSimulator.toNex.Position.Distance(unit.Position);
-            var distEneNexDeepest = ARAMSimulator.toNex.Position.Distance(ARAMSimulator.deepestAlly.Position);
+            var distEneNex = Geometry.Distance(ARAMSimulator.toNex.Position, unit.Position);
+            var distEneNexDeepest = Geometry.Distance(ARAMSimulator.toNex.Position, ARAMSimulator.deepestAlly.Position);
 
             return !ARAMSimulator.deepestAlly.IsDead && distEneNexDeepest + 1500 < distEneNex;
         }
@@ -453,6 +537,7 @@ namespace ARAMDetFull
                     .OrderBy(tur => tur.Distance(ObjectManager.Player.Position, true))
                     .FirstOrDefault();
         }
+
 
         /* LOGIC!!
          * 

@@ -99,7 +99,6 @@ namespace ARAMDetFull.Champions
 
         public override void farm()
         {
-            base.farm();
             if (player.ManaPercent < 55 || !Q.IsReady())
                 return;
 

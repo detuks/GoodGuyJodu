@@ -23,9 +23,9 @@ namespace ARAMDetFull.Champions
                         {
                             new ConditionalItem(ItemId.Sunfire_Cape),
                             new ConditionalItem(ItemId.Mercurys_Treads,ItemId.Ninja_Tabi,ItemCondition.ENEMY_AP),
-                            new ConditionalItem(ItemId.Iceborn_Gauntlet),
-                            new ConditionalItem(ItemId.Trinity_Force),
-                            new ConditionalItem(ItemId.Frozen_Heart),
+                            new ConditionalItem(ItemId.Abyssal_Scepter, ItemId.Iceborn_Gauntlet,ItemCondition.ENEMY_AP),
+                            new ConditionalItem(ItemId.Warmogs_Armor),
+                            new ConditionalItem(ItemId.Rylais_Crystal_Scepter),
                             new ConditionalItem(ItemId.Banshees_Veil),
                         },
                 startingItems = new List<ItemId>
@@ -101,11 +101,11 @@ namespace ARAMDetFull.Champions
         public override void setUpSpells()
         {
             Q = new Spell(SpellSlot.Q, 950f);
-            Q.SetSkillshot(0.25f, 90f, 2000f, true, SkillshotType.SkillshotLine);
+            Q.SetSkillshot(250, 90f, 2000f, true, SkillshotType.SkillshotLine);
            
-            W = new Spell(SpellSlot.W, 300f);
+            W = new Spell(SpellSlot.W, 400f);
             E = new Spell(SpellSlot.E, 350f);
-            R = new Spell(SpellSlot.R, 825f);
+            R = new Spell(SpellSlot.R, 755f);
         }
 
         public override void useSpells()

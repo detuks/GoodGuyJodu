@@ -230,7 +230,6 @@ namespace ARAMDetFull.Champions
 
         public override void farm()
         {
-            base.farm();
             if (Q.IsReady())
             {
                 var allMinionsQ = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q1.Range, MinionTypes.All);
