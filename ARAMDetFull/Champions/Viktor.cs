@@ -13,66 +13,22 @@ namespace ARAMDetFull.Champions
     {
         public Viktor()
         {
-            ARAMSimulator.defBuyThings = new List<ARAMSimulator.ItemToShop>
-                {//3198
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{},
-                        itemIds = new List<int>{1001,3028},
-                        sellItems = new List<int>{}
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{1001,3028},
-                        itemIds = new List<int>{1058}//rod
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{1058},
-                        itemIds = new List<int>{3020}
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{3020},
-                        itemIds = new List<int>{3089}
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{3089},
-                        itemIds = new List<int>{3198}
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{3198},
-                        itemIds = new List<int>{3174}
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{3174},
-                        itemIds = new List<int>{1058}
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{1058,3089},
-                        itemIds = new List<int>{3157}
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{3157},
-                        itemIds = new List<int>{3135}
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{3135},
-                        itemIds = new List<int>{3100}
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        last = true,
-                        itemsMustHave = new List<int>{3100},
-                        itemIds = new List<int>{}
-                    },
-                };
+            ARAMSimulator.champBuild = new Build
+            {
+                coreItems = new List<ConditionalItem>
+                        {
+                            new ConditionalItem(ItemId.Perfect_Hex_Core),
+                            new ConditionalItem(ItemId.Sorcerers_Shoes),
+                            new ConditionalItem(ItemId.Rylais_Crystal_Scepter),
+                            new ConditionalItem(ItemId.Rabadons_Deathcap),
+                            new ConditionalItem(ItemId.Abyssal_Scepter,ItemId.Zhonyas_Hourglass,ItemCondition.ENEMY_AP),
+                            new ConditionalItem(ItemId.Ludens_Echo,ItemId.Liandrys_Torment,ItemCondition.ENEMY_LOSING),
+                        },
+                startingItems = new List<ItemId>
+                        {
+                            ItemId.Needlessly_Large_Rod
+                        }
+            };
 
             Interrupter.OnPossibleToInterrupt += Interrupter_OnPossibleToInterrupt;
         }
@@ -86,7 +42,6 @@ namespace ARAMDetFull.Champions
 
         public override void useQ(Obj_AI_Base target)
         {
-            Console.WriteLine("cast Q");
             if (!Q.IsReady() || target == null)
                 return;
             Q.Cast(target);

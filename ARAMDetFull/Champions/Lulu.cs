@@ -30,9 +30,9 @@ namespace ARAMDetFull.Champions
                             new ConditionalItem(ItemId.Morellonomicon),
                             new ConditionalItem(ItemId.Sorcerers_Shoes),
                             new ConditionalItem(ItemId.Rabadons_Deathcap),
-                            new ConditionalItem(ItemId.Void_Staff),
-                            new ConditionalItem(ItemId.Zhonyas_Hourglass),
-                            new ConditionalItem(ItemId.Banshees_Veil),
+                            new ConditionalItem(ItemId.Void_Staff, ItemId.Abyssal_Scepter,ItemCondition.ENEMY_LOSING),
+                            new ConditionalItem(ItemId.Banshees_Veil,ItemId.Zhonyas_Hourglass,ItemCondition.ENEMY_AP),
+                            new ConditionalItem(ItemId.Lich_Bane),
                         },
                 startingItems = new List<ItemId>
                         {
@@ -116,7 +116,7 @@ namespace ARAMDetFull.Champions
             Q = new Spell(SpellSlot.Q, 925);
             Q2 = new Spell(SpellSlot.Q, 925); 
             W = new Spell(SpellSlot.W, 600);
-            E = new Spell(SpellSlot.E, 550);
+            E = new Spell(SpellSlot.E, 600);
             R = new Spell(SpellSlot.R, 900);
             Q.SetSkillshot(0.25f, 70, 1450, false, SkillshotType.SkillshotLine);
         }

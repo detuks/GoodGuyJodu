@@ -104,7 +104,7 @@ namespace ARAMDetFull.Champions
         public override void setUpSpells()
         {
             //Create the spells
-            Q = new Spell(SpellSlot.Q, 600);
+            Q = new Spell(SpellSlot.Q, 500);
             W = new Spell(SpellSlot.W, 700);
             E = new Spell(SpellSlot.E, 325);
             R = new Spell(SpellSlot.R, 800);
@@ -266,7 +266,7 @@ namespace ARAMDetFull.Champions
             List<Vector2> points = new List<Vector2>();
             Vector2 rTpos = Prediction.GetPrediction(target, 0.10f).UnitPosition.To2D();
             Vector2 startP = player.ServerPosition.To2D();
-            Vector2 endP = startP.Extend(rTpos, 1100 + bonusW);
+            Vector2 endP = startP.Extend(rTpos, 900 + bonusW);
 
             Vector2 p = (rTpos - startP);
             var per = p.Perpendicular().Normalized() * (Q.Width / 2 + bonusW);

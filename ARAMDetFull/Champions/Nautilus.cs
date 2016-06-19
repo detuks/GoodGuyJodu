@@ -26,7 +26,7 @@ namespace ARAMDetFull.Champions
                             new ConditionalItem(ItemId.Abyssal_Scepter, ItemId.Iceborn_Gauntlet,ItemCondition.ENEMY_AP),
                             new ConditionalItem(ItemId.Warmogs_Armor),
                             new ConditionalItem(ItemId.Rylais_Crystal_Scepter),
-                            new ConditionalItem(ItemId.Banshees_Veil),
+                            new ConditionalItem(ItemId.Banshees_Veil,ItemId.Thornmail,ItemCondition.ENEMY_AP),
                         },
                 startingItems = new List<ItemId>
                         {

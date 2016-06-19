@@ -19,9 +19,9 @@ namespace ARAMDetFull.Champions
                         {
                             new ConditionalItem(ItemId.Rod_of_Ages),
                             new ConditionalItem(ItemId.Sorcerers_Shoes),
+                            new ConditionalItem(ItemId.Archangels_Staff),
+                            new ConditionalItem(ItemId.Spirit_Visage,ItemId.Frozen_Heart,ItemCondition.ENEMY_AP),
                             new ConditionalItem(ItemId.Rabadons_Deathcap),
-                            new ConditionalItem(ItemId.Rylais_Crystal_Scepter),
-                            new ConditionalItem(ItemId.Void_Staff),
                             new ConditionalItem(ItemId.Banshees_Veil),
                         },
                 startingItems = new List<ItemId>

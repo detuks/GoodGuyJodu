@@ -184,7 +184,7 @@ namespace ARAMDetFull
             if (!CanMove())
                 return;
             if (holdAreaRadius < 0)
-                holdAreaRadius = 90;
+                holdAreaRadius = 160;
             if (MyHero.ServerPosition.Distance(position) < holdAreaRadius)
             {
                 if (MyHero.Path.Count() > 1)

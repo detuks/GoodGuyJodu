@@ -21,7 +21,7 @@ namespace ARAMDetFull.Champions
                 {
                     new ConditionalItem(ItemId.The_Black_Cleaver),
                     new ConditionalItem(ItemId.Mercurys_Treads,ItemId.Ninja_Tabi,ItemCondition.ENEMY_AP),
-                    new ConditionalItem(ItemId.Sunfire_Cape, ItemId.Banshees_Veil, ItemCondition.ENEMY_AP),
+                    new ConditionalItem(ItemId.Banshees_Veil,ItemId.Sunfire_Cape,  ItemCondition.ENEMY_AP),
                     new ConditionalItem(ItemId.Frozen_Mallet),
                     new ConditionalItem(ItemId.Spirit_Visage, ItemId.Randuins_Omen, ItemCondition.ENEMY_AP),
                     new ConditionalItem(ItemId.Last_Whisper),
@@ -50,6 +50,7 @@ namespace ARAMDetFull.Champions
             if (unit.IsMe && target is Obj_AI_Hero && Q.IsReady() && !GarenE)
             {
                 Q.Cast();
+                Aggresivity.addAgresiveMove(new AgresiveMove(1000, 2500, true));
                 player.IssueOrder(GameObjectOrder.AutoAttack, target);
             }
         }
@@ -57,13 +58,19 @@ namespace ARAMDetFull.Champions
         public override void useQ(Obj_AI_Base target)
         {
             if (Q.IsReady() && !GarenE && player.CountEnemiesInRange(400) > 1)
+            {
                 Q.Cast();
+                Aggresivity.addAgresiveMove(new AgresiveMove(100, 2500, true));
+            }
         }
 
         public override void useW(Obj_AI_Base target)
         {
             if (W.IsReady())
+            {
                 W.Cast();
+                Aggresivity.addAgresiveMove(new AgresiveMove(50, 2500, true));
+            }
         }
 
         public override void useE(Obj_AI_Base target)
@@ -71,6 +78,7 @@ namespace ARAMDetFull.Champions
             if (!E.IsReady() || target == null || GarenE)
                 return;
             E.Cast();
+            Aggresivity.addAgresiveMove(new AgresiveMove(150,3000,true));
         }
 
 
@@ -109,7 +117,7 @@ namespace ARAMDetFull.Champions
         public override void setUpSpells()
         {
             //Create the spells
-            Q = new Spell(SpellSlot.Q, player.AttackRange);
+            Q = new Spell(SpellSlot.Q, player.AttackRange+150);
             W = new Spell(SpellSlot.W,350);
             E = new Spell(SpellSlot.E, 330);
             R = new Spell(SpellSlot.R, 400);

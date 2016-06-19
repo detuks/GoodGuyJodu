@@ -29,9 +29,9 @@ namespace ARAMDetFull.Champions
                             new ConditionalItem(ItemId.Nashors_Tooth),
                             new ConditionalItem(ItemId.Sorcerers_Shoes),
                             new ConditionalItem(ItemId.Morellonomicon),
+                            new ConditionalItem(ItemId.Ludens_Echo,ItemId.Rylais_Crystal_Scepter,ItemCondition.ENEMY_LOSING),
                             new ConditionalItem(ItemId.Rabadons_Deathcap),
-                            new ConditionalItem(ItemId.Void_Staff),
-                            new ConditionalItem(ItemId.Zhonyas_Hourglass),
+                            new ConditionalItem(ItemId.Abyssal_Scepter,ItemId.Zhonyas_Hourglass,ItemCondition.ENEMY_AP),
                         },
                 startingItems = new List<ItemId>
                         {

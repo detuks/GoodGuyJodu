@@ -107,24 +107,24 @@ namespace ARAMDetFull
             private int lastCast = 0;
             public override void useSpell()
             {
-                if (!spell.IsReady())
+                if (!spell.IsReady() || lastCast + 700 > LXOrbwalker.now)
                     return;
+                lastCast = LXOrbwalker.now;
 
-                if (spell.Instance.Name.Equals("snowballfollowupcast"))
+                if (spell.Instance.Name.ToLower().Equals("snowballfollowupcast"))
                 {
                     if (snowed != null)
                     {
-                       // if (MapControl.fightIsOn(snowed))
-                       //     spell.Cast();
+                        if (MapControl.safeGap(snowed))
+                            spell.Cast();
                     }
                 }
                 else
                 {
                     var tar = ARAMTargetSelector.getBestTarget(spell.Range);
-                    if (tar != null && lastCast+500< LXOrbwalker.now)
+                    if (tar != null )
                     {
-                        lastCast = LXOrbwalker.now;
-                       // spell.Cast(tar);
+                        spell.Cast(tar);
                         snowed = tar;
                     }
                 }

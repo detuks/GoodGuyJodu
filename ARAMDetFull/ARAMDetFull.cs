@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using ARAMDetFull.Champions;
 using LeagueSharp;
@@ -76,8 +78,7 @@ namespace ARAMDetFull
                 Config.AddToMainMenu();
                 Drawing.OnDraw += onDraw;
                 Game.OnUpdate += OnGameUpdate;
-                Drawing.OnDraw += onDraw;
-                CustomEvents.Game.OnGameEnd += OnGameEnd;
+                Game.OnEnd += OnGameEnd;
                 ARAMSimulator.setupARMASimulator();
             }
             catch(Exception ex)
@@ -88,13 +89,10 @@ namespace ARAMDetFull
 
         private static void OnGameEnd(EventArgs args)
         {
-            Utility.DelayAction.Add(10000, closeGame);
-        }
-
-        private static void closeGame()
-        {
+            Thread.Sleep(5000);//Stole from myo lol
             Game.Quit();
         }
+        
 
         private static void onDraw(EventArgs args)
         {
@@ -102,7 +100,7 @@ namespace ARAMDetFull
             {
                 if (!Config.Item("debugDraw").GetValue<bool>())
                     return;
-                Drawing.DrawText(100, 100, Color.Red, "bal: " + ARAMSimulator.balance+ " fear: "+MapControl.fearDistance );
+                Drawing.DrawText(100, 100, Color.Red, "2bal: " + ARAMSimulator.balance+ " fear: "+MapControl.fearDistance );
                //return;
                // ((Jayce)ARAMSimulator.champ).drawCD();
                 foreach (var hel in ObjectManager.Get<Obj_AI_Base>().Where(r => r.IsValid && !r.IsDead && r.Name.Contains("ealth")))

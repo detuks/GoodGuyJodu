@@ -24,11 +24,11 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                         {
-                            new ConditionalItem(ItemId.Blade_of_the_Ruined_King),
-                            new ConditionalItem(ItemId.Berserkers_Greaves),
                             new ConditionalItem(ItemId.Runaans_Hurricane_Ranged_Only),
+                            new ConditionalItem(ItemId.Berserkers_Greaves),
+                            new ConditionalItem(ItemId.Blade_of_the_Ruined_King),
                             new ConditionalItem(ItemId.The_Bloodthirster),
-                            new ConditionalItem(ItemId.Last_Whisper),
+                            new ConditionalItem(ItemId.Guinsoos_Rageblade),
                             new ConditionalItem(ItemId.Infinity_Edge),
                         },
                 startingItems = new List<ItemId>

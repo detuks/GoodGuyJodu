@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
@@ -128,7 +129,7 @@ namespace ARAMDetFull
                             if ( spell.CastType.IsSkillShot())
                             {
                                 bool coll = spell.CollisionObjects.Length>1;
-                                spl.SetSkillshot(spell.Delay,spell.Width,spell.MissileSpeed,coll,spell.SpellType.GetSkillshotType());
+                                spl.SetSkillshot(spell.Delay,spell.Radius,spell.MissileSpeed,coll,spell.SpellType.GetSkillshotType());
                             }
                             spells.Add(spell, spl);
                         }
@@ -142,6 +143,23 @@ namespace ARAMDetFull
                 }
             }
 
+            public int bonusSpellBalance()
+            {
+                float manaUsed = 0;
+                int bal = 0;
+                foreach (var spell in spells)
+                {
+                    if (!spell.Value.IsReady())
+                        continue;
+                    manaUsed += spell.Value.ManaCost;
+                    if (hero.MaxMana < 300 || hero.Mana- manaUsed>=0)
+                    {
+                        bal += (spell.Value.Slot == SpellSlot.R) ? 15 : 7;
+                    }
+                }
+                return bal;
+            }
+
             private int lastMinionSpellUse = LXOrbwalker.now;
             public void useSpellsOnMinions()
             {
@@ -150,6 +168,8 @@ namespace ARAMDetFull
                     if (lastMinionSpellUse + 277 > LXOrbwalker.now)
                         return;
                     lastMinionSpellUse = LXOrbwalker.now;
+                    if (hero.MaxMana > 300 && hero.ManaPercent < 78)
+                        return;
                     foreach (var spell in spells)
                     {
                         if (spell.Value.Instance.Cooldown > 15 || !spell.Value.IsReady() || spell.Value.ManaCost > hero.Mana || spell.Key.SpellTags == null || !spell.Key.SpellTags.Contains(SpellTags.Damage))
@@ -224,18 +244,18 @@ namespace ARAMDetFull
                                 if (spell.Key.SpellTags != null && spell.Key.SpellTags.Any(movementSpells.Contains))
                                 {
                                     if (hero.HealthPercent < 25 && hero.CountEnemiesInRange(400)>0)
-                                {
-                                    Console.WriteLine("Cast esacpe location: " + spell.Key.Slot);
-                                    spell.Value.Cast(hero.Position.Extend(ARAMSimulator.fromNex.Position, 1235));
+                                    {
+                                        Console.WriteLine("Cast esacpe location: " + spell.Key.Slot);
+                                        spell.Value.Cast(hero.Position.Extend(ARAMSimulator.fromNex.Position, 1235));
                                         return;
                                     }
                                     else
                                     {
                                         var bTarg = ARAMTargetSelector.getBestTarget(spell.Value.Range, true);
-                                        if (bTarg != null && safeGap(bTarg))
-                                    {
-                                        Console.WriteLine("Cast attack location gap: " + spell.Key.Slot);
-                                        spell.Value.CastIfHitchanceEquals(bTarg, HitChance.High);
+                                        if (bTarg != null && safeGap(hero.Position.Extend(bTarg.Position,spell.Key.Range).To2D()))
+                                        {
+                                            Console.WriteLine("Cast attack location gap: " + spell.Key.Slot);
+                                            spell.Value.CastIfHitchanceEquals(bTarg, HitChance.High);
                                             return;
                                         }
                                     }
@@ -295,7 +315,7 @@ namespace ARAMDetFull
                 { }
             }
             
-            public float canDoDmgTo(Obj_AI_Base target)
+            public float canDoDmgTo(Obj_AI_Base target, bool ignoreRange = false)
             {
                 float dmgreal = 0;
                 float mana = 0;
@@ -309,7 +329,7 @@ namespace ARAMDetFull
 
                         float dmg = 0;
                         var checkRange = spell.Range + 250;
-                        if (hero.Distance(target, true) < checkRange*checkRange)
+                        if (ignoreRange || hero.Distance(target, true) < checkRange*checkRange)
                             dmg = spell.GetDamage(target);
                         if (dmg != 0)
                             mana += hero.Spellbook.GetSpell(spell.Slot).ManaCost;
@@ -333,13 +353,13 @@ namespace ARAMDetFull
                 int assistValue = (ARAMSimulator.getType() == ARAMSimulator.ChampType.Support
                                    || ARAMSimulator.getType() == ARAMSimulator.ChampType.Tank ||
                                    ARAMSimulator.getType() == ARAMSimulator.ChampType.TankAS)
-                    ? 25
-                    : 10;
+                    ? 30
+                    : 20;
                 int kdaScore = myControler.hero.ChampionsKilled*50 + myControler.hero.Assists* assistValue - myControler.hero.Deaths*50;
                 int timeFear = (ARAMDetFull.gameStart + 300*1000 < ARAMDetFull.now) ? 0 : -350;
-                int healthFear = (int)(-(100 - myControler.hero.HealthPercent)*2);
+                int healthFear = (int)(-(60 - myControler.hero.HealthPercent)*2);
                 int score = kdaScore + timeFear +100;
-                return (score < -550) ? -550 + healthFear : ((score > 500) ? 500 : score)+ healthFear;
+                return (score < -550) ? -550 + healthFear : ((score > 500) ? 500 : score) + healthFear;
             }
         }
 
@@ -442,7 +462,7 @@ namespace ARAMDetFull
             int balance = (point.To3D().UnderTurret(true)) ? -80 : (point.To3D().UnderTurret(false)) ? 80 : 0;
             foreach (var ene in enemy_champions)
             {
-                var reach = (ARAMDetFull.gameStart + 1000 * 1000 < ARAMDetFull.now)?100:ene.reach + rangePlus;
+                var reach = ene.reach + rangePlus;
                 if (!ene.hero.IsDead && ene.hero.Distance(point, true) < reach* reach && !unitIsUseless(ene.hero) && !notVisibleAndMostLieklyNotThere(ene.hero))
                 {
                     balance -= (int) ((ene.hero.HealthPercent + 20 - ene.hero.Deaths*4 + ene.hero.ChampionsKilled*4)*
@@ -461,7 +481,7 @@ namespace ARAMDetFull
                     balance += ((int)aly.hero.HealthPercent + 20 + 20 - aly.hero.Deaths * 4 + aly.hero.ChampionsKilled * 4);
             }
             var myBal = ((int)myControler.hero.HealthPercent + 20 + 20 - myControler.hero.Deaths * 10 +
-                         myControler.hero.ChampionsKilled*10);
+                         myControler.hero.ChampionsKilled*10) + myControler.bonusSpellBalance();
             balance += (myBal<0)?10:myBal;
             return balance;
         }
@@ -498,7 +518,7 @@ namespace ARAMDetFull
 
         public static bool safeGap(Obj_AI_Base target)
         {
-            return safeGap(target.Position.To2D()) || MapControl.fightIsOn(target);
+            return safeGap(target.Position.To2D()) || MapControl.fightIsOn(target) || (!ARAMTargetSelector.IsInvulnerable(target) && target.Health < myControler.canDoDmgTo(target,true)/2);
         }
 
         public static bool safeGap(Vector2 position)

@@ -85,7 +85,7 @@ namespace ARAMDetFull
         {
             "Ashe", "Caitlyn", "Corki", "Draven", "Ezreal", "Graves",  "KogMaw", "MissFortune", 
               "Sivir", "Jinx","Jayce", "Gangplank",
-            "Talon", "Tristana", "Twitch", "Urgot", "Varus",  "Zed", "Lucian","Yasuo","MasterYi","Quinn","Kalista","Vayne"
+            "Talon", "Tristana", "Twitch", "Urgot", "Varus",  "Zed", "Lucian","Yasuo","MasterYi","Quinn","Kalista","Vayne","Kindred"
 
         };
 
@@ -596,7 +596,7 @@ namespace ARAMDetFull
                 case "MasterYi":
                     champ = new MasterYi();
                     break;
-                case "Annie ":
+                case "Annie":
                     champ = new Annie();
                     break;
                 case "Ekko":
@@ -656,7 +656,10 @@ namespace ARAMDetFull
                 case "Taliyah":
                     champ = new Taliyah();
                     break;
-                    //Taliyah
+                case "Lissandra":
+                    champ = new Lissandra();
+                    break;
+                    //Lissandra
             }
         }
 
