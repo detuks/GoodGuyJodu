@@ -67,7 +67,6 @@ namespace ARAMDetFull
                 //Extra
                 Config.AddSubMenu(new Menu("Extra Sharp", "extra"));
                 Config.SubMenu("extra").AddItem(new MenuItem("debugDraw", "Debug draw")).SetValue(false);
-                Config.SubMenu("extra").AddItem(new MenuItem("supportChampPlus", "Support unsupported champs")).SetValue(true);
 
 
                 //Debug

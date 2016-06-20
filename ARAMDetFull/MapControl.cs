@@ -121,20 +121,17 @@ namespace ARAMDetFull
                 try
                 {
                     hero = champ;
-                    if(ARAMDetFull.Config.Item("supportChampPlus").GetValue<bool>())
-                    { 
-                        foreach (var spell in champSpells)
+                    foreach (var spell in champSpells)
+                    {
+                        var spl= new Spell(spell.Slot, spell.Range);
+                        if ( spell.CastType.IsSkillShot())
                         {
-                            var spl= new Spell(spell.Slot, spell.Range);
-                            if ( spell.CastType.IsSkillShot())
-                            {
-                                bool coll = spell.CollisionObjects.Length>1;
-                                spl.SetSkillshot(spell.Delay,spell.Radius,spell.MissileSpeed,coll,spell.SpellType.GetSkillshotType());
-                            }
-                            spells.Add(spell, spl);
+                            bool coll = spell.CollisionObjects.Length>1;
+                            spl.SetSkillshot(spell.Delay,spell.Radius,spell.MissileSpeed,coll,spell.SpellType.GetSkillshotType());
                         }
-                        getReach();
+                        spells.Add(spell, spl);
                     }
+                    getReach();
                     LXOrbwalker.farmRange = reach;
                 }
                 catch (Exception ex)
