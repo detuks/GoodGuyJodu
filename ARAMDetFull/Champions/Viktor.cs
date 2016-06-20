@@ -45,7 +45,7 @@ namespace ARAMDetFull.Champions
             if (!Q.IsReady() || target == null)
                 return;
             Q.Cast(target);
-            player.IssueOrder(GameObjectOrder.AttackUnit, target);
+            Aggresivity.addAgresiveMove(new AgresiveMove(50,1200,true));
         }
 
         public override void useW(Obj_AI_Base target)

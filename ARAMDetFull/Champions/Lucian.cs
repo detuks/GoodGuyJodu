@@ -57,10 +57,10 @@ namespace ARAMDetFull.Champions
 
             if (W.IsReady() && !Q.IsReady() && player.Mana >= 120 && !tooEasyKill(hero))
             {
-                W.Cast(hero.Position);
+                W.Cast(hero);
             }
 
-            if (!useQonTarg(hero, QhitChance.hard)) ;
+            if (!useQonTarg(hero, QhitChance.hard))
                 eAwayFrom();
         }
 
@@ -75,15 +75,15 @@ namespace ARAMDetFull.Champions
         {
             if (!W.IsReady())
                 return;
-            if (player.HealthPercent < 35)
-                W.Cast(player.Position);
+            W.Cast(player);
         }
 
         public override void useE(Obj_AI_Base target)
         {
             if (!E.IsReady() || target == null)
                 return;
-            E.Cast();
+            if(safeGap(player.Position.Extend(target.Position,400).To2D()))
+                E.Cast(target);
         }
 
 
@@ -91,14 +91,19 @@ namespace ARAMDetFull.Champions
         {
             if (!R.IsReady() || target == null)
                 return;
-            if (safeGap(target))
-                R.Cast(target);
+            R.Cast(target.Position);
         }
 
         public override void useSpells()
         {
-            var tar = ARAMTargetSelector.getBestTarget(670);
+            var tar = ARAMTargetSelector.getBestTarget(Q.Range);
             if (tar != null) useQ(tar);
+            tar = ARAMTargetSelector.getBestTarget(W.Range);
+            if (tar != null) useW(tar);
+            tar = ARAMTargetSelector.getBestTarget(E.Range);
+            if (tar != null) useE(tar);
+            tar = ARAMTargetSelector.getBestTarget(R.Range);
+            if (tar != null) useR(tar);
         }
 
         public override void setUpSpells()
@@ -106,8 +111,11 @@ namespace ARAMDetFull.Champions
             //Create the spells
             Q = new Spell(SpellSlot.Q, 500);
             W = new Spell(SpellSlot.W, 700);
-            E = new Spell(SpellSlot.E, 325);
+            E = new Spell(SpellSlot.E, 825);
             R = new Spell(SpellSlot.R, 800);
+
+            W.SetSkillshot(0.30f, 80f, 1600f, true, SkillshotType.SkillshotLine);
+            R.SetSkillshot(0.2f, 110f, 2500, true, SkillshotType.SkillshotLine);
         }
 
         public float fullComboOn(Obj_AI_Base targ)

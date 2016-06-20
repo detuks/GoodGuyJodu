@@ -136,7 +136,7 @@ namespace ARAMDetFull
             CheckAutoWindUp();
             if (MyHero.IsChannelingImportantSpell() || CustomOrbwalkMode)
                 return;
-            var target = GetPossibleTarget(onlyChamps || Aggresivity.getIgnoreMinions());
+            var target = GetPossibleTarget(onlyChamps);
             Orbwalk(goalPosition, target);
         }
 
@@ -265,7 +265,7 @@ namespace ARAMDetFull
             var camp = GetBestHeroTarget();
             if (camp != null)
                 return camp;
-
+            CurrentMode = (Aggresivity.getIgnoreMinions()) ? Mode.Lasthit : Mode.LaneClear;
             Obj_AI_Base tempTarget = null;
             /*turrets*/
             if (CurrentMode == Mode.LaneClear)
@@ -507,13 +507,7 @@ namespace ARAMDetFull
             return Vector2.DistanceSquared(target.Position.To2D(), MyHero.ServerPosition.To2D()) <= myRange * myRange;
         }
 
-        public static Mode CurrentMode
-        {
-            get
-            {
-                return Mode.LaneClear;
-            }
-        }
+        public static Mode CurrentMode = Mode.LaneClear;
 
         public static void SetAttack(bool value)
         {

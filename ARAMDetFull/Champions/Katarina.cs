@@ -137,7 +137,7 @@ namespace ARAMDetFull.Champions
 
         public override void farm()
         {
-            if (!Orbwalking.CanMove(40)) return;
+            if (!LXOrbwalker.CanMove()) return;
             var allMinions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q.Range);
             var useQ = true;
             var useW = true;

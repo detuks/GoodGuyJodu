@@ -356,7 +356,7 @@ namespace ARAMDetFull
                     ? 30
                     : 20;
                 int kdaScore = myControler.hero.ChampionsKilled*50 + myControler.hero.Assists* assistValue - myControler.hero.Deaths*50;
-                int timeFear = (ARAMDetFull.gameStart + 300*1000 < ARAMDetFull.now) ? 0 : -350;
+                int timeFear = 0;
                 int healthFear = (int)(-(60 - myControler.hero.HealthPercent)*2);
                 int score = kdaScore + timeFear +100;
                 return (score < -550) ? -550 + healthFear : ((score > 500) ? 500 : score) + healthFear;

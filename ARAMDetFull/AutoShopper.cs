@@ -309,7 +309,7 @@ namespace ARAMDetFull
             if (condition == ItemCondition.ENEMY_LOSING)
             {
                 var allTowers = ObjectManager.Get<Obj_AI_Turret>().ToList();
-                if (allTowers.Count(tow => tow.IsDead && tow.IsEnemy) > allTowers.Count(tow => tow.IsDead && tow.IsAlly))
+                if (allTowers.Count(tow => tow.IsDead && tow.IsEnemy) < allTowers.Count(tow => tow.IsDead && tow.IsAlly))
                     selected = primary;
                 else
                     selected = secondary;
