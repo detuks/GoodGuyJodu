@@ -17,11 +17,11 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                         {
-                            new ConditionalItem(ItemId.Rabadons_Deathcap),
-                            new ConditionalItem(ItemId.Sorcerers_Shoes),
-                            new ConditionalItem(ItemId.Void_Staff),
-                            new ConditionalItem(ItemId.Zhonyas_Hourglass),
                             new ConditionalItem(ItemId.Ludens_Echo),
+                            new ConditionalItem(ItemId.Sorcerers_Shoes),
+                            new ConditionalItem(ItemId.Rabadons_Deathcap),
+                            new ConditionalItem(ItemId.Abyssal_Scepter, ItemId.Void_Staff,ItemCondition.ENEMY_AP),
+                            new ConditionalItem(ItemId.Zhonyas_Hourglass),
                             new ConditionalItem(ItemId.Banshees_Veil),
                         },
                 startingItems = new List<ItemId>
@@ -43,6 +43,7 @@ namespace ARAMDetFull.Champions
             if (!W.IsReady())
                 return;
             W.Cast();
+            Aggresivity.addAgresiveMove(new AgresiveMove(20,2000));
         }
 
         public override void useE(Obj_AI_Base target)
@@ -57,7 +58,7 @@ namespace ARAMDetFull.Champions
         {
             if (!R.IsReady())
                 return;
-            if (player.CountEnemiesInRange(450) > 1 || player.HealthPercent<25)
+            if (R.GetDamage(target)>target.Health || player.CountEnemiesInRange(450) > 1 || player.HealthPercent<25)
                 R.Cast();
         }
 

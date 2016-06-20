@@ -828,6 +828,9 @@ namespace ARAMDetFull
         [DllImport("user32.dll")]
         static extern bool PostMessage(IntPtr hWnd, UInt32 Msg, int wParam, int lParam);
 
+        private static bool needRecall = false;
+        private static int lastRecall = 0;
+
         [SecurityPermission(SecurityAction.Assert, Unrestricted = true)]
         public static void updateArmaPlay()
         {
@@ -873,6 +876,29 @@ namespace ARAMDetFull
             balance = (ARAMTargetSelector.IsInvulnerable(player) || player.IsZombie) ? 250 : MapControl.balanceAroundPointAdvanced(player.Position.To2D(), 380 - agrobalance * 5) + agrobalance;
             LXOrbwalker.inDanger = balance < 0;
 
+            if (Game.MapId == GameMapId.SummonersRift)
+            {
+                if (player.IsRecalling())
+                    return;
+                if (player.InFountain() && player.HealthPercent < 90)
+                {
+                    player.IssueOrder(GameObjectOrder.Stop, player);
+                    return;
+                }
+                if(player.HealthPercent>85)
+                    needRecall = false;
+                if (((player.HealthPercent < 32 && player.CountEnemiesInRange(1000)==0) || needRecall) && balance > 5 )
+                {
+                    if (lastRecall + 9000 < LXOrbwalker.now)
+                    {
+                        needRecall = true;
+                        var recall = new Spell(SpellSlot.Recall);
+                        recall.Cast();
+                        lastRecall = LXOrbwalker.now;
+                    }
+                }
+            }
+
             if (champ != null)
             {
                 try
@@ -913,13 +939,14 @@ namespace ARAMDetFull
             }
 
             deepestAlly = HeroManager.Allies.OrderBy(al => toNex.Position.Distance(al.Position, true)).FirstOrDefault();
-            var lookRange = player.AttackRange + ((player.IsMelee) ? 160 : 35);
+            var lookRange = player.AttackRange + ((player.IsMelee) ? 260 : 155);
             var easyKill =
                HeroManager.Enemies.FirstOrDefault(ene => !ene.IsDead && ene.Distance(player, true) < lookRange * lookRange &&
                                                          !ARAMTargetSelector.IsInvulnerable(ene) && ene.Health / 1.5 < player.GetAutoAttackDamage(ene));
 
             if (easyKill != null)
             {
+                Aggresivity.addAgresiveMove(new AgresiveMove(45,1500,true));
                 //Console.WriteLine("go get easy");
                 LXOrbwalker.OrbwalkTo(easyKill.Position.To2D().Extend(fromNex.Position.To2D(), player.AttackRange*0.4f).To3D(),true);
             }
