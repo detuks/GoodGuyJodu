@@ -317,14 +317,14 @@ namespace ARAMDetFull
                     {
                         new ConditionalItem(ItemId.Mercurys_Treads),
                         new ConditionalItem(ItemId.Sunfire_Cape),
-                        new ConditionalItem(ItemId.Banshees_Veil,ItemId.Thornmail,ItemCondition.ENEMY_MR),
+                        new ConditionalItem(ItemId.Banshees_Veil,ItemId.Thornmail,ItemCondition.ENEMY_AP),
                         new ConditionalItem(ItemId.Frozen_Mallet),
-                        new ConditionalItem(ItemId.Maw_of_Malmortius,ItemId.Iceborn_Gauntlet,ItemCondition.ENEMY_MR),
+                        new ConditionalItem(ItemId.Maw_of_Malmortius,ItemId.Iceborn_Gauntlet,ItemCondition.ENEMY_AP),
                         new ConditionalItem(ItemId.Warmogs_Armor),
                     },
                     startingItems = new List<ItemId>
                     {
-                        ItemId.Phage,
+                        ItemId.Giants_Belt,
                     }
                 };
             }
@@ -864,6 +864,7 @@ namespace ARAMDetFull
             setRambo();
             if (player.IsDead || player.IsChannelingImportantSpell())
                 return;
+            MapControl.updateReaches();
 
             var closestEnemy = HeroManager.Enemies.Where(ene => !ene.IsDead && ene.IsTargetable && !ARAMTargetSelector.IsInvulnerable(ene)).OrderBy(ene =>  player.Position.Distance(ene.Position, true)).FirstOrDefault();
             if (closestEnemy != null && ramboMode)
@@ -873,7 +874,7 @@ namespace ARAMDetFull
             }
             agrobalance = Aggresivity.getAgroBalance();
 
-            balance = (ARAMTargetSelector.IsInvulnerable(player) || player.IsZombie) ? 250 : MapControl.balanceAroundPointAdvanced(player.Position.To2D(), 380 - agrobalance * 5) + agrobalance;
+            balance = (ARAMTargetSelector.IsInvulnerable(player) || player.IsZombie) ? 250 : MapControl.balanceAroundPointAdvanced(player.Position.To2D(), 250 - agrobalance * 5) + agrobalance;
             LXOrbwalker.inDanger = balance < 0;
 
             if (Game.MapId == GameMapId.SummonersRift)
@@ -895,7 +896,13 @@ namespace ARAMDetFull
                         var recall = new Spell(SpellSlot.Recall);
                         recall.Cast();
                         lastRecall = LXOrbwalker.now;
+                        return;
                     }
+                }
+                else if (needRecall)
+                {
+                    player.IssueOrder(GameObjectOrder.MoveTo, fromNex.Position.Randomize(534,1005));
+                    return;
                 }
             }
 

@@ -74,9 +74,6 @@ namespace ARAMDetFull.Champions
         {
             try
             {
-                if (!player.IsChannelingImportantSpell() || player.CountEnemiesInRange(450) == 0)
-                    ExecuteKillsteal();
-
                 if (player.IsChannelingImportantSpell())
                     return;
                 var tar = ARAMTargetSelector.getBestTarget(Q.Range);
@@ -96,7 +93,7 @@ namespace ARAMDetFull.Champions
 
         }
 
-        private void ExecuteKillsteal()
+        public override void killSteal()
         {
             var target = ARAMTargetSelector.getBestTarget(E.Range);
             if (target == null) return;

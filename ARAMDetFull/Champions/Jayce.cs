@@ -141,7 +141,7 @@ namespace ARAMDetFull.Champions
         public override void useSpells()
         {
             checkForm();
-            if (isHammer && R1.IsReady())
+            if (isHammer && R1.IsReady() && (player.CountEnemiesInRange(700) > 0 && !Q.IsReady()))
                 R1.Cast();
 
             if (!E1.IsReady() && !isHammer)
@@ -197,7 +197,8 @@ namespace ARAMDetFull.Champions
                 }//and wont die wih 1 AA
                 else if (!Q1.IsReady() && !W1.IsReady() && R1.IsReady() && hammerWillKill(target) && hamQCDRem == 0 && hamECDRem == 0)// will need to add check if other form skills ready
                 {
-                    R1.Cast();
+                    if(player.CountEnemiesInRange(700)>0 && !Q.IsReady())
+                        R1.Cast();
                 }
             }
             else
@@ -317,6 +318,11 @@ namespace ARAMDetFull.Champions
 
         }
 
+        public override void farm()
+        {
+
+        }
+
         public void castQEPred(Obj_AI_Hero target)
         {
             if (isHammer)
@@ -411,15 +417,15 @@ namespace ARAMDetFull.Champions
             {
                 if (isHammer && R2.IsReady())
                     R2.Cast();
-                if (!E1.IsReady() || !Q1.IsReady() || isHammer)
+                if(E1.IsReady())
+                    E1.Cast(getParalelVec(pos));
+                if (!Q1.IsReady() || isHammer)
                     return false;
                 
                 Vector3 bPos = player.ServerPosition - Vector3.Normalize(pos - player.ServerPosition) * 50;
 
                 player.IssueOrder(GameObjectOrder.MoveTo, bPos);
                 Q1.Cast(pos);
-                if (man)
-                    E1.Cast(getParalelVec(pos));
 
             }
             catch (Exception ex)

@@ -120,7 +120,7 @@ namespace ARAMDetFull
                 foreach (var ene in MapControl.enemy_champions)
                 {
                     var spos = Drawing.WorldToScreen(ene.hero.Position);
-                    Utility.DrawCircle(ene.hero.Position, ene.getReach() , Color.Green);
+                    Utility.DrawCircle(ene.hero.Position, ene.reach , Color.Green);
                 
                     Drawing.DrawText(spos.X, spos.Y, Color.Green,"Gold: "+ene.hero.Gold);
                 }

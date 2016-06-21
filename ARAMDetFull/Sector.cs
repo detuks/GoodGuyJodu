@@ -163,7 +163,7 @@ namespace ARAMDetFull
             {
                 Random r = new Random();
                 int x = 200 - r.Next(400);
-                int y = 200 - r.Next(400);
+                int y = 400 - r.Next(800);
 
 
                 result = new Vector2(center.X + x, center.Y + y);
@@ -172,7 +172,7 @@ namespace ARAMDetFull
                 {
                     count++;
                      x = 200 - r.Next(400);
-                     y = 200 - r.Next(400);
+                     y = 400 - r.Next(800);
 
                     result = new Vector2(center.X + x, center.Y + y);
                     if(count>10)

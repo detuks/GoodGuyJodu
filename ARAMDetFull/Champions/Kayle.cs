@@ -21,7 +21,7 @@ namespace ARAMDetFull.Champions
                         {
                             new ConditionalItem(ItemId.Nashors_Tooth),
                             new ConditionalItem(ItemId.Berserkers_Greaves),
-                            new ConditionalItem(ItemId.Runaans_Hurricane_Ranged_Only),
+                            new ConditionalItem(ItemId.Guinsoos_Rageblade),
                             new ConditionalItem(ItemId.Rabadons_Deathcap),
                             new ConditionalItem(ItemId.Lich_Bane),
                             new ConditionalItem(ItemId.Zhonyas_Hourglass),
@@ -116,8 +116,7 @@ namespace ARAMDetFull.Champions
                         }
                     }
                 }
-
-                Console.WriteLine(player.HealthPercent);
+                
                 var herolist = ObjectManager.Get<Obj_AI_Hero>()
                     .Where(
                         h =>
@@ -157,7 +156,8 @@ namespace ARAMDetFull.Champions
 
         public override void useE(Obj_AI_Base target)
         {
-            E.Cast();
+            if (E.IsReady() && target == null)
+                E.Cast();
         }
 
 

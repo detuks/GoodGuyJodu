@@ -54,13 +54,14 @@ namespace ARAMDetFull
             public float getReach()
             {
                 dangerReach = 0;
-                reach = (ARAMSimulator.player.Level < 7 && hero.IsEnemy) ? 750 : hero.AttackRange + 200;
+                reach = hero.AttackRange;
                 activeDangers = 0;
-
-                foreach (var slot in spellSlots)
+                foreach (var cSpell in champSpells)
                 {
-                    var spell = hero.Spellbook.GetSpell(slot);
-                    if ((spell.CooldownExpires - Game.Time) > 1.5f || hero.Spellbook.CanUseSpell(slot) == SpellState.NotLearned)
+                    if (cSpell.SpellTags == null || !cSpell.SpellTags.Contains(SpellTags.Damage))
+                        continue;
+                    var spell = hero.Spellbook.GetSpell(cSpell.Slot);
+                    if ((spell.CooldownExpires - Game.Time) > 3.5f)
                         continue;
                     var range = (spell.SData.CastRange < 1000) ? spell.SData.CastRange : 1000;
                     if (spell.SData.CastRange > range)
@@ -96,6 +97,8 @@ namespace ARAMDetFull
                         dangerReach = range;
                     }
                 }*/
+                var extra = (hero.IsEnemy) ? (100 - ObjectManager.Player.HealthPercent)*1.5f : 0;
+                reach += 150 + extra;
                 return reach;
             }
 
@@ -169,7 +172,7 @@ namespace ARAMDetFull
                         return;
                     foreach (var spell in spells)
                     {
-                        if (spell.Value.Instance.Cooldown > 15 || !spell.Value.IsReady() || spell.Value.ManaCost > hero.Mana || spell.Key.SpellTags == null || !spell.Key.SpellTags.Contains(SpellTags.Damage))
+                        if (spell.Value.Instance.Cooldown > 10 || !spell.Value.IsReady() || spell.Value.ManaCost > hero.Mana || spell.Key.SpellTags == null || !spell.Key.SpellTags.Contains(SpellTags.Damage))
                             continue;
                         var minions = MinionManager.GetMinions((spell.Value.Range != 0) ? spell.Value.Range : 500);
                         foreach (var minion in minions)
@@ -240,7 +243,7 @@ namespace ARAMDetFull
                         {
                                 if (spell.Key.SpellTags != null && spell.Key.SpellTags.Any(movementSpells.Contains))
                                 {
-                                    if (hero.HealthPercent < 25 && hero.CountEnemiesInRange(400)>0)
+                                    if (hero.HealthPercent < 25 && hero.CountEnemiesInRange(600)>0)
                                     {
                                         Console.WriteLine("Cast esacpe location: " + spell.Key.Slot);
                                         spell.Value.Cast(hero.Position.Extend(ARAMSimulator.fromNex.Position, 1235));
@@ -251,9 +254,11 @@ namespace ARAMDetFull
                                         var bTarg = ARAMTargetSelector.getBestTarget(spell.Value.Range, true);
                                         if (bTarg != null && safeGap(hero.Position.Extend(bTarg.Position,spell.Key.Range).To2D()))
                                         {
-                                            Console.WriteLine("Cast attack location gap: " + spell.Key.Slot);
-                                            spell.Value.CastIfHitchanceEquals(bTarg, HitChance.High);
-                                            return;
+                                            if (spell.Value.CastIfHitchanceEquals(bTarg, HitChance.VeryHigh))
+                                            {
+                                                Console.WriteLine("Cast attack location gap: " + spell.Key.Slot);
+                                                return;
+                                            }
                                         }
                                     }
                                 }
@@ -261,10 +266,12 @@ namespace ARAMDetFull
                                 {
                                     var bTarg = ARAMTargetSelector.getBestTarget(spell.Value.Range, true);
                                     if (bTarg != null)
-                                {
-                                    Console.WriteLine("Cast attack location: " + spell.Key.Slot);
-                                    spell.Value.CastIfHitchanceEquals(bTarg, HitChance.High);
-                                        return;
+                                    {
+                                        if (spell.Value.CastIfHitchanceEquals(bTarg, HitChance.VeryHigh))
+                                        {
+                                            Console.WriteLine("Cast attack location gap: " + spell.Key.Slot);
+                                            return;
+                                        }
                                     }
                                 }
                         }
@@ -365,6 +372,17 @@ namespace ARAMDetFull
         public static List<ChampControl> ally_champions = new List<ChampControl>();
 
         public static MyControl myControler;
+        public static void updateReaches()
+        {
+            foreach (var champ in enemy_champions)
+            {
+                champ.getReach();
+            }
+            foreach (var champ in ally_champions)
+            {
+                champ.getReach();
+            }
+        }
 
         public static void setupMapControl()
         {
