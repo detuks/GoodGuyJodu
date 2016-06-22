@@ -659,7 +659,10 @@ namespace ARAMDetFull
                 case "Lissandra":
                     champ = new Lissandra();
                     break;
-                    //Lissandra
+                //DrMundo
+                case "DrMundo":
+                    champ = new DrMundo();
+                    break;
             }
         }
 

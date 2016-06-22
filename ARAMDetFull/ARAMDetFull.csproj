@@ -126,6 +126,7 @@
     <Compile Include="Champions\MasterYi.cs" />
     <Compile Include="Champions\MissFortune.cs" />
     <Compile Include="Champions\Mordekaiser.cs" />
+    <Compile Include="Champions\DrMundo.cs" />
     <Compile Include="Champions\Nami.cs" />
     <Compile Include="Champions\Nautilus.cs" />
     <Compile Include="Champions\Nocturne.cs" />

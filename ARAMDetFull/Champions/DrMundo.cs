@@ -9,10 +9,10 @@ using SharpDX;
 
 namespace ARAMDetFull.Champions
 {
-    class Volibear : Champion
+    class DrMundo : Champion
     {
 
-        public Volibear()
+        public DrMundo()
         {
             ARAMSimulator.champBuild = new Build
             {
@@ -31,21 +31,14 @@ namespace ARAMDetFull.Champions
                         }
             };
             LXOrbwalker.BeforeAttack += beforeAttack;
-            Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
-            Console.WriteLine("Volibear in");
         }
-
-
-        private void OnProcessSpell(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
-        {
-
-        }
+        
 
         private void beforeAttack(LXOrbwalker.BeforeAttackEventArgs args)
         {
-            if (args.Unit.IsMe && args.Target is Obj_AI_Hero && Q.IsReady())
+            if (args.Unit.IsMe && args.Target is Obj_AI_Hero && E.IsReady())
             {
-                Q.Cast();
+                E.Cast();
                 Aggresivity.addAgresiveMove(new AgresiveMove(105, 3500, true));
             }
         }
@@ -54,15 +47,13 @@ namespace ARAMDetFull.Champions
         {
             if (!Q.IsReady() || target == null)
                 return;
-            Q.Cast();
-            Aggresivity.addAgresiveMove(new AgresiveMove(145, 4000,true));
+            Q.Cast(target);
         }
 
         public override void useW(Obj_AI_Base target)
         {
-            if (!W.IsReady() || target == null || target.HealthPercent>65)
+            if (!W.IsReady() || target == null || target.HealthPercent > 65)
                 return;
-            
             W.CastOnUnit(target);
         }
 
@@ -71,31 +62,41 @@ namespace ARAMDetFull.Champions
             if (!E.IsReady() || target == null)
                 return;
             E.Cast();
+            Aggresivity.addAgresiveMove(new AgresiveMove(105, 5000, true));
         }
 
         public override void useR(Obj_AI_Base target)
         {
             if (target == null || !R.IsReady())
                 return;
-            if (player.CountEnemiesInRange(450) > 1)
+            if (player.HealthPercent < 60)
             {
                 R.Cast();
-                Aggresivity.addAgresiveMove(new AgresiveMove(105, 8000, false));
+                Aggresivity.addAgresiveMove(new AgresiveMove(65, 12000, true));
             }
+        }
+
+        public bool isBurning()
+        {
+            return ObjectManager.Player.HasBuff("BurningAgony");
         }
 
         public override void useSpells()
         {
             if (player.IsChannelingImportantSpell())
                 return;
-
+            if (W.IsReady())
+            {
+                if (isBurning() && player.CountEnemiesInRange(450) == 0)
+                    W.Cast();
+                if (!isBurning() && player.CountEnemiesInRange(450) > 0)
+                    W.Cast();
+            }
 
             var tar = ARAMTargetSelector.getBestTarget(Q.Range);
             if (tar != null) useQ(tar);
             tar = ARAMTargetSelector.getBestTarget(E.Range);
             if (tar != null) useE(tar);
-            tar = ARAMTargetSelector.getBestTarget(W.Range);
-            if (tar != null) useW(tar);
             tar = ARAMTargetSelector.getBestTarget(R.Range);
             if (tar != null) useR(tar);
         }
@@ -103,29 +104,14 @@ namespace ARAMDetFull.Champions
 
         public override void setUpSpells()
         {
-            Q = new Spell(SpellSlot.Q, 520);
-            W = new Spell(SpellSlot.W, 400);
-            E = new Spell(SpellSlot.E, 400);
-            R = new Spell(SpellSlot.R, 240);
+            Q = new Spell(SpellSlot.Q, 1000);
+            W = new Spell(SpellSlot.W, 325);
+            E = new Spell(SpellSlot.E, 150);
+            R = new Spell(SpellSlot.R);
 
-            //  R.SetSkillshot(0.2f, 320, float.MaxValue, false, SkillshotType.SkillshotCircle);
+            Q.SetSkillshot(0.275f, 60, 1850, true, SkillshotType.SkillshotLine);
 
         }
-
-
-        public override void farm()
-        {
-            if (player.ManaPercent < 65)
-                return;
-
-            var AllMinions = MinionManager.GetMinions(player.ServerPosition, Q.Range, MinionTypes.All, MinionTeam.Enemy, MinionOrderTypes.Health);
-            foreach (var minion in AllMinions)
-            {
-                if (E.IsReady() && E.GetDamage(minion) > minion.Health)
-                {
-                    E.Cast(minion);
-                }
-            }
-        }
+        
     }
 }
