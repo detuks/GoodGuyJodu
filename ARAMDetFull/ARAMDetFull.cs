@@ -70,8 +70,8 @@ namespace ARAMDetFull
             Game.PrintChat("ARAm - Sharp by DeTuKs");
             try
             {
-                defaultOut = System.Console.Out;
-                System.Console.SetOut(new ErrorLogger(defaultOut));
+                //defaultOut = System.Console.Out;
+               // System.Console.SetOut(new ErrorLogger(defaultOut));
 
                 Config = new Menu("ARAM", "Yasuo", true);
                 
