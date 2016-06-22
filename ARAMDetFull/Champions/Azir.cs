@@ -247,7 +247,7 @@ namespace ARAMDetFull.Champions
 
         public bool interactsOnlyWithTarg(Obj_AI_Hero target, Obj_AI_Base sol, float distColser)
         {
-            foreach (var hero in ObjectManager.Get<Obj_AI_Hero>().Where(obj => obj.IsValid && obj.IsEnemy && obj.NetworkId != target.NetworkId))
+            foreach (var hero in HeroManager.Enemies.Where(obj => obj != null && obj.IsValid && obj.NetworkId != target.NetworkId))
             {
                 float myDistToIt = player.Distance(hero);
                 PredictionOutput po = Prediction.GetPrediction(hero, myDistToIt / 1500f);

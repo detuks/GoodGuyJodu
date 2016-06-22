@@ -80,11 +80,10 @@ namespace ARAMDetFull.Champions
 
         public override void setUpSpells()
         {
-
             Q = new Spell(SpellSlot.Q, 1000);
             W = new Spell(SpellSlot.W, 5500);
             E = new Spell(SpellSlot.E, 1050);
-            R = new Spell(SpellSlot.R, 1250);
+            R = new Spell(SpellSlot.R, 1050);
 
             Q.SetSkillshot(0.25f, 40f, 1200f, true, SkillshotType.SkillshotLine);
             W.SetSkillshot(0.25f, 80f, 1600f, false, SkillshotType.SkillshotLine);
@@ -128,13 +127,19 @@ namespace ARAMDetFull.Champions
 
             if (E.IsReady())
             {
-                foreach (var targ in ObjectManager.Get<Obj_AI_Base>().Where(o => o.IsValidTarget(E.Range) && !o.IsDead))
+                foreach (var targ in HeroManager.Enemies.Where(o => o.IsValidTarget(E.Range) && !o.IsDead))
                 {
                     if (targ.Health < player.GetSpellDamage(targ, SpellSlot.E))
                     {
                         E.Cast();
                     }
                 }
+                var deadMins =
+                    MinionManager.GetMinions(E.Range)
+                        .Count(o => o.IsValidTarget(E.Range) && !o.IsDead && E.GetDamage(o) > o.Health);
+
+                if (deadMins > 1)
+                    E.Cast();
             }
 
             if (!R.IsReady()) return;

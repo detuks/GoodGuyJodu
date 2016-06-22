@@ -59,8 +59,7 @@ namespace ARAMDetFull.Champions
 
         /* COOLDOWN STUFF END */
         public bool isHammer = false;
-
-
+        
         public Jayce()
         {
             Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
@@ -141,7 +140,7 @@ namespace ARAMDetFull.Champions
         public override void useSpells()
         {
             checkForm();
-            if (isHammer && R1.IsReady() && (player.CountEnemiesInRange(700) > 0 && !Q.IsReady()))
+            if (isHammer && R1.IsReady() && (player.CountEnemiesInRange(700) > 0 && !Q1.IsReady()))
                 R1.Cast();
 
             if (!E1.IsReady() && !isHammer)
@@ -167,6 +166,17 @@ namespace ARAMDetFull.Champions
 
         public override void setUpSpells()
         {
+
+            Q1 = new Spell(SpellSlot.Q, 1050);//Emp 1470
+            QEmp1 = new Spell(SpellSlot.Q, 1500);//Emp 1470
+            W1 = new Spell(SpellSlot.W, 0);
+            E1 = new Spell(SpellSlot.E, 650);
+            R1 = new Spell(SpellSlot.R);
+
+            Q2 = new Spell(SpellSlot.Q, 600);
+            W2 = new Spell(SpellSlot.W, 285);
+            E2 = new Spell(SpellSlot.E, 240);
+            R2 = new Spell(SpellSlot.R);
             //Create the spells
             Q1.SetSkillshot(0.3f, 70f, 1500, true, SkillshotType.SkillshotLine);
             QEmp1.SetSkillshot(0.3f, 70f, 2180, true, SkillshotType.SkillshotLine);
@@ -197,7 +207,7 @@ namespace ARAMDetFull.Champions
                 }//and wont die wih 1 AA
                 else if (!Q1.IsReady() && !W1.IsReady() && R1.IsReady() && hammerWillKill(target) && hamQCDRem == 0 && hamECDRem == 0)// will need to add check if other form skills ready
                 {
-                    if(player.CountEnemiesInRange(700)>0 && !Q.IsReady())
+                    if(player.CountEnemiesInRange(700)>0 && !Q1.IsReady())
                         R1.Cast();
                 }
             }

@@ -30,7 +30,7 @@ namespace ARAMDetFull.Champions
 
         public static Obj_AI_Hero player = ObjectManager.Player;
 
-        public Spell Q, W, E, R;
+        public Spell Q = new Spell(SpellSlot.Q), W = new Spell(SpellSlot.W), E = new Spell(SpellSlot.E), R = new Spell(SpellSlot.R);
 
         /* Skill Use */
         public abstract void useQ(Obj_AI_Base target);

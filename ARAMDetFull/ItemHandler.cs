@@ -5,7 +5,6 @@ using LeagueSharp;
 using LeagueSharp.Common;
 using ARAMDetFull = ARAMDetFull.ARAMDetFull;
 using Items = LeagueSharp.Common.Items;
-using Console = ARAMDetFull.Console;
 
 namespace UnderratedAIO.Helpers
 {

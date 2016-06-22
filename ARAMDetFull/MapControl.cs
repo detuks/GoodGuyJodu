@@ -519,7 +519,7 @@ namespace ARAMDetFull
 
         public static bool unitIsUseless(Obj_AI_Base unit)
         {
-            return unitIsUselessFor(unit) > 0.7;
+            return unitIsUselessFor(unit) > 0.3;
         }
 
         public static bool notVisibleAndMostLieklyNotThere(Obj_AI_Base unit)

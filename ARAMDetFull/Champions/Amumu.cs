@@ -34,7 +34,7 @@ namespace ARAMDetFull.Champions
 
         public override void useQ(Obj_AI_Base target)
         {
-            if (Q.CanCast(target))
+            if (safeGap(target))
             {
                 CastQ(target);
             }

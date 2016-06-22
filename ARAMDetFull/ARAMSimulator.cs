@@ -123,9 +123,9 @@ namespace ARAMDetFull
         };
         public static Obj_AI_Hero player = ObjectManager.Player;
 
-        public static GameObject fromNex = null;
+        public static Obj_HQ fromNex = null;
 
-        public static GameObject toNex = null;
+        public static Obj_HQ toNex = null;
 
 
         public static List<Sector> sectors = new List<Sector>();

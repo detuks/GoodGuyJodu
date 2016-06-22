@@ -173,7 +173,8 @@
     <Compile Include="Champions\Ziggs.cs" />
     <Compile Include="Champions\Zilean.cs" />
     <Compile Include="Champions\Zyra.cs" />
-    <Compile Include="Console.cs" />
+    <Compile Include="DataGathering.cs" />
+    <Compile Include="ErrorLogger.cs" />
     <Compile Include="FullItem.cs" />
     <Compile Include="FullItemsData.cs" />
     <Compile Include="ItemHandler.cs" />

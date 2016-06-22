@@ -38,11 +38,18 @@ namespace ARAMDetFull
          *  ##- healing relics
          *  -Make velkoz
          */
+        public static TextWriter defaultOut;
+
 
         public ARAMDetFull()
         {
             Console.WriteLine("Aram det full started!");
             Events.OnLoad += onLoad;
+
+            /*FileStream filestream = new FileStream("c:/outSuka.txt", FileMode.Create);
+            var streamwriter = new StreamWriter(filestream);
+            streamwriter.AutoFlush = true;
+            System.Console.SetError(streamwriter);*/
         }
         
         public static int gameStart = 0;
@@ -61,12 +68,15 @@ namespace ARAMDetFull
             Game.PrintChat("ARAm - Sharp by DeTuKs");
             try
             {
+                defaultOut = System.Console.Out;
+                System.Console.SetOut(new ErrorLogger(defaultOut));
 
                 Config = new Menu("ARAM", "Yasuo", true);
                 
                 //Extra
                 Config.AddSubMenu(new Menu("Extra Sharp", "extra"));
                 Config.SubMenu("extra").AddItem(new MenuItem("debugDraw", "Debug draw")).SetValue(false);
+                Config.SubMenu("extra").AddItem(new MenuItem("dataGathering", "Send errors to server")).SetValue(true);
 
 
                 //Debug
@@ -85,9 +95,11 @@ namespace ARAMDetFull
                 Console.WriteLine(ex);
             }
         }
+        
 
         private static void OnGameEnd(EventArgs args)
         {
+            //DataGathering.sendEndGame(ARAMSimulator.toNex.Health<ARAMSimulator.fromNex.Health);
             Thread.Sleep(5000);//Stole from myo lol
             Game.Quit();
         }
@@ -155,9 +167,12 @@ namespace ARAMDetFull
         {
             try
             {
+                DataGathering.on = Config.Item("dataGathering").GetValue<bool>();
+
                 if (Config.Item("db_targ").GetValue<KeyBind>().Active)
                 {
-                    var player = HeroManager.Player;
+                    System.Console.WriteLine("Error here");
+                    /*var player = HeroManager.Player;
                     foreach (var spell in
                    SpellDatabase.Spells.Where(
                        s =>
@@ -174,7 +189,7 @@ namespace ARAMDetFull
                             {
                                 Console.WriteLine("--casttype: " + ctype);
                             }
-                    }
+                    }*/
 
                 }
                 //if (lastTick + tickTimeRng > now)
