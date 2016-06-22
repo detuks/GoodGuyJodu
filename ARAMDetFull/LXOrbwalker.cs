@@ -324,7 +324,7 @@ namespace ARAMDetFull
                 foreach (
                     var minion in
                         from minion in
-                            enemiesMinionsAround.Where(minion => minion.IsValidTarget() && InAutoAttackRange(minion))
+                            enemiesMinionsAround.Where(minion => minion != null && minion.IsValidTarget() && InAutoAttackRange(minion))
                         let t = (int)(MyHero.AttackCastDelay * 1000) - 100 + Game.Ping / 2 +
                                 1000 * (int)MyHero.Distance(minion) / (int)MyProjectileSpeed()
                         let predHealth = HealthPrediction.GetHealthPrediction(minion, t, FarmDelay())

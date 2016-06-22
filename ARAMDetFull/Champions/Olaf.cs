@@ -14,7 +14,6 @@ namespace ARAMDetFull.Champions
         {
             GameObject.OnCreate += onCreate;
             GameObject.OnDelete += onDelete;
-            LXOrbwalker.AfterAttack += afterAttack;
 
             ARAMSimulator.champBuild = new Build
             {
@@ -33,12 +32,7 @@ namespace ARAMDetFull.Champions
                         }
             };
         }
-
-        private void afterAttack(Obj_AI_Base unit, Obj_AI_Base target)
-        {
-            if (unit is Obj_AI_Hero && W.IsReady())
-                W.Cast();
-        }
+        
 
         public GameObject olafAxe = null;
 
@@ -69,6 +63,7 @@ namespace ARAMDetFull.Champions
         {
             if (!W.IsReady())
                 return;
+            W.Cast();
         }
 
         public override void useE(Obj_AI_Base target)
@@ -118,7 +113,7 @@ namespace ARAMDetFull.Champions
         public override void setUpSpells()
         {
             Q = new Spell(SpellSlot.Q, 1000);
-            W = new Spell(SpellSlot.W);
+            W = new Spell(SpellSlot.W, 325);
             E = new Spell(SpellSlot.E, 325);
             R = new Spell(SpellSlot.R,350);
 

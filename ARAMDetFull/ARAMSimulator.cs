@@ -955,7 +955,7 @@ namespace ARAMDetFull
             {
                 Aggresivity.addAgresiveMove(new AgresiveMove(45,1500,true));
                 //Console.WriteLine("go get easy");
-                LXOrbwalker.OrbwalkTo(easyKill.Position.To2D().Extend(fromNex.Position.To2D(), player.AttackRange*0.4f).To3D(),true);
+                LXOrbwalker.OrbwalkTo(easyKill.Position.To2D().Extend(player.Position.To2D(), player.AttackRange*0.7f).To3D(),true);
             }
 
             if (balance < 0)
@@ -996,7 +996,7 @@ namespace ARAMDetFull
             {
                 var fightOn = MapControl.fightIsOn();
 
-                if (fightOn != null && MapControl.balanceAroundPointAdvanced(fightOn.Position.To2D(),280) > (-180) && fightOn.Distance(player, true) < 2500 * 2500 && (!player.IsMelee() || !Sector.inTowerRange(fightOn.Position.To2D())))
+                if (fightOn != null && MapControl.balanceAroundPointAdvanced(fightOn.Position.To2D(),280,350) > (-180) && fightOn.Distance(player, true) < 2500 * 2500 && (!player.IsMelee() || !Sector.inTowerRange(fightOn.Position.To2D())))
                 {
                     if (!Aggresivity.getIgnoreMinions())
                         Aggresivity.addAgresiveMove(new AgresiveMove(40,1500,true));

@@ -50,7 +50,12 @@ namespace ARAMDetFull.Champions
         {
             if (!E.IsReady())
                 return;
-            if (safeGap(target))
+            if (player.Health < 24 && player.CountEnemiesInRange(550) > 0)
+            {
+                var minion = ObjectManager.Get<Obj_AI_Base>().Where(o => o.IsValid && !o.IsDead && o.Distance(player,true)<E.Range*E.Range).OrderBy(m => m.Distance(ARAMSimulator.fromNex.Position,true)).FirstOrDefault();
+                if(minion != null)
+                    E.CastOnUnit(minion);
+            } else if (safeGap(target))
                 E.CastOnUnit(target);
         }
 
@@ -58,7 +63,7 @@ namespace ARAMDetFull.Champions
         {
             if (!R.IsReady())
                 return;
-            if (R.GetDamage(target)>target.Health || player.CountEnemiesInRange(450) > 1 || player.HealthPercent<25)
+            if (R.GetDamage(target, 1) * 8 > target.Health || player.CountEnemiesInRange(450) > 1 || player.HealthPercent<25)
                 R.Cast();
         }
 
@@ -98,7 +103,7 @@ namespace ARAMDetFull.Champions
             var target = ARAMTargetSelector.getBestTarget(E.Range);
             if (target == null) return;
 
-            if (E.IsReady() && E.IsKillable(target, 1) &&
+            if (E.IsReady() && GetComboDamage(target)<target.Health &&
                 ObjectManager.Player.Distance(target, false) < E.Range + target.BoundingRadius)
                 E.CastOnUnit(target, true);
 

@@ -172,7 +172,7 @@ namespace ARAMDetFull
                         return;
                     foreach (var spell in spells)
                     {
-                        if (spell.Value.Instance.Cooldown > 10 || !spell.Value.IsReady() || spell.Value.ManaCost > hero.Mana || spell.Key.SpellTags == null || !spell.Key.SpellTags.Contains(SpellTags.Damage))
+                        if (spell.Value.Slot == SpellSlot.R || spell.Value.Instance.Cooldown > 10 || !spell.Value.IsReady() || spell.Value.ManaCost > hero.Mana || spell.Key.SpellTags == null || !spell.Key.SpellTags.Contains(SpellTags.Damage))
                             continue;
                         var minions = MinionManager.GetMinions((spell.Value.Range != 0) ? spell.Value.Range : 500);
                         foreach (var minion in minions)
@@ -415,7 +415,7 @@ namespace ARAMDetFull
                 if (myControler.canDoDmgTo(enem.hero) > enem.hero.Health+250)
                     return enem.hero;
 
-                if (ally_champions.Where(ene => !ene.hero.IsDead && !ene.hero.IsMe).Any(ally => enem.hero.Distance(ally.hero, true) < 500*500))
+                if (ally_champions.Where(ene => !ene.hero.IsDead && !ene.hero.IsMe).Any(ally => enem.hero.Distance(ally.hero, true) < 600*600))
                 {
                     return enem.hero;
                 }
@@ -429,7 +429,7 @@ namespace ARAMDetFull
             foreach (var enem in enemy_champions.Where(ene => !ene.hero.IsDead && ene.hero.IsVisible).OrderBy(ene => ene.hero.Distance(ObjectManager.Player, true)))
             {
 
-                if (ally_champions.Where(ene => !ene.hero.IsDead && !ene.hero.IsMe).Any(ally => enem.hero.Distance(ally.hero, true) < 400 * 400))
+                if (ally_champions.Where(ene => !ene.hero.IsDead && !ene.hero.IsMe).Any(ally => enem.hero.Distance(ally.hero, true) < 550 * 550))
                 {
                     return true;
                 }
@@ -472,19 +472,23 @@ namespace ARAMDetFull
             return balance;
         }
 
-        public static int balanceAroundPointAdvanced(Vector2 point, float rangePlus)
+        public static int balanceAroundPointAdvanced(Vector2 point, float rangePlus, int fearCompansate = 0)
         {
-            int balance = (point.To3D().UnderTurret(true)) ? -80 : (point.To3D().UnderTurret(false)) ? 80 : 0;
+            int balance = (point.To3D().UnderTurret(true)) ? -100 : (point.To3D().UnderTurret(false)) ? 100 : 0;
             foreach (var ene in enemy_champions)
             {
+                var eneBalance = 0;
                 var reach = ene.reach + rangePlus;
                 if (!ene.hero.IsDead && ene.hero.Distance(point, true) < reach* reach && !unitIsUseless(ene.hero) && !notVisibleAndMostLieklyNotThere(ene.hero))
                 {
-                    balance -= (int) ((ene.hero.HealthPercent + 20 - ene.hero.Deaths*4 + ene.hero.ChampionsKilled*4)*
+                    eneBalance -= (int) ((ene.hero.HealthPercent + 20 - ene.hero.Deaths*4 + ene.hero.ChampionsKilled*4)*
                                       ((ARAMSimulator.player.Level < 7)
                                           ? 1.3f
                                           : 1f));
+                    if (!ene.hero.IsFacing(ObjectManager.Player))
+                        eneBalance = (int)(eneBalance * 0.64f);
                 }
+                balance += eneBalance;
             }
 
 
@@ -492,11 +496,11 @@ namespace ARAMDetFull
             {
                 var reach = (aly.reach-200<500)?500:(aly.reach - 200);
                 if (!aly.hero.IsDead && /*aly.hero.Distance(point, true) < reach * reach &&*/
-                    (Geometry.Distance(aly.hero, ARAMSimulator.toNex.Position) + reach < (Geometry.Distance(point, ARAMSimulator.toNex.Position) + fearDistance + (ARAMSimulator.tankBal * -5) + (ARAMSimulator.agrobalance * 3))))
+                    (Geometry.Distance(aly.hero, ARAMSimulator.toNex.Position) + reach < (Geometry.Distance(point, ARAMSimulator.toNex.Position) + fearDistance + fearCompansate + (ARAMSimulator.tankBal * -5) + (ARAMSimulator.agrobalance * 3))))
                     balance += ((int)aly.hero.HealthPercent + 20 + 20 - aly.hero.Deaths * 4 + aly.hero.ChampionsKilled * 4);
             }
-            var myBal = ((int)myControler.hero.HealthPercent + 20 + 20 - myControler.hero.Deaths * 10 +
-                         myControler.hero.ChampionsKilled*10) + myControler.bonusSpellBalance();
+            var myBal = ((int)myControler.hero.HealthPercent + 20 + 20 - myControler.hero.Deaths * 4 +
+                         myControler.hero.ChampionsKilled*4)+ myControler.hero.Assists/2 + myControler.bonusSpellBalance();
             balance += (myBal<0)?10:myBal;
             return balance;
         }

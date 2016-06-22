@@ -92,9 +92,10 @@ namespace ARAMDetFull
 
             foreach (var en_chemp in MapControl.enemy_champions)
             {
+                
                 en_chemp.getReach();
                 //Console.WriteLine(en_chemp.reach);
-                if (!en_chemp.hero.IsDead  && (en_chemp.hero.IsVisible || ARAMSimulator.deepestAlly.IsMe) && (sectorInside(en_chemp.hero.Position.To2D(), en_chemp.hero.AttackRange + 120) ||
+                if (!en_chemp.hero.IsDead  && (en_chemp.hero.IsVisible || ARAMSimulator.deepestAlly.IsMe || NavMesh.GetCollisionFlags(en_chemp.hero.Position) == CollisionFlags.Grass) && (sectorInside(en_chemp.hero.Position.To2D(), en_chemp.hero.AttackRange + 120) ||
                     sectorInside(en_chemp.hero.Position.To2D(), en_chemp.reach)))
                 {
                     dangLVL++;

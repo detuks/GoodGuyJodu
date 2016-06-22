@@ -144,14 +144,20 @@ namespace ARAMDetFull.Champions
 
         void GameObject_OnDelete(GameObject sender, EventArgs args)
         {
-            if (!sender.Name.Contains("Q_reticle_self")) return;
+            if (!sender.Name.Contains("Draven_Base_Q_reticle_self.troy"))
+            {
+                return;
+            }
             Axes.RemoveAll(ax => ax.networkID == sender.NetworkId);
            
         }
 
         void GameObject_OnCreate(GameObject sender, EventArgs args)
         {
-            if (!sender.Name.Contains("Q_reticle_self")) return;
+            if (!sender.Name.Contains("Draven_Base_Q_reticle_self.troy"))
+            {
+                return;
+            }
             Axes.Add(new PossibleReticle(sender));
         }
 
