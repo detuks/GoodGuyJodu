@@ -34,7 +34,7 @@ namespace ARAMDetFull
         [SecurityPermission(SecurityAction.Assert, Unrestricted = true)]
         private static void sendData(string to, string postData)
         {
-            /*if (!on)
+            if (!on)
                 return;
             try
             {
@@ -59,7 +59,7 @@ namespace ARAMDetFull
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-            }*/
+            }
         }
 
     }

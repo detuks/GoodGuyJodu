@@ -46,11 +46,7 @@ namespace ARAMDetFull
         {
             Console.WriteLine("Aram det full started!");
             Events.OnLoad += onLoad;
-
-            /*FileStream filestream = new FileStream("c:/outSuka.txt", FileMode.Create);
-            var streamwriter = new StreamWriter(filestream);
-            streamwriter.AutoFlush = true;
-            System.Console.SetError(streamwriter);*/
+            
         }
         
         public static int gameStart = 0;
@@ -70,8 +66,8 @@ namespace ARAMDetFull
             Game.PrintChat("ARAm - Sharp by DeTuKs");
             try
             {
-                //defaultOut = System.Console.Out;
-               // System.Console.SetOut(new ErrorLogger(defaultOut));
+                defaultOut = System.Console.Out;
+                System.Console.SetOut(new ErrorLogger(defaultOut));
 
                 Config = new Menu("ARAM", "Yasuo", true);
                 
@@ -173,8 +169,7 @@ namespace ARAMDetFull
 
                 if (Config.Item("db_targ").GetValue<KeyBind>().Active)
                 {
-
-                    DataGathering.sendEndGame(ARAMSimulator.toNex.Health < ARAMSimulator.fromNex.Health);
+                    
                     /*var player = HeroManager.Player;
                     foreach (var spell in
                    SpellDatabase.Spells.Where(
