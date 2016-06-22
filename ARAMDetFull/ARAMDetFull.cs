@@ -99,7 +99,7 @@ namespace ARAMDetFull
 
         private static void OnGameEnd(EventArgs args)
         {
-            //DataGathering.sendEndGame(ARAMSimulator.toNex.Health<ARAMSimulator.fromNex.Health);
+            DataGathering.sendEndGame(ARAMSimulator.toNex.Health<ARAMSimulator.fromNex.Health);
             Thread.Sleep(5000);//Stole from myo lol
             Game.Quit();
         }
@@ -171,7 +171,8 @@ namespace ARAMDetFull
 
                 if (Config.Item("db_targ").GetValue<KeyBind>().Active)
                 {
-                    System.Console.WriteLine("Error here");
+
+                    DataGathering.sendEndGame(ARAMSimulator.toNex.Health < ARAMSimulator.fromNex.Health);
                     /*var player = HeroManager.Player;
                     foreach (var spell in
                    SpellDatabase.Spells.Where(

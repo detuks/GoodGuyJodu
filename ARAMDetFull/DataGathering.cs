@@ -20,7 +20,7 @@ namespace ARAMDetFull
             postData += "&kills=" + ObjectManager.Player.ChampionsKilled;
             postData += "&deaths=" + ObjectManager.Player.Deaths;
             postData += "&assists=" + ObjectManager.Player.Assists;
-            postData += "&won=" + won;
+            postData += "&won=" + ((won)?"Y":"N");
             sendData("logendgame.php", postData);
         }
 
