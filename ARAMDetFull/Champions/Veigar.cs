@@ -18,12 +18,12 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                         {
-                            new ConditionalItem(ItemId.Void_Staff),
-                            new ConditionalItem(ItemId.Sorcerers_Shoes),
                             new ConditionalItem(ItemId.Rabadons_Deathcap),
+                            new ConditionalItem(ItemId.Sorcerers_Shoes),
                             new ConditionalItem(ItemId.Ludens_Echo),
+                            new ConditionalItem(ItemId.Void_Staff),
                             new ConditionalItem(ItemId.Zhonyas_Hourglass),
-                            new ConditionalItem(ItemId.Banshees_Veil),
+                            new ConditionalItem(ItemId.Banshees_Veil,ItemId.Zhonyas_Hourglass,ItemCondition.ENEMY_AP),
                         },
                 startingItems = new List<ItemId>
                         {

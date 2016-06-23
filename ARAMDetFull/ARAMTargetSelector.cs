@@ -11,10 +11,13 @@ namespace ARAMDetFull
 {
     class ARAMTargetSelector
     {
-        public static Obj_AI_Hero getBestTarget(float range,bool calcInRadius = false, Vector3 fromPlus = new Vector3())
+        public static Obj_AI_Hero getBestTarget(float range,bool calcInRadius = false, Vector3 fromPlus = new Vector3(), List<Obj_AI_Hero> fromEnes = null  )
         {
+            if (fromEnes == null)
+                fromEnes = HeroManager.Enemies;
+
             List<Obj_AI_Hero> targetable_ones =
-                HeroManager.Enemies.Where(ob => ob != null && !IsInvulnerable(ob) && !ob.IsDead && !ob.IsZombie
+                fromEnes.Where(ob => ob != null && !IsInvulnerable(ob) && !ob.IsDead && !ob.IsZombie
                     && (ob.IsValidTarget((!calcInRadius) ? range : range + 90) || ob.IsValidTarget((!calcInRadius) ? range : range + 90, true, fromPlus))).ToList();
 
             if (targetable_ones.Count == 0)
@@ -28,6 +31,11 @@ namespace ARAMDetFull
             Obj_AI_Hero bestStats = targetable_ones.OrderByDescending(tar => (tar.ChampionsKilled + tar.Assists) / ((tar.Deaths == 0) ? 0.5f : tar.Deaths)).FirstOrDefault();
 
             return bestStats;
+        }
+
+        public static Obj_AI_Hero getSafeMeleeTarget(float range = 750)
+        {
+            return getBestTarget(range,true, new Vector3(), HeroManager.Enemies.Where(ene => ene!=null && MapControl.safeGap(ene)).ToList());
         }
 
         public static Obj_AI_Hero getBestTargetAly(float range, bool calcInRadius = false, Vector3 fromPlus = new Vector3())

@@ -30,7 +30,7 @@ namespace ARAMDetFull.Champions
                             new ConditionalItem(ItemId.Infinity_Edge),
                             new ConditionalItem(ItemId.Phantom_Dancer),
                             new ConditionalItem(ItemId.Last_Whisper),
-                            new ConditionalItem(ItemId.Guardian_Angel),
+                            new ConditionalItem(ItemId.Maw_of_Malmortius, ItemId.Thornmail,ItemCondition.ENEMY_AP),
                         },
                 startingItems = new List<ItemId>
                         {
@@ -50,7 +50,7 @@ namespace ARAMDetFull.Champions
 
                 if(axe!=null)
                     player.IssueOrder(GameObjectOrder.MoveTo, axe.Position);
-                else if (player.CountEnemiesInRange(550)==0)
+                else if (safeGap(target.Position.To2D()))
                     player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
                 else
                     player.IssueOrder(GameObjectOrder.MoveTo,player.Position.Extend(ARAMSimulator.fromNex.Position,450));
@@ -119,6 +119,7 @@ namespace ARAMDetFull.Champions
             if (Etarget.IsValidTarget()) CastE(Etarget);
             if (RTarget.IsValidTarget()) CastRExecute(RTarget);
             if (RTarget.IsValidTarget()) { RExecute(RTarget); }
+            if (RTarget.IsValidTarget()) { RMostDamange(RTarget); }
             
         }
 
@@ -227,7 +228,7 @@ namespace ARAMDetFull.Champions
         {
             if (shouldUseWForIt && W.IsReady() && !Axe.isCatchingNow()) W.Cast();
             LXOrbwalker.CustomOrbwalkMode = true;
-            LXOrbwalker.Orbwalk(Axe.Position.Extend(player.Position,player.BoundingRadius+10), LXOrbwalker.GetPossibleTarget());
+            LXOrbwalker.Orbwalk(Axe.Position.Extend(player.Position,player.BoundingRadius-100), LXOrbwalker.GetPossibleTarget());
         }
         public void CastQ()
         {
@@ -276,6 +277,18 @@ namespace ARAMDetFull.Champions
                 R.Cast(RTarget);
             }
         }
+
+        private void RMostDamange(Obj_AI_Hero RTarget)
+        {
+            var Pred = R.GetPrediction(RTarget);
+            if (!RTarget.IsValidTarget() || Pred.Hitchance < HitChance.Medium || !R.IsReady()) return;
+
+            if (!player.HasBuff("dravenrdoublecast", true))
+            {
+                R.CastIfWillHit(RTarget,3);
+            }
+        }
+
         void castItems(Obj_AI_Hero tar)
         {
             if (tar == null)

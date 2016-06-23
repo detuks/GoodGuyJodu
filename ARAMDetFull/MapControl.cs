@@ -56,12 +56,13 @@ namespace ARAMDetFull
                 dangerReach = 0;
                 reach = hero.AttackRange;
                 activeDangers = 0;
+                var takeInCOunt = new List<SpellTags> { SpellTags.Dash, SpellTags.Blink, SpellTags.Teleport,SpellTags.Damage,SpellTags.CrowdControl };
                 foreach (var cSpell in champSpells)
                 {
-                    if (cSpell.SpellTags == null || !cSpell.SpellTags.Contains(SpellTags.Damage))
+                    if (cSpell.SpellTags == null || !(cSpell.SpellTags.Any(takeInCOunt.Contains)))
                         continue;
                     var spell = hero.Spellbook.GetSpell(cSpell.Slot);
-                    if ((spell.CooldownExpires - Game.Time) > 3.5f)
+                    if ((spell.CooldownExpires - Game.Time) > 3.5f || spell.State == SpellState.NotLearned)
                         continue;
                     var range = (spell.SData.CastRange < 1000) ? spell.SData.CastRange : 1000;
                     if (spell.SData.CastRange > range)
@@ -408,11 +409,27 @@ namespace ARAMDetFull
             return (enesAround - allyAround) > 1;
         }
 
+        public static int fightLevel()
+        {
+            int count = 0;
+            foreach (var enem in enemy_champions.Where(ene => !ene.hero.IsDead && ene.hero.IsVisible).OrderBy(ene => ene.hero.Distance(ObjectManager.Player, true)))
+            {
+                if (myControler.canDoDmgTo(enem.hero) * 0.7f > enem.hero.Health)
+                    count++;
+
+                if (ally_champions.Where(ene => !ene.hero.IsDead && !ene.hero.IsMe).Any(ally => enem.hero.Distance(ally.hero, true) < 600 * 600))
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
         public static Obj_AI_Hero fightIsOn()
         {
             foreach (var enem in enemy_champions.Where(ene => !ene.hero.IsDead && ene.hero.IsVisible).OrderBy(ene => ene.hero.Distance(ObjectManager.Player,true)))
             {
-                if (myControler.canDoDmgTo(enem.hero) > enem.hero.Health+250)
+                if (myControler.canDoDmgTo(enem.hero)*0.7f > enem.hero.Health)
                     return enem.hero;
 
                 if (ally_champions.Where(ene => !ene.hero.IsDead && !ene.hero.IsMe).Any(ally => enem.hero.Distance(ally.hero, true) < 600*600))
@@ -553,8 +570,8 @@ namespace ARAMDetFull
             var closesEnem = ClosestEnemyTobase();
             //var closesEnemTower = ClosestEnemyTobase();
             var hprelics = ObjectManager.Get<Obj_AI_Base>().Where(
-                r => r.IsValid && !r.IsDead && (r.Name.Contains("HealthRelic") || r.Name.Contains("BardChime") || (r.Name.Contains("BardPickup") && ObjectManager.Player.ChampionName == "Bard")) 
-                    && !usedRelics.Contains(r.NetworkId) && (closesEnem == null || r.Distance(ARAMSimulator.fromNex.Position, true) - 500 < closesEnem.Distance(ARAMSimulator.fromNex.Position, true))).ToList().OrderBy(r => ARAMSimulator.player.Distance(r, true));
+                r => r.IsValid && !r.IsDead && (r.Name.Contains("HealthRelic") || r.Name.Contains("BardChime") || (r.Name.Contains("BardPickup") && ObjectManager.Player.ChampionName == "Bard") || (r.Name.ToLower().Contains("blobdrop") && ObjectManager.Player.ChampionName == "Zac")) 
+                    && !usedRelics.Contains(r.NetworkId) && (closesEnem == null || (r.Name.ToLower().Contains("blobdrop") && ObjectManager.Player.ChampionName == "Zac") || r.Distance(ARAMSimulator.fromNex.Position, true) - 500 < closesEnem.Distance(ARAMSimulator.fromNex.Position, true))).ToList().OrderBy(r => ARAMSimulator.player.Distance(r, true));
             return hprelics.FirstOrDefault();
         }
 

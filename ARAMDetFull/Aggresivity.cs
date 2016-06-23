@@ -12,7 +12,8 @@ namespace ARAMDetFull
 
         public static void addAgresiveMove(AgresiveMove move)
         {
-            agresiveMoves.Add(move);
+            if(!move.oneTimeUse || !getOneTime())
+                agresiveMoves.Add(move);
         }
 
         public static int getAgroBalance()
@@ -29,7 +30,12 @@ namespace ARAMDetFull
             
             return agresiveMoves.Any(agr => agr.ignoreMinions);
         }
+        public static bool getOneTime()
+        {
+            agresiveMoves.RemoveAll(mov => mov.endAt < LXOrbwalker.now);
 
+            return agresiveMoves.Any(agr => agr.oneTimeUse);
+        }
     }
 
     public class AgresiveMove
@@ -37,12 +43,13 @@ namespace ARAMDetFull
         public int endAt;
         public int agroBalance;
         public bool ignoreMinions;
-
-        public AgresiveMove(int agro = 10, int duration = 5000, bool ignoreMins = false)
+        public bool oneTimeUse;
+        public AgresiveMove(int agro = 10, int duration = 5000, bool ignoreMins = false, bool oneTime = false)
         {
             agroBalance = 10;
             endAt = LXOrbwalker.now + duration;
             ignoreMinions = ignoreMins;
+            oneTimeUse = oneTime;
         }
     }
 }

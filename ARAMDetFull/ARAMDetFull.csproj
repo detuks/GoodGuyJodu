@@ -185,6 +185,7 @@
     <Compile Include="Champions\Xerath.cs" />
     <Compile Include="Champions\XinZhao.cs" />
     <Compile Include="Champions\Yasuo.cs" />
+    <Compile Include="Champions\Zac.cs" />
     <Compile Include="Champions\Zed.cs" />
     <Compile Include="Champions\Ziggs.cs" />
     <Compile Include="Champions\Zilean.cs" />

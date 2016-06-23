@@ -117,7 +117,7 @@ namespace ARAMDetFull.Champions
         public override void setUpSpells()
         {
             //Create the spells
-            Q = new Spell(SpellSlot.Q, player.AttackRange+150);
+            Q = new Spell(SpellSlot.Q, player.AttackRange+370);
             W = new Spell(SpellSlot.W,350);
             E = new Spell(SpellSlot.E, 330);
             R = new Spell(SpellSlot.R, 400);

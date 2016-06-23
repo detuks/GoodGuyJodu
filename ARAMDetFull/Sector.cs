@@ -118,10 +118,13 @@ namespace ARAMDetFull
 
             foreach (var turret in ObjectManager.Get<Obj_AI_Turret>())
             {
-                if (turret.IsEnemy && !turret.IsDead && turret.IsValid && sectorInside(turret.Position.To2D(), 1100) && !towerContainsAlly(turret))
+                if (turret.IsEnemy && !turret.IsDead && turret.IsValid && sectorInside(turret.Position.To2D(), 1100))
                 {
-                    dangerPolig = true;
-                    break;
+                    if (!towerContainsAlly(turret) || polig.pointInside(turret.Position.To2D()))
+                    {
+                        dangerPolig = true;
+                        break;
+                    }
                 }
             }
 
@@ -135,7 +138,7 @@ namespace ARAMDetFull
                 if (mins.Distance(tow, true) < 800*800)
                     count += (mins is Obj_AI_Hero) ? 2 : 1;
             }
-            return count>2;
+            return count>1;
         }
 
         public static bool inTowerRange(Vector2 pos)
@@ -172,8 +175,8 @@ namespace ARAMDetFull
                 while (inTowerRange(result))
                 {
                     count++;
-                     x = 200 - r.Next(400);
-                     y = 400 - r.Next(800);
+                        x = 200 - r.Next(400);
+                        y = 400 - r.Next(800);
 
                     result = new Vector2(center.X + x, center.Y + y);
                     if(count>10)

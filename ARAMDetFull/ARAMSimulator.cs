@@ -659,10 +659,13 @@ namespace ARAMDetFull
                 case "Lissandra":
                     champ = new Lissandra();
                     break;
-                //DrMundo
                 case "DrMundo":
                     champ = new DrMundo();
                     break;
+                case "Zac":
+                    champ = new Zac();
+                    break;
+                    //Zac
             }
         }
 
@@ -867,6 +870,7 @@ namespace ARAMDetFull
             setRambo();
             if (player.IsDead || player.IsChannelingImportantSpell())
                 return;
+            var fightLevel = MapControl.fightLevel();
             MapControl.updateReaches();
 
             var closestEnemy = HeroManager.Enemies.Where(ene => !ene.IsDead && ene.IsTargetable && !ARAMTargetSelector.IsInvulnerable(ene)).OrderBy(ene =>  player.Position.Distance(ene.Position, true)).FirstOrDefault();
@@ -875,6 +879,12 @@ namespace ARAMDetFull
                 LXOrbwalker.OrbwalkTo(closestEnemy.Position,false,true);
                 return;
             }
+
+            if (fightLevel != 0)
+            {
+                Aggresivity.addAgresiveMove(new AgresiveMove(40 * fightLevel, 2000, true, true));
+            }
+
             agrobalance = Aggresivity.getAgroBalance();
 
             balance = (ARAMTargetSelector.IsInvulnerable(player) || player.IsZombie) ? 250 : MapControl.balanceAroundPointAdvanced(player.Position.To2D(), 250 - agrobalance * 5) + agrobalance;
@@ -951,7 +961,7 @@ namespace ARAMDetFull
             deepestAlly = HeroManager.Allies.OrderBy(al => toNex.Position.Distance(al.Position, true)).FirstOrDefault();
             var lookRange = player.AttackRange + ((player.IsMelee) ? 260 : 155);
             var easyKill =
-               HeroManager.Enemies.FirstOrDefault(ene => !ene.IsDead && ene.Distance(player, true) < lookRange * lookRange &&
+               HeroManager.Enemies.FirstOrDefault(ene => ene!= null && !ene.IsDead && ene.Distance(player, true) < lookRange * lookRange &&
                                                          !ARAMTargetSelector.IsInvulnerable(ene) && ene.Health / 1.5 < player.GetAutoAttackDamage(ene));
 
             if (easyKill != null)
@@ -961,9 +971,11 @@ namespace ARAMDetFull
                 LXOrbwalker.OrbwalkTo(easyKill.Position.To2D().Extend(player.Position.To2D(), player.AttackRange*0.7f).To3D(),true);
             }
 
+
             if (balance < 0)
                 LXOrbwalker.OrbwalkTo(player.Position.To2D().Extend(fromNex.Position.To2D(), 600).To3D(),false,true);
-            if (moveToRelicIfForHeal())
+
+            if ((!player.IsMelee || fightLevel<2) && moveToRelicIfForHeal())
             {
                 return;
             }
@@ -978,12 +990,10 @@ namespace ARAMDetFull
             {
                 LXOrbwalker.CustomOrbwalkMode = false;
                // Game.PrintChat("ouch tower!");
-                LXOrbwalker.OrbwalkTo(player.Position.To2D().Extend(fromNex.Position.To2D(), 600).To3D(), false);
+                LXOrbwalker.OrbwalkTo(player.Position.To2D().Extend(fromNex.Position.To2D(), 600).To3D(), true);
                 return;
             }
-
             
-
             awayTo = eAwayFromTo();
             if (awayTo.IsValid() && awayTo.X != 0 )
             {
@@ -997,15 +1007,21 @@ namespace ARAMDetFull
             }
             else
             {
-                var fightOn = MapControl.fightIsOn();
-
-                if (fightOn != null && MapControl.balanceAroundPointAdvanced(fightOn.Position.To2D(),280,450) > (-230) && fightOn.Distance(player, true) < 2500 * 2500 && (!player.IsMelee() || !Sector.inTowerRange(fightOn.Position.To2D())))
+                if (player.IsMelee)
                 {
-                    if (!Aggresivity.getIgnoreMinions())
-                        Aggresivity.addAgresiveMove(new AgresiveMove(40,1500,true));
-                    if (player.Position.Distance(fightOn.Position)>player.AttackRange*0.8f)
-                        LXOrbwalker.OrbwalkTo(fightOn.Position.Extend(player.Position, player.AttackRange * ((LXOrbwalker.inDanger)?0.75f:0.3f)));
-                    return;
+                    var safeMeleeEnem = ARAMTargetSelector.getSafeMeleeTarget();
+                    if (safeMeleeEnem != null)
+                    {
+                        LXOrbwalker.OrbwalkTo(safeMeleeEnem.Position.Extend(safeMeleeEnem.Direction, player.AttackRange * 0.3f),true);
+                        return;
+                    }
+
+                }
+                var fightOn = MapControl.fightIsOn();
+                if (fightOn != null && MapControl.balanceAroundPointAdvanced(fightOn.Position.To2D(),280,450) > (-130) && fightOn.Distance(player, true) < 2500 * 2500 && (!player.IsMelee() || !Sector.inTowerRange(fightOn.Position.To2D())))
+                {
+                    Aggresivity.addAgresiveMove(new AgresiveMove(40* MapControl.fightLevel(), 2000,true,true));
+                    LXOrbwalker.OrbwalkTo(fightOn.Position.Extend(player.Position, player.AttackRange * 0.8f), true);
                 }
                 else
                 {/*
@@ -1022,7 +1038,8 @@ namespace ARAMDetFull
                         foreach (var sector in sectors)
                         {
                             sector.update();
-                            if (sector.containsEnemyChamp && sector.enemyChampIn.Distance(player,true)<1350*1350)
+                            int sectorCheck = 1150 - MapControl.fearDistance;
+                            if (sector.containsEnemyChamp && sector.enemyChampIn.Distance(player,true) < sectorCheck * sectorCheck)
                             {
                                 orbSector = sector;
                                 break;
@@ -1073,9 +1090,11 @@ namespace ARAMDetFull
                 var dist = relicHeal.Distance(player);
                 var bonus = ((50 - dist/20) > 0) ? (50 - dist/20) : 0;
                 bool needHeal = player.HealthPercent + (float)agrobalance / 5 - (tankBal / 2.5) < 39 + bonus;
-                if (dist < 100)
+                if (dist < 100 && !relicHeal.IsMoving)
+                {
                     MapControl.usedRelics.Add(relicHeal.NetworkId);
-                if (needHeal || (!relicHeal.Name.Contains("Health") && dist < 1600) )
+                }
+                if (needHeal || (!relicHeal.Name.Contains("Health") && dist < 1600))
                 {
                     LXOrbwalker.OrbwalkTo(relicHeal.Position);
                     return true;
@@ -1122,7 +1141,7 @@ namespace ARAMDetFull
 
             if (count > 0)
             {
-                var awayTo = player.Position.To2D().Extend(backTo, 700);
+                var awayTo = player.Position.To2D().Extend(backTo, player.AttackRange*0.8f);
                 if (!Sector.inTowerRange(awayTo))
                     return backTo;
             }

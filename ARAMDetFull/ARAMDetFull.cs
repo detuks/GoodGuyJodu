@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using ARAMDetFull.Champions;
 using LeagueSharp;
 using LeagueSharp.Common;
-using LeagueSharp.SDK;
 using KeyBindType = LeagueSharp.Common.KeyBindType;
 
 namespace ARAMDetFull
@@ -45,8 +44,7 @@ namespace ARAMDetFull
         public ARAMDetFull()
         {
             Console.WriteLine("Aram det full started!");
-            Events.OnLoad += onLoad;
-            
+            CustomEvents.Game.OnGameLoad += onLoad;
         }
         
         public static int gameStart = 0;
@@ -59,7 +57,7 @@ namespace ARAMDetFull
         }
 
         [SecurityPermission(SecurityAction.Assert, Unrestricted = true)]
-        private static void onLoad(object sender, EventArgs e)
+        private static void onLoad(object sender)
         {
             gameStart = now;
 
@@ -112,11 +110,11 @@ namespace ARAMDetFull
                 Drawing.DrawText(100, 100, Color.Red, "2bal: " + ARAMSimulator.balance+ " fear: "+MapControl.fearDistance );
                //return;
                // ((Jayce)ARAMSimulator.champ).drawCD();
-                foreach (var hel in ObjectManager.Get<Obj_AI_Base>().Where(r => r.IsValid && !r.IsDead && r.Name.Contains("ealth")))
+                foreach (var hel in ObjectManager.Get<Obj_AI_Minion>().Where(r => r.IsValid && !r.IsDead && r.Name.ToLower().Contains("blobdrop")))
                 {
                     var spos = Drawing.WorldToScreen(hel.Position);
                     Drawing.DrawText(spos.X, spos.Y, Color.Brown, " : " + hel.Name);
-                    Drawing.DrawText(spos.X, spos.Y+25, Color.Brown, hel.IsDead + " : " + hel.Type+ " : " + hel.IsValid+ " : " + hel.IsVisible);
+                    Drawing.DrawText(spos.X, spos.Y+25, Color.Brown, hel.IsDead + " : " + hel.Type+ " : " + hel.IsValid+ " : " + hel.CharacterState);
                 }
                 var tar = ARAMTargetSelector.getBestTarget(5100);
                 if (tar != null)
@@ -165,8 +163,6 @@ namespace ARAMDetFull
         {
             try
             {
-                DataGathering.on = Config.Item("dataGathering").GetValue<bool>();
-
                 if (Config.Item("db_targ").GetValue<KeyBind>().Active)
                 {
                     
