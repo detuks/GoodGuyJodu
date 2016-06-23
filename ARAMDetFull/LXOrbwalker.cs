@@ -328,7 +328,7 @@ namespace ARAMDetFull
                         let t = (int)(MyHero.AttackCastDelay * 1000) - 100 + Game.Ping / 2 +
                                 1000 * (int)MyHero.Distance(minion) / (int)MyProjectileSpeed()
                         let predHealth = HealthPrediction.GetHealthPrediction(minion, t, FarmDelay())
-                        where minion.Team != GameObjectTeam.Neutral && predHealth > 0 && minion.SkinName != "GangplankBarrel" && 
+                        where minion != null && minion.Team != GameObjectTeam.Neutral && predHealth > 0 && minion.SkinName != "GangplankBarrel" && 
                               predHealth <= MyHero.GetAutoAttackDamage(minion, true)
                         select minion)
                     return minion;
@@ -367,7 +367,7 @@ namespace ARAMDetFull
                 return null;
             maxhealth = new float[] { 0 };
             foreach (var minion in from minion in enemiesMinionsAround
-                .Where(minion => minion.IsValidTarget(GetAutoAttackRange(MyHero, minion)) && minion.SkinName != "GangplankBarrel")
+                .Where(minion => minion!= null && minion.IsValidTarget(GetAutoAttackRange(MyHero, minion)) && minion.SkinName != "GangplankBarrel")
                                    let predHealth = HealthPrediction.LaneClearHealthPrediction(minion, (int)((MyHero.AttackDelay * 1000) * LaneClearWaitTimeMod), FarmDelay())
                                    where predHealth >=
                                          2 * MyHero.GetAutoAttackDamage(minion, true) ||

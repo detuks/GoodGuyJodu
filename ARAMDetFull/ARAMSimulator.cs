@@ -665,7 +665,10 @@ namespace ARAMDetFull
                 case "Zac":
                     champ = new Zac();
                     break;
-                    //Zac
+                case "Akali":
+                    champ = new Akali();
+                    break;
+                    //Akali
             }
         }
 

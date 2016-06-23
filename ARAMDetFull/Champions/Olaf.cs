@@ -56,7 +56,7 @@ namespace ARAMDetFull.Champions
         {
             if (!Q.IsReady() || target == null)
                 return;
-            Q.Cast(target);
+            Q.CastIfHitchanceEquals(target,HitChance.VeryHigh);
         }
 
         public override void useW(Obj_AI_Base target)

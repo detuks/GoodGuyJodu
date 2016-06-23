@@ -10,21 +10,39 @@ namespace ARAMDetFull.Champions
 {
     class Akali : Champion
     {
+        public Akali()
+        {
 
+            ARAMSimulator.champBuild = new Build
+            {
+                coreItems = new List<ConditionalItem>
+                        {
+                            new ConditionalItem(ItemId.Hextech_Gunblade),
+                            new ConditionalItem(ItemId.Sorcerers_Shoes,ItemId.Mercurys_Treads,ItemCondition.ENEMY_LOSING),
+                            new ConditionalItem(ItemId.Zhonyas_Hourglass),
+                            new ConditionalItem(ItemId.Lich_Bane),
+                            new ConditionalItem(ItemId.Abyssal_Scepter,ItemId.Rylais_Crystal_Scepter,ItemCondition.ENEMY_AP),
+                            new ConditionalItem(ItemId.Rabadons_Deathcap),
+                        },
+                startingItems = new List<ItemId>
+                        {
+                            ItemId.Ruby_Crystal,ItemId.Cloth_Armor,ItemId.Long_Sword
+                        }
+            };
+        }
 
         public override void useQ(Obj_AI_Base target)
         {
             if (!Q.IsReady() || target == null)
                 return;
-            if (!Sector.inTowerRange(target.Position.To2D()) && (MapControl.balanceAroundPoint(target.Position.To2D(), 700) >= -1 || (MapControl.fightIsOn() != null && MapControl.fightIsOn().NetworkId == target.NetworkId)))
-                Q.Cast(target);
+            Q.Cast(target);
         }
 
         public override void useW(Obj_AI_Base target)
         {
             if (!W.IsReady())
                 return;
-            if(player.HealthPercent<35)
+            if(player.CountEnemiesInRange(500)>0)
                 W.Cast(player.Position);
         }
 
@@ -40,7 +58,7 @@ namespace ARAMDetFull.Champions
         {
             if (!R.IsReady() || target == null)
                 return;
-            if (!Sector.inTowerRange(target.Position.To2D()) && (MapControl.balanceAroundPoint(target.Position.To2D(), 700) >= -1 || (MapControl.fightIsOn() != null && MapControl.fightIsOn().NetworkId == target.NetworkId)))
+            if (safeGap(target) || GetComboDamage(target)*0.8f>target.Health)
                 R.Cast(target);
         }
 
@@ -56,13 +74,40 @@ namespace ARAMDetFull.Champions
             if (tar != null) useR(tar);
         }
 
+        public override void killSteal()
+        {
+            foreach (var hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValidTarget(R.Range)))
+            {
+                if (hero.Distance(ObjectManager.Player) <= R.Range &&
+                    player.GetSpellDamage(hero, SpellSlot.R) >= hero.Health)
+                        R.CastOnUnit(hero, true);
+            }
+        }
+
+        private float GetComboDamage(Obj_AI_Base vTarget)
+        {
+            var fComboDamage = 0d;
+
+            if (Q.IsReady())
+                fComboDamage += player.GetSpellDamage(vTarget, SpellSlot.Q) +
+                                player.GetSpellDamage(vTarget, SpellSlot.Q, 1);
+            if (E.IsReady())
+                fComboDamage += player.GetSpellDamage(vTarget, SpellSlot.E);
+
+            if (R.IsReady())
+                fComboDamage += player.GetSpellDamage(vTarget, SpellSlot.R) * R.Instance.Ammo;
+            
+            
+            return (float)fComboDamage;
+        }
+
         public override void setUpSpells()
         {
             //Create the spells
-            Q = new Spell(SpellSlot.Q, 600);
-            W = new Spell(SpellSlot.W, 700);
-            E = new Spell(SpellSlot.E, 325);
-            R = new Spell(SpellSlot.R, 800);
+            Q = new Spell(SpellSlot.Q, 600f);
+            W = new Spell(SpellSlot.W, 700f);
+            E = new Spell(SpellSlot.E, 290f);
+            R = new Spell(SpellSlot.R, 800f);
         }
     }
 }
