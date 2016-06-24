@@ -57,7 +57,7 @@ namespace ARAMDetFull.Champions
 
         public override void useQ(Obj_AI_Base target)
         {
-            if (Q.IsReady() && !GarenE && player.CountEnemiesInRange(400) > 1)
+            if (Q.IsReady() && !GarenE)
             {
                 Q.Cast();
                 Aggresivity.addAgresiveMove(new AgresiveMove(100, 2500, true));

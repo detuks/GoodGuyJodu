@@ -26,7 +26,7 @@ namespace ARAMDetFull.Champions
                         },
                 startingItems = new List<ItemId>
                         {
-                            ItemId.Ruby_Crystal,ItemId.Cloth_Armor,ItemId.Long_Sword
+                            ItemId.Hextech_Revolver
                         }
             };
         }

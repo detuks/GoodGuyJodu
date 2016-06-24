@@ -35,6 +35,8 @@ namespace ARAMDetFull
 
         public static List<Obj_HQ> EnemyHQ = new List<Obj_HQ>();
 
+        public static List<AttackableUnit> EnemyObjectives = new List<AttackableUnit>();
+
         public static bool CustomOrbwalkMode = false;
 
         public delegate void BeforeAttackEvenH(BeforeAttackEventArgs args);
@@ -89,6 +91,11 @@ namespace ARAMDetFull
             EnemyBarracs = ObjectManager.Get<Obj_BarracksDampener>().Where(tow => tow.IsEnemy).ToList();
 
             EnemyHQ = ObjectManager.Get<Obj_HQ>().Where(tow => tow.IsEnemy).ToList();
+
+            EnemyObjectives.AddRange(EnemyTowers);
+            EnemyObjectives.AddRange(EnemyBarracs);
+            EnemyObjectives.AddRange(EnemyHQ);
+
         }
 
         private static void onDoCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
@@ -256,19 +263,14 @@ namespace ARAMDetFull
                     return ForcedTarget;
                 ForcedTarget = null;
             }
-
-            if (onlyChamps)
-            {
-                return GetBestHeroTarget();
-            }
-
             var camp = GetBestHeroTarget();
             if (camp != null)
                 return camp;
-            CurrentMode = (Aggresivity.getIgnoreMinions()) ? Mode.Lasthit : Mode.LaneClear;
+            CurrentMode = (Aggresivity.getIgnoreMinions() || onlyChamps) ? Mode.Lasthit : Mode.LaneClear;
             Obj_AI_Base tempTarget = null;
+            //Well fuk it we need win the game not kda!!!
             /*turrets*/
-            if (CurrentMode == Mode.LaneClear)
+            if (CurrentMode == Mode.LaneClear || CurrentMode == Mode.Lasthit || true)
             {
                 foreach (var turret in
                    EnemyTowers.Where(t => t.IsValidTarget() && InAutoAttackRange(t)))
@@ -276,17 +278,10 @@ namespace ARAMDetFull
                     return turret;
                 }
             }
-            if ((CurrentMode == Mode.Harass || CurrentMode == Mode.LaneClear))
-            {
-                tempTarget = GetBestHeroTarget();
-                if (tempTarget != null)
-                    return tempTarget;
-            }
 
-            
 
             /*inhibitor*/
-            if (CurrentMode == Mode.LaneClear)
+            if (CurrentMode == Mode.LaneClear || CurrentMode == Mode.Lasthit || true)
             {
                 foreach (var turret in
                     EnemyBarracs
@@ -297,7 +292,7 @@ namespace ARAMDetFull
             }
 
             /*nexus*/
-            if (CurrentMode == Mode.LaneClear)
+            if (CurrentMode == Mode.LaneClear || CurrentMode == Mode.Lasthit || true)
             {
                 foreach (var nexus in
                     EnemyHQ
@@ -306,6 +301,14 @@ namespace ARAMDetFull
                     return nexus;
                 }
             }
+
+            if ((CurrentMode == Mode.Harass || CurrentMode == Mode.LaneClear))
+            {
+                tempTarget = GetBestHeroTarget();
+                if (tempTarget != null)
+                    return tempTarget;
+            }
+
             if (ARAMSimulator.towerAttackedMe)
                 return null;
             /* dont aa if enemy close */

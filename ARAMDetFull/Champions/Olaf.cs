@@ -22,9 +22,9 @@ namespace ARAMDetFull.Champions
                             new ConditionalItem(ItemId.The_Black_Cleaver),
                             new ConditionalItem(ItemId.Mercurys_Treads,ItemId.Ninja_Tabi,ItemCondition.ENEMY_AP),
                             new ConditionalItem((ItemId)3053),
-                            new ConditionalItem(ItemId.Randuins_Omen),
-                            new ConditionalItem(ItemId.Maw_of_Malmortius),
-                            new ConditionalItem(ItemId.Banshees_Veil),
+                            new ConditionalItem((ItemId)3748),
+                            new ConditionalItem(ItemId.Maw_of_Malmortius,ItemId.Frozen_Mallet,ItemCondition.ENEMY_AP),
+                            new ConditionalItem(ItemId.Spirit_Visage),
                         },
                 startingItems = new List<ItemId>
                         {
@@ -64,6 +64,7 @@ namespace ARAMDetFull.Champions
             if (!W.IsReady())
                 return;
             W.Cast();
+            Aggresivity.addAgresiveMove(new AgresiveMove(55, 6000));
         }
 
         public override void useE(Obj_AI_Base target)
@@ -79,7 +80,10 @@ namespace ARAMDetFull.Champions
             if (!R.IsReady() || target == null)
                 return;
             if (player.HealthPercent < 65)
+            {
                 R.Cast();
+                Aggresivity.addAgresiveMove(new AgresiveMove(105,8000));
+            }
         }
 
         public override void useSpells()

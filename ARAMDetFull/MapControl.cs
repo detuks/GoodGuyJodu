@@ -491,7 +491,7 @@ namespace ARAMDetFull
 
         public static int balanceAroundPointAdvanced(Vector2 point, float rangePlus, int fearCompansate = 0)
         {
-            int balance = (point.To3D().UnderTurret(true)) ? -100 : (point.To3D().UnderTurret(false)) ? 100 : 0;
+            int balance = (point.To3D().UnderTurret(true)) ? -80 : (point.To3D().UnderTurret(false)) ? 110 : 0;
             foreach (var ene in enemy_champions)
             {
                 var eneBalance = 0;

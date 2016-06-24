@@ -156,7 +156,7 @@ namespace ARAMDetFull.Champions
 
         public override void useE(Obj_AI_Base target)
         {
-            if (E.IsReady() && target == null)
+            if (E.IsReady())
                 E.Cast();
         }
 
@@ -169,10 +169,10 @@ namespace ARAMDetFull.Champions
 
         public override void useSpells()
         {
+            if(E.IsReady() && player.CountEnemiesInRange(650)>0)
+                E.Cast();
             var tar = ARAMTargetSelector.getBestTarget(Q.Range);
             if (tar != null) useQ(tar);
-            tar = ARAMTargetSelector.getBestTarget(E.Range);
-            if (tar != null) useE(tar);
 
 
         }
@@ -182,13 +182,13 @@ namespace ARAMDetFull.Champions
             //Create the spells
             Q = new Spell(SpellSlot.Q, 650, TargetSelector.DamageType.Magical);
             W = new Spell(SpellSlot.W, 900);
-            E = new Spell(SpellSlot.E, 525+150);
+            E = new Spell(SpellSlot.E, 525+250);
             R = new Spell(SpellSlot.R, 900);
         }
 
         public override void farm()
         {
-            if (E.IsReady())
+            if (E.IsReady() && MinionManager.GetMinions(700).Count>2)
                 E.Cast();
         }
     }

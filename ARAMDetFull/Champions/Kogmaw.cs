@@ -18,16 +18,15 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                         {
-                            new ConditionalItem(ItemId.Trinity_Force),
-                            new ConditionalItem(ItemId.Berserkers_Greaves),
+                            new ConditionalItem(ItemId.Runaans_Hurricane_Ranged_Only),
                             new ConditionalItem(ItemId.Blade_of_the_Ruined_King),
-                            new ConditionalItem(ItemId.Phantom_Dancer),
-                            new ConditionalItem(ItemId.Infinity_Edge),
-                            new ConditionalItem(ItemId.Banshees_Veil),
+                            new ConditionalItem(ItemId.Guinsoos_Rageblade),
+                            new ConditionalItem(ItemId.Infinity_Edge,ItemId.Ludens_Echo,ItemCondition.ENEMY_MR),
+                            new ConditionalItem(ItemId.Maw_of_Malmortius,ItemId.Rabadons_Deathcap,ItemCondition.ENEMY_MR),
                         },
                 startingItems = new List<ItemId>
                         {
-                            ItemId.Phage
+                            ItemId.Berserkers_Greaves
                         }
             };
         }

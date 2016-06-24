@@ -60,8 +60,6 @@ namespace ARAMDetFull.Champions
             {
                 AutoUlt();
             }
-
-
         }
 
         public override void setUpSpells()

@@ -14,7 +14,7 @@ namespace ARAMDetFull
         public static Obj_AI_Hero getBestTarget(float range,bool calcInRadius = false, Vector3 fromPlus = new Vector3(), List<Obj_AI_Hero> fromEnes = null  )
         {
             if (fromEnes == null)
-                fromEnes = HeroManager.Enemies;
+                fromEnes = HeroManager.Enemies.Where(ene => ene != null && (ene.MaxMana<300 || (ene.MaxMana>=300 && ene.ManaPercent>15)) || ene.HealthPercent>15 || ene.FlatPhysicalDamageMod>40+ene.Level*6).ToList();
 
             List<Obj_AI_Hero> targetable_ones =
                 fromEnes.Where(ob => ob != null && !IsInvulnerable(ob) && !ob.IsDead && !ob.IsZombie

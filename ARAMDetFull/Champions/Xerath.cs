@@ -39,8 +39,8 @@ namespace ARAMDetFull.Champions
         {
             get
             {
-                return ObjectManager.Player.HasBuff("XerathLocusOfPower2", true) ||
-                       (ObjectManager.Player.LastCastedSpellName() == "XerathLocusOfPower2" &&
+                return ObjectManager.Player.HasBuff("XerathLocusOfPower2") ||
+                       (ObjectManager.Player.LastCastedSpellName().Equals("XerathLocusOfPower2", StringComparison.InvariantCultureIgnoreCase) &&
                         Utils.TickCount - ObjectManager.Player.LastCastedSpellT() < 500);
             }
         }
@@ -55,86 +55,6 @@ namespace ARAMDetFull.Champions
 
         public Xerath()
         {
-            ARAMSimulator.defBuyThings = new List<ARAMSimulator.ItemToShop>
-                {
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{},
-                        itemIds = new List<int>{1001,3028},//boots of speed, chalice
-                        sellItems = new List<int>{}
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{1001,3028},
-                        itemIds = new List<int>{1052}// amplifying tome
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{3028,1001,1052},
-                        itemIds = new List<int>{3108}//codex
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{3028,3108,1001},
-                        itemIds = new List<int>{3174}//unholy grail
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{3174,1001},
-                        itemIds = new List<int>{3020}//Sorcerer's shoes
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{3020,3174},
-                        itemIds = new List<int>{1058}// needlesly large rod
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{1058,3020,3174},
-                        itemIds = new List<int>{1026}//blasting wand
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{1026,1058,3020,3174},
-                        itemIds = new List<int>{3089}//rabadons deathcap
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{3089,3020,3174},
-                        itemIds = new List<int>{1028,1052}//ruby crystal, amplifying tome
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{1028,1052,3089,3020,3174},
-                        itemIds = new List<int>{3136}//haunting guize
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{3136,3089,3020,3174},
-                        itemIds = new List<int>{3151}//liandry's troment
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{3151,3089,3020,3174},
-                        itemIds = new List<int>{1026,1052}//blasting wand, amplifying tome
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{1026,1052,3151,3089,3020,3174},
-                        itemIds = new List<int>{3135}//void staff
-                    },
-                    new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{3135,3151,3089,3020,3174},
-                        itemIds = new List<int>{3191}//seekers armgaurd
-                    },
-                                        new ARAMSimulator.ItemToShop()
-                    {
-                        itemsMustHave = new List<int>{3191,3135,3151,3089,3020,3174},
-                        itemIds = new List<int>{3157}//zhonyas
-                    },
-                };
-
             Interrupter2.OnInterruptableTarget += Interrupter2_OnInterruptableTarget;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
             Obj_AI_Hero.OnProcessSpellCast += Obj_AI_Hero_OnProcessSpellCast;
@@ -314,6 +234,7 @@ namespace ARAMDetFull.Champions
 
         private void WhileCastingR()
         {
+
             var rTarget = ARAMTargetSelector.getBestTarget(R.Range);
 
             if (rTarget != null)

@@ -30,6 +30,7 @@ namespace ARAMDetFull
         public bool containsEnemy = false;
         public bool containsEnemyChamp = false;
         public Obj_AI_Hero enemyChampIn = null;
+        public Obj_AI_Base enemyTowerIn = null;
         public bool containsAllyChamp = false;
         public AttackableUnit enem = null;
         public bool dangerPolig = false;
@@ -59,6 +60,7 @@ namespace ARAMDetFull
         public void update()
         {
             enemyChampIn = null;
+            enemyTowerIn = null;
             containsAlly = false;
             containsAllyMinion = false;
             containsEnemy = false;
@@ -118,9 +120,16 @@ namespace ARAMDetFull
 
             foreach (var turret in ObjectManager.Get<Obj_AI_Turret>())
             {
-                if (turret.IsEnemy && !turret.IsDead && turret.IsValid && sectorInside(turret.Position.To2D(), 1100))
+                if (turret.IsEnemy && !turret.IsDead && turret.IsValid && sectorInside(turret.Position.To2D(), 1050))
                 {
-                    if (!towerContainsAlly(turret) || polig.pointInside(turret.Position.To2D()))
+                    if (polig.pointInside(turret.Position.To2D()))
+                    {
+                        enemyTowerIn = turret;
+                        dangerPolig = true;
+                        break;
+                    }
+
+                    if (!towerContainsAlly(turret))
                     {
                         dangerPolig = true;
                         break;
@@ -135,7 +144,7 @@ namespace ARAMDetFull
             int count = 0;
             foreach (var mins in ObjectManager.Get<Obj_AI_Base>().Where(ob => ob.IsAlly && !ob.IsDead && ob.IsTargetable && !ob.IsMe))
             {
-                if (mins.Distance(tow, true) < 800*800)
+                if (mins.Distance(tow, true) < 900 * 900)
                     count += (mins is Obj_AI_Hero) ? 2 : 1;
             }
             return count>1;
@@ -157,8 +166,12 @@ namespace ARAMDetFull
 
         public Vector2 getRandomPointIn(bool rand = false)
         {
+            if (enemyTowerIn != null && ARAMSimulator.player.IsMelee)
+                return enemyTowerIn.Position.To2D().Extend(ARAMSimulator.player.Position.To2D(), ARAMSimulator.player.AttackRange * 0.7f);
+
             if (enemyChampIn != null && ARAMSimulator.player.IsMelee && !enemyChampIn.Position.UnderTurret(true))
-                return enemyChampIn.Position.To2D().Extend(ARAMSimulator.player.Position.To2D(),ARAMSimulator.player.AttackRange/2);
+                return enemyChampIn.Position.To2D().Extend(ARAMSimulator.player.Position.To2D(),ARAMSimulator.player.AttackRange * 0.7f);
+
 
             Vector2 result = new Vector2();
             if (containsEnemy && enem != null && ARAMSimulator.player.IsMelee() && !rand)

@@ -1010,12 +1010,25 @@ namespace ARAMDetFull
             }
             else
             {
+
+                var closestObj =
+                    LXOrbwalker.EnemyObjectives.Where(
+                        obj => obj.IsValidTarget(500) && !obj.IsDead && !obj.IsInvulnerable)
+                        .OrderBy(obj => obj.Position.Distance(player.Position, true)).FirstOrDefault();
+                if (closestObj != null)
+                {
+                    LXOrbwalker.OrbwalkTo(
+                        closestObj.Position.Extend(player.Position, player.AttackRange * 0.6f), true);
+                    return;
+                }
+
                 if (player.IsMelee)
                 {
                     var safeMeleeEnem = ARAMTargetSelector.getSafeMeleeTarget();
                     if (safeMeleeEnem != null)
                     {
-                        LXOrbwalker.OrbwalkTo(safeMeleeEnem.Position.Extend(safeMeleeEnem.Direction, player.AttackRange * 0.3f),true);
+                        LXOrbwalker.OrbwalkTo(
+                            safeMeleeEnem.Position.Extend(safeMeleeEnem.Direction, player.AttackRange*0.3f), true);
                         return;
                     }
 
@@ -1097,7 +1110,7 @@ namespace ARAMDetFull
                 {
                     MapControl.usedRelics.Add(relicHeal.NetworkId);
                 }
-                if (needHeal || (!relicHeal.Name.Contains("Health") && dist < 1600))
+                if ((needHeal && player.HealthPercent>18 && MapControl.fightIsOn() == null) || (!relicHeal.Name.Contains("Health")) && dist < 2500)
                 {
                     LXOrbwalker.OrbwalkTo(relicHeal.Position);
                     return true;
