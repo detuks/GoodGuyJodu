@@ -82,7 +82,7 @@ namespace ARAMDetFull.Champions
             if (player.HealthPercent < 65)
             {
                 R.Cast();
-                Aggresivity.addAgresiveMove(new AgresiveMove(105,8000));
+                Aggresivity.addAgresiveMove(new AgresiveMove(85,8000));
             }
         }
 
@@ -105,9 +105,7 @@ namespace ARAMDetFull.Champions
             LXOrbwalker.CustomOrbwalkMode = false;
             if (olafAxe == null)
                 return;
-            if (olafAxe.Position.Distance(player.Position, true) > 500*500)
-                return;
-            if (olafAxe.Position.UnderTurret(true))
+            if (!safeGap(olafAxe.Position.To2D()))
                 return;
             LXOrbwalker.CustomOrbwalkMode = true;
             LXOrbwalker.Orbwalk(olafAxe.Position, LXOrbwalker.GetPossibleTarget());
@@ -116,7 +114,7 @@ namespace ARAMDetFull.Champions
 
         public override void setUpSpells()
         {
-            Q = new Spell(SpellSlot.Q, 1000);
+            Q = new Spell(SpellSlot.Q, 900);
             W = new Spell(SpellSlot.W, 325);
             E = new Spell(SpellSlot.E, 325);
             R = new Spell(SpellSlot.R,350);

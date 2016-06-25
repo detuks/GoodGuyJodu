@@ -416,7 +416,7 @@ namespace ARAMDetFull
         {
             if (_lastAATick <= LXOrbwalker.now && _delayAttackTill <= LXOrbwalker.now)
             {
-                float danger = (inDanger && MyHero.FlatMagicDamageMod > MyHero.FlatPhysicalDamageMod*1.4f) ? 500 : 0;
+                float danger = (inDanger && MyHero.FlatMagicDamageMod > MyHero.FlatPhysicalDamageMod*1.4f) ? 300 : 0;
                 return LXOrbwalker.now + Game.Ping / 2 + 25 >= _lastAATick + MyHero.AttackDelay * 1000 + danger && _attack;
             }
             return false;
@@ -447,7 +447,7 @@ namespace ARAMDetFull
         {
             Obj_AI_Hero killableEnemy = null;
             var hitsToKill = double.MaxValue;
-            foreach (var enemy in AllEnemys.Where(hero => !hero.IsDead && hero.IsValidTarget() && !hero.IsZombie && InAutoAttackRange(hero)))
+            foreach (var enemy in AllEnemys.Where(hero => !hero.IsDead && !hero.IsInvulnerable && hero.IsValidTarget() && !hero.IsZombie && InAutoAttackRange(hero)))
             {
                 var killHits = CountKillhits(enemy);
                 if (killableEnemy != null && !(killHits < hitsToKill))

@@ -169,7 +169,7 @@ namespace ARAMDetFull
             if (enemyTowerIn != null && ARAMSimulator.player.IsMelee)
                 return enemyTowerIn.Position.To2D().Extend(ARAMSimulator.player.Position.To2D(), ARAMSimulator.player.AttackRange * 0.7f);
 
-            if (enemyChampIn != null && ARAMSimulator.player.IsMelee && !enemyChampIn.Position.UnderTurret(true))
+            if (enemyChampIn != null && !enemyChampIn.IsZombie && ARAMSimulator.player.IsMelee && !enemyChampIn.Position.UnderTurret(true))
                 return enemyChampIn.Position.To2D().Extend(ARAMSimulator.player.Position.To2D(),ARAMSimulator.player.AttackRange * 0.7f);
 
 

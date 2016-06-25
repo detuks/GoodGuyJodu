@@ -964,7 +964,7 @@ namespace ARAMDetFull
             deepestAlly = HeroManager.Allies.OrderBy(al => toNex.Position.Distance(al.Position, true)).FirstOrDefault();
             var lookRange = player.AttackRange + ((player.IsMelee) ? 260 : 155);
             var easyKill =
-               HeroManager.Enemies.FirstOrDefault(ene => ene!= null && !ene.IsDead && ene.Distance(player, true) < lookRange * lookRange &&
+               HeroManager.Enemies.FirstOrDefault(ene => ene!= null && !ene.IsZombie && !ene.IsDead && ene.Distance(player, true) < lookRange * lookRange &&
                                                          !ARAMTargetSelector.IsInvulnerable(ene) && ene.Health / 1.5 < player.GetAutoAttackDamage(ene));
 
             if (easyKill != null)

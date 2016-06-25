@@ -72,7 +72,7 @@ namespace ARAMDetFull
                 //Extra
                 Config.AddSubMenu(new Menu("Extra Sharp", "extra"));
                 Config.SubMenu("extra").AddItem(new MenuItem("debugDraw", "Debug draw")).SetValue(false);
-                Config.SubMenu("extra").AddItem(new MenuItem("dataGathering", "Send errors to server")).SetValue(true);
+                Config.SubMenu("extra").AddItem(new MenuItem("dataGathering", "Send errors to server")).SetValue(false);
 
 
                 //Debug
