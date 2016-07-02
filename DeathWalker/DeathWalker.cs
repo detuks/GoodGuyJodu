@@ -75,6 +75,8 @@ namespace DetuksSharp
         {
             get
             {
+                if (BottingMode)
+                    return Mode.LaneClear;
                 if (menu.Item("Combo_Key").GetValue<KeyBind>().Active)
                     return Mode.Combo;
                 if (menu.Item("Harass_Key").GetValue<KeyBind>().Active)
@@ -109,6 +111,7 @@ namespace DetuksSharp
         private static int cantMoveTill = 0;
 
         private static bool attack = true;
+        private static bool move = true;
 
         private static bool disableNextAttack = false;
 
@@ -134,9 +137,25 @@ namespace DetuksSharp
 
         public static List<Obj_HQ> EnemyHQ = new List<Obj_HQ>();
 
+        public static List<AttackableUnit> EnemyObjectives = new List<AttackableUnit>();
+
+        //For botting use mostly
+        public static bool CustomOrbwalkMode = false;
+
+        public static int CustomAttackDelay = 0;
+
+        public static bool IgnoreMinions = false;
+
+        public static bool BottingMode = false;
+
+        public static int CustomRunCS = 0;
+
+        public static int CustomMoveDelay = 0;
+        public static int CustomMoveDelayTemp = 0;
+
         public static int attackTime
         {
-            get { return (int) (player.AttackDelay*1000 + menu.Item("AttDelay").GetValue<Slider>().Value); }
+            get { return (int) (player.AttackDelay * 1000 + menu.Item("AttDelay").GetValue<Slider>().Value); }
         }
 
         public static float moveTime
@@ -158,6 +177,10 @@ namespace DetuksSharp
             EnemyBarracs = ObjectManager.Get<Obj_BarracksDampener>().Where(tow => tow.IsEnemy).ToList();
 
             EnemyHQ = ObjectManager.Get<Obj_HQ>().Where(tow => tow.IsEnemy).ToList();
+
+            EnemyObjectives.AddRange(EnemyTowers);
+            EnemyObjectives.AddRange(EnemyBarracs);
+            EnemyObjectives.AddRange(EnemyHQ);
 
         }
 
@@ -212,7 +235,7 @@ namespace DetuksSharp
                 if (isAutoAttackReset(args.SData.Name))
                 {
                     if(player.ChampionName == "Lucian")
-                        Utility.DelayAction.Add((int)350, resetAutoAttackTimer);
+                        Utility.DelayAction.Add((int)350, delegate { resetAutoAttackTimer(); });
                     else
                         resetAutoAttackTimer();
                     //
@@ -325,9 +348,11 @@ namespace DetuksSharp
 
         private static void OnUpdate(EventArgs args)
         {
+            if (BottingMode)
+                return;
             try
             {
-                deathWalk(Game.CursorPos, CurrentMode != Mode.None ? getBestTarget() : ((azir && player.HealthPercent>30)?getBestTarget(azir):null), CurrentMode == Mode.None);
+                deathWalkTarget(Game.CursorPos, CurrentMode != Mode.None ? getBestTarget() : ((azir && player.HealthPercent>30)?getBestTarget(azir):null), CurrentMode == Mode.None);
             }
             catch (Exception ex)
             {
@@ -348,18 +373,19 @@ namespace DetuksSharp
             }
         }
 
-        public static void deathWalk(Vector3 goalPosition)
+        public static void deathWalk(Vector3 goalPosition, bool onlyChamps = false, bool delayMovement = false)
         {
-            if(CurrentMode == Mode.None)
-                deathWalk(goalPosition, getBestTarget());
+            if((CurrentMode == Mode.None || BottingMode) && !CustomOrbwalkMode)
+                deathWalkTarget(goalPosition, getBestTarget(false, onlyChamps),false,delayMovement);
         }
 
-        public static void deathWalk(Vector3 goalPosition, AttackableUnit target = null, bool noMove = false)
+        public static void deathWalkTarget(Vector3 goalPosition, AttackableUnit target = null, bool noMove = false, bool delayMovement = false)
         {
             if (target != null && canAttack() && inAutoAttackRange(target))
             {
                 doAttack(target);
             }
+            CustomMoveDelayTemp = delayMovement ? 400 : 0;
             if (canMove() && !noMove)
             {
                 if (target != null && (CurrentMode == Mode.Lasthit || CurrentMode == Mode.Harass))
@@ -370,9 +396,38 @@ namespace DetuksSharp
             }
         }
 
-        public static AttackableUnit getBestTarget(bool onlySolider = false)
+        public static AttackableUnit getBestTarget(bool onlySolider = false, bool targetOnlyChampions = false)
         {
             bool soliderHit = false;
+
+            /* turrets / inhibitors / nexus */
+            if (BottingMode)
+            {
+                /* turrets */
+                foreach (var turret in
+                   EnemyTowers.Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
+                {
+                    return turret;
+                }
+
+                /* inhibitor */
+                foreach (var turret in
+                    EnemyBarracs.Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
+                {
+                    return turret;
+                }
+
+                /* nexus */
+                foreach (var nexus in
+                    EnemyHQ.Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
+                {
+                    return nexus;
+                }
+            }
+
+            if (targetOnlyChampions)
+                return GetBestHeroTarget(out soliderHit);
+
             if (ForcedTarget != null && !onlySolider)
             {
                 if (inAutoAttackRange(ForcedTarget))
@@ -451,7 +506,6 @@ namespace DetuksSharp
             if (hero != null && (!onlySolider || soliderHit))
                 return hero;
             if (!onlySolider)
-
                 if (ShouldWaitAllTogether())
                     return null;
             /* turrets / inhibitors / nexus */
@@ -597,7 +651,7 @@ namespace DetuksSharp
 
         public static float getTargetSearchDist()
         {
-            return player.AttackRange + player.BoundingRadius + menu.Item("runCS").GetValue<Slider>().Value;
+            return player.AttackRange + player.BoundingRadius + menu.Item("runCS").GetValue<Slider>().Value+CustomRunCS;
         }
 
         public static int timeTillDamageOn(Obj_AI_Base unit)
@@ -714,9 +768,9 @@ namespace DetuksSharp
 
         public static void moveTo(Vector3 goalPosition)
         {
-            if (now - lastmove <  0)//Humanizer
+            if (now - lastmove < CustomMoveDelay+ CustomMoveDelayTemp)//Humanizer
                 return;
-            if (player.ServerPosition.Distance(goalPosition) < 70)
+            if (player.ServerPosition.Distance(goalPosition) < 100)
             {
                 if (!playerStoped)
                 {
@@ -727,12 +781,30 @@ namespace DetuksSharp
             }
             playerStoped = false;
             if (player.IssueOrder(GameObjectOrder.MoveTo, goalPosition))
+            {
+                lastAutoAttackMove = now;
                 lastmove = now;
+            }
         }
 
         public static void setAttack(bool val)
         {
             attack = val;
+        }
+
+        public static void setMovement(bool val)
+        {
+            move = val;
+        }
+
+        public static bool getAttack()
+        {
+            return attack;
+        }
+
+        public static bool getMovement()
+        {
+            return move;
         }
 
         public static bool canAttack()
@@ -742,13 +814,13 @@ namespace DetuksSharp
 
         public static int canAttackAfter()
         {
-            var after = player.AttackDelay * 1000 + lastAutoAttack - now + menu.Item("AttDelay").GetValue<Slider>().Value;
-            return (int)(after > 0 ? after : 0);
+            int after = (int)(player.AttackDelay * 1000) + lastAutoAttack - now + menu.Item("AttDelay").GetValue<Slider>().Value + CustomAttackDelay;
+            return (after > 0 ? after : 0);
         }
 
         public static bool canMove()
         {
-            return canMoveAfter() == 0 && cantMoveTill<now;
+            return canMoveAfter() == 0 && cantMoveTill<now && move;
         }
 
         public static int canMoveAfter()
@@ -763,10 +835,11 @@ namespace DetuksSharp
             return player.Buffs.Any(buffs => buffs.Name == "jaycehypercharge");
         }
 
-        public static void resetAutoAttackTimer()
+        public static void resetAutoAttackTimer(bool safe = false)
         {
             //Console.WriteLine("Reseet");
-            lastAutoAttack = 0;
+            if(!safe || canMove())
+                lastAutoAttack = 0;
             //lastAutoAttackMove = 0;
         }
 
@@ -843,7 +916,7 @@ namespace DetuksSharp
                 OnUnkillable(unit, target, msTillDead);
             }
         }
-
+        
         public static void AddToMenu(Menu menuIn)
         {
             menuIn.AddItem(new MenuItem("Combo_Key", "Combo Key").SetValue(new KeyBind(32, KeyBindType.Press)));
@@ -852,7 +925,7 @@ namespace DetuksSharp
             menuIn.AddItem(new MenuItem("LastHit_Key", "LastHir Key").SetValue(new KeyBind('X', KeyBindType.Press)));
             menuIn.AddItem(new MenuItem("AttDelay", "Attack delay").SetValue(new Slider(0, -100, 250)));
             menuIn.AddItem(new MenuItem("MovDelay", "Move delay").SetValue(new Slider(0, -100, 250)));
-            menuIn.AddItem(new MenuItem("farmDelay", "Farm delay").SetValue(new Slider(100, -100, 250)));
+            menuIn.AddItem(new MenuItem("farmDelay", "Farm delay").SetValue(new Slider(25, -100, 250)));
             menuIn.AddItem(new MenuItem("runCS", "Run CS distance").SetValue(new Slider(25, 0, 500)));
             menuIn.AddItem(new MenuItem("betaStut", "Beta anti stut").SetValue(true));
             menuIn.AddItem(new MenuItem("nobar", "Disable greenBar").SetValue(false));
