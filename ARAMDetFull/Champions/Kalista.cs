@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -17,8 +17,8 @@ namespace ARAMDetFull.Champions
 
         public Kalista()
         {
-            LXOrbwalker.moveDelay = 200;
-            LXOrbwalker.AfterAttack += onAfterAttack;
+           // DeathWalker.moveDelay = 200;
+            DeathWalker.AfterAttack += onAfterAttack;
 
             ARAMSimulator.champBuild = new Build
             {
@@ -38,7 +38,7 @@ namespace ARAMDetFull.Champions
             };
         }
 
-        private void onAfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
+        private void onAfterAttack(AttackableUnit unit, AttackableUnit target)
         {
             if (unit.IsMe && ARAMSimulator.awayTo.IsValid())
             {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -25,7 +25,7 @@ namespace ARAMDetFull.Champions
 
         public Lucian()
         {
-            LXOrbwalker.AfterAttack += AfterAttack;
+            DeathWalker.AfterAttack += AfterAttack;
 
             ARAMSimulator.champBuild = new Build
             {
@@ -48,7 +48,7 @@ namespace ARAMDetFull.Champions
         private void AfterAttack(AttackableUnit unit, AttackableUnit target)
         {
             var hero = target as Obj_AI_Hero;
-            if (hero == null || LXOrbwalker.CurrentMode != LXOrbwalker.Mode.Combo) return;
+            if (hero == null || DeathWalker.CurrentMode != DeathWalker.Mode.Combo) return;
 
             if (Q.IsReady())
             {

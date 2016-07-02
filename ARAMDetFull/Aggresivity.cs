@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DetuksSharp;
 
 namespace ARAMDetFull
 {
@@ -18,7 +19,7 @@ namespace ARAMDetFull
 
         public static int getAgroBalance()
         {
-            agresiveMoves.RemoveAll(mov => mov.endAt < LXOrbwalker.now);
+            agresiveMoves.RemoveAll(mov => mov.endAt < DeathWalker.now);
             if (!agresiveMoves.Any())
                 return 0;
             return agresiveMoves.Max(agr => agr.agroBalance);
@@ -26,13 +27,13 @@ namespace ARAMDetFull
 
         public static bool getIgnoreMinions()
         {
-            agresiveMoves.RemoveAll(mov => mov.endAt < LXOrbwalker.now);
+            agresiveMoves.RemoveAll(mov => mov.endAt < DeathWalker.now);
             
             return agresiveMoves.Any(agr => agr.ignoreMinions);
         }
         public static bool getOneTime()
         {
-            agresiveMoves.RemoveAll(mov => mov.endAt < LXOrbwalker.now);
+            agresiveMoves.RemoveAll(mov => mov.endAt < DeathWalker.now);
 
             return agresiveMoves.Any(agr => agr.oneTimeUse);
         }
@@ -47,7 +48,7 @@ namespace ARAMDetFull
         public AgresiveMove(int agro = 10, int duration = 5000, bool ignoreMins = false, bool oneTime = false)
         {
             agroBalance = 10;
-            endAt = LXOrbwalker.now + duration;
+            endAt = DeathWalker.now + duration;
             ignoreMinions = ignoreMins;
             oneTimeUse = oneTime;
         }

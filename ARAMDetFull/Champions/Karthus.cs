@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -155,7 +155,7 @@ namespace ARAMDetFull.Champions
             if (playerInfo.Player.IsVisible)
                 return playerInfo.Player.Health;
 
-            var predictedhealth = playerInfo.Player.Health + playerInfo.Player.HPRegenRate * ((LXOrbwalker.now - playerInfo.LastSeen + additionalTime) / 1000f);
+            var predictedhealth = playerInfo.Player.Health + playerInfo.Player.HPRegenRate * ((DeathWalker.now - playerInfo.LastSeen + additionalTime) / 1000f);
 
             return predictedhealth > playerInfo.Player.MaxHealth ? playerInfo.Player.MaxHealth : predictedhealth;
         }

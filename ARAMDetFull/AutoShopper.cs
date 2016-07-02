@@ -8,7 +8,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 
 namespace ARAMDetFull

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -31,7 +31,7 @@ namespace ARAMDetFull.Champions
             };
 
             Interrupter.OnPossibleToInterrupt += OnPossibleToInterrupt;
-            LXOrbwalker.AfterAttack += OnAfterAttack;
+            DeathWalker.AfterAttack += OnAfterAttack;
         }
 
         public override void useW(Obj_AI_Base target)
@@ -135,7 +135,6 @@ namespace ARAMDetFull.Champions
 
             if (E.Cast())
             {
-                LXOrbwalker.ResetAutoAttackTimer();
                 player.IssueOrder(GameObjectOrder.AttackUnit, target);
             }
         }
@@ -149,7 +148,6 @@ namespace ARAMDetFull.Champions
 
             if (E.IsReady() && E.Cast())
             {
-                LXOrbwalker.ResetAutoAttackTimer();
                 player.IssueOrder(GameObjectOrder.AttackUnit, unit);
             }
 

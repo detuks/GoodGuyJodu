@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -16,7 +16,7 @@ namespace ARAMDetFull.Champions
         public static Vector3 AfterCond = Vector3.Zero;
         public Vayne()
         {
-            LXOrbwalker.AfterAttack += AfterAttack;
+            DeathWalker.AfterAttack += AfterAttack;
             Interrupter.OnPossibleToInterrupt += Interrupter_OnPossibleToInterrupt;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
 
@@ -38,7 +38,7 @@ namespace ARAMDetFull.Champions
             };
         }
 
-        private void AfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
+        private void AfterAttack(AttackableUnit unit, AttackableUnit target)
         {
             if (!(target is Obj_AI_Hero) || !unit.IsMe) return;
             var tar = (Obj_AI_Hero)target;
@@ -91,7 +91,7 @@ namespace ARAMDetFull.Champions
         void NoAAStealth()
         {
             var mb = (!player.HasBuff("vaynetumblefade", true));
-            LXOrbwalker.SetAttack(mb);
+            DeathWalker.setAttack(mb);
         }
 
         public static bool EnemyInRange(int numOfEnemy, float range)
@@ -121,7 +121,7 @@ namespace ARAMDetFull.Champions
                 target = null;
                 return false;
             }
-            foreach (var En in LXOrbwalker.AllEnemys.Where(hero => hero.IsEnemy && hero.IsValidTarget() && hero.Distance(player.Position) <= E.Range))
+            foreach (var En in DeathWalker.AllEnemys.Where(hero => hero.IsEnemy && hero.IsValidTarget() && hero.Distance(player.Position) <= E.Range))
             {
                 var EPred = E.GetPrediction(En);
                 int pushDist = 300;
@@ -155,14 +155,14 @@ namespace ARAMDetFull.Champions
         {
             foreach (
                 var hero in
-                    LXOrbwalker.AllEnemys
-                        .Where(hero => hero.IsValidTarget(LXOrbwalker.GetAutoAttackRange(player,hero))))
+                    DeathWalker.AllEnemys
+                        .Where(hero => hero.IsValidTarget(DeathWalker.getRealAutoAttackRange(player,hero))))
             {
                 foreach (var b in hero.Buffs)
                 {
                     if (b.Name == "vaynesilvereddebuff" && b.Count == 2)
                     {
-                        LXOrbwalker.ForcedTarget=hero;
+                        DeathWalker.ForcedTarget=hero;
                         Hud.SelectedUnit = hero;
                         return;
                     }

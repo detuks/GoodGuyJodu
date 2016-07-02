@@ -10,7 +10,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ARAMDetFull.Champions;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using KeyBindType = LeagueSharp.Common.KeyBindType;
 
@@ -67,8 +68,12 @@ namespace ARAMDetFull
                 defaultOut = System.Console.Out;
                 System.Console.SetOut(new ErrorLogger(defaultOut));
 
-                Config = new Menu("ARAM", "Yasuo", true);
-                
+                Config = new Menu("ARAM", "aramBot", true);
+
+                var orbwalkerMenu = new Menu("Orbwalker", "my_Orbwalker");
+                DeathWalker.AddToMenu(orbwalkerMenu);
+                Config.AddSubMenu(orbwalkerMenu);
+
                 //Extra
                 Config.AddSubMenu(new Menu("Extra Sharp", "extra"));
                 Config.SubMenu("extra").AddItem(new MenuItem("debugDraw", "Debug draw")).SetValue(false);

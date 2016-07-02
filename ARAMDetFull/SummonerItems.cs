@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 

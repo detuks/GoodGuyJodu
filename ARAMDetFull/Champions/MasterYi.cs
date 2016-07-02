@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 
 namespace ARAMDetFull.Champions
@@ -13,7 +14,7 @@ namespace ARAMDetFull.Champions
 
         public MasterYi()
         {
-            LXOrbwalker.farmRange = 750;
+            ARAMSimulator.farmRange = 750;
             ARAMSimulator.champBuild = new Build
             {
                 coreItems = new List<ConditionalItem>

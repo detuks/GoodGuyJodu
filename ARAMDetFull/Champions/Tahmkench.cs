@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 
 namespace ARAMDetFull.Champions
@@ -141,7 +141,7 @@ namespace ARAMDetFull.Champions
                     var swallowAlly =
                         HeroManager.Allies.FirstOrDefault(
                             x => x.HealthPercent < 25
-                                && LXOrbwalker.inDanger
+                                && ARAMSimulator.inDanger
                                 && x.IsAlly && player.Distance(x) <= 500
                                 && !x.IsDead);
                     if (swallowAlly != null && current == SwallowedTarget.None && W.IsReady())

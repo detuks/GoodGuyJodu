@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -63,7 +64,7 @@ namespace ARAMDetFull.Champions
         public RekSai()
         {
             Console.WriteLine("RekSai Opened");
-            LXOrbwalker.AfterAttack += ExecuteAfterAttack;
+            DeathWalker.AfterAttack += ExecuteAfterAttack;
 
         }
 
@@ -266,7 +267,7 @@ namespace ARAMDetFull.Champions
         public static void OnPermaActive()
         {
             // Re-enable auto attacks that might have been disabled
-            LXOrbwalker.SetAttack(true);
+            DeathWalker.setAttack(true);
         }
 
 
@@ -327,7 +328,7 @@ namespace ARAMDetFull.Champions
             else
             {
                 // Disable auto attacks
-               //LXOrbwalker.SetAttack(false);
+               //DeathWalker.setAttack(false);
 
                 // Config values
                 var useQ = true;
@@ -445,7 +446,7 @@ namespace ARAMDetFull.Champions
             else
             {
                 // Disable auto attacks
-               // LXOrbwalker.SetAttack(true);
+               // DeathWalker.setAttack(true);
 
                 if (Q.IsReady())
                 {

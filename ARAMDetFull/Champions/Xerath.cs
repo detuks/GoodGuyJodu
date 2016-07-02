@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -58,11 +59,11 @@ namespace ARAMDetFull.Champions
             Interrupter2.OnInterruptableTarget += Interrupter2_OnInterruptableTarget;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
             Obj_AI_Hero.OnProcessSpellCast += Obj_AI_Hero_OnProcessSpellCast;
-            LXOrbwalker.BeforeAttack += OrbwalkingOnBeforeAttack;
+            DeathWalker.BeforeAttack += OrbwalkingOnBeforeAttack;
             Obj_AI_Hero.OnIssueOrder += Obj_AI_Hero_OnIssueOrder;
         }
 
-        private void OrbwalkingOnBeforeAttack(LXOrbwalker.BeforeAttackEventArgs args)
+        private void OrbwalkingOnBeforeAttack(DeathWalker.BeforeAttackEventArgs args)
         {
             args.Process = AttacksEnabled;
         }
@@ -155,13 +156,13 @@ namespace ARAMDetFull.Champions
             {
                 if (IsCastingR)
                 {
-                    LXOrbwalker.SetMovement(false);
+                    DeathWalker.setMovement(false);
                     WhileCastingR();
                     return;
                 }
-                else if (!LXOrbwalker.GetMovement())
+                else if (!DeathWalker.getMovement())
                 {
-                    LXOrbwalker.SetMovement(true);
+                    DeathWalker.setMovement(true);
                 }
 
                 if (R.IsReady())

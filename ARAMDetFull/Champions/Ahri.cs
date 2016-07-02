@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -176,12 +177,12 @@ namespace ARAMDetFull.Champions
                 if (ShouldR(eTarget) && R.IsReady())
                 {
                     R.Cast(player.Position.Extend(ARAMSimulator.fromNex.Position, 250));
-                    _rTimer = LXOrbwalker.now - 250;
+                    _rTimer = DeathWalker.now - 250;
                 }
                 if (_rTimeLeft > 9500 && _rOn && R.IsReady())
                 {
                     R.Cast(player.Position.Extend(ARAMSimulator.fromNex.Position,250));
-                    _rTimer = LXOrbwalker.now - 250;
+                    _rTimer = DeathWalker.now - 250;
                 }
             }
         }

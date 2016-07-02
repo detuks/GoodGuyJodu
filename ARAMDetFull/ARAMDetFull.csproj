@@ -54,6 +54,9 @@
     <StartupObject>ARAMDetFull.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DeathWalker">
+      <HintPath>C:\Program Files (x86)\PlaySharp\System\DeathWalker.dll</HintPath>
+    </Reference>
     <Reference Include="LeagueSharp">
       <HintPath>C:\Program Files (x86)\PlaySharp\System\LeagueSharp.dll</HintPath>
     </Reference>
@@ -155,6 +158,7 @@
     <Compile Include="Champions\RekSai.cs" />
     <Compile Include="Champions\RekSai2.cs" />
     <Compile Include="Champions\Renekton.cs" />
+    <Compile Include="Champions\Riven.cs" />
     <Compile Include="Champions\Ryze.cs" />
     <Compile Include="Champions\Sejuani.cs" />
     <Compile Include="Champions\Shaco.cs" />

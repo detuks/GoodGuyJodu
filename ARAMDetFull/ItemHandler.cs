@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ARAMDetFull;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using ARAMDetFull = ARAMDetFull.ARAMDetFull;
 using Items = LeagueSharp.Common.Items;

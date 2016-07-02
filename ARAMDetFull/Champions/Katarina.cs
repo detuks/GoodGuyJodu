@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -140,7 +140,7 @@ namespace ARAMDetFull.Champions
 
         public override void farm()
         {
-            if (!LXOrbwalker.CanMove()) return;
+            if (!DeathWalker.canMove()) return;
             var allMinions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q.Range);
             var useQ = true;
             var useW = true;

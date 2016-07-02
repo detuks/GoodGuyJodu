@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -122,9 +123,9 @@ namespace ARAMDetFull.Champions
             {
                 foreach (var ene in enes)
                 {
-                    if (LXOrbwalker.CanMove() && LXOrbwalker.CanAttack() && solisAreStill())
+                    if (DeathWalker.canMove() && DeathWalker.canAttack() && solisAreStill())
                     {
-                        //LXOrbwalker. = LXOrbwalker.now;
+                        //DeathWalker. = DeathWalker.now;
                         player.IssueOrder(GameObjectOrder.AttackUnit, ene);
                     }
                 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 
 namespace ARAMDetFull.Champions
@@ -70,7 +70,7 @@ namespace ARAMDetFull.Champions
             tar = ARAMTargetSelector.getBestTarget(W.Range);
             if (tar != null) useW(tar);
             if(E.IsReady())
-                foreach (var enem in LXOrbwalker.AllEnemys)
+                foreach (var enem in DeathWalker.AllEnemys)
                 {
                     useE(enem);
                 }

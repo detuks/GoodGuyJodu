@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 
 namespace ARAMDetFull
@@ -12,7 +13,7 @@ namespace ARAMDetFull
     {
         private static int[] order = new int[18];
 
-        private static int lastLevelup = LXOrbwalker.now;
+        private static int lastLevelup = DeathWalker.now;
 
         public static void setAutoLevel()
         {
@@ -28,9 +29,9 @@ namespace ARAMDetFull
 
         public static void LevelUpOff()
         {
-            if (lastLevelup + 2000 < LXOrbwalker.now)
+            if (lastLevelup + 2000 < DeathWalker.now)
             {
-                lastLevelup = LXOrbwalker.now;
+                lastLevelup = DeathWalker.now;
                 //return;
                 if (ObjectManager.Player.SpellTrainingPoints > 0 && ObjectManager.Player.SpellTrainingPoints <= ObjectManager.Player.Level)
                     for (var i = ObjectManager.Player.Level - ObjectManager.Player.SpellTrainingPoints;

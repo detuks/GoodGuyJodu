@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -22,8 +23,8 @@ namespace ARAMDetFull.Champions
         public Jinx()
         {
 
-            LXOrbwalker.BeforeAttack += BeforeAttack;
-            LXOrbwalker.AfterAttack += afterAttack;
+            DeathWalker.BeforeAttack += BeforeAttack;
+            DeathWalker.AfterAttack += afterAttack;
 
             ARAMSimulator.champBuild = new Build
             {
@@ -43,7 +44,7 @@ namespace ARAMDetFull.Champions
             };
         }
 
-        private void BeforeAttack(LXOrbwalker.BeforeAttackEventArgs args)
+        private void BeforeAttack(DeathWalker.BeforeAttackEventArgs args)
         {
             var t = ARAMTargetSelector.getBestTarget(bonusRange() + 50);
             if (t.IsValidTarget() && Q.IsReady() && FishBoneActive)

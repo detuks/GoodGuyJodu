@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -32,7 +32,7 @@ namespace ARAMDetFull.Champions
                     ItemId.Vampiric_Scepter,ItemId.Boots_of_Speed
                 }
             };
-            LXOrbwalker.AfterAttack += afterAttack;
+            DeathWalker.AfterAttack += afterAttack;
             Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
         }
 

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -19,7 +20,7 @@ namespace ARAMDetFull.Champions
             GameObject.OnDelete += GameObject_OnDelete;
             Interrupter.OnPossibleToInterrupt += Interrupter_OnPossibleToInterrupt;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
-            LXOrbwalker.AfterAttack += LXOrbwalker_AfterAttack;
+            DeathWalker.AfterAttack += DeathWalker_AfterAttack;
 
             ARAMSimulator.champBuild = new Build
             {
@@ -39,7 +40,7 @@ namespace ARAMDetFull.Champions
             };
         }
 
-        void LXOrbwalker_AfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
+        void DeathWalker_AfterAttack(AttackableUnit unit, AttackableUnit target)
         {
             //Game.PrintChat("Registered");
             if (!(target is Obj_AI_Hero)) return;
@@ -54,7 +55,7 @@ namespace ARAMDetFull.Champions
                     player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
                 else
                     player.IssueOrder(GameObjectOrder.MoveTo,player.Position.Extend(ARAMSimulator.fromNex.Position,450));
-
+                
                 CastW(target);
                 //castItems((Obj_AI_Hero)target);
             }
@@ -104,13 +105,13 @@ namespace ARAMDetFull.Champions
         {
             if (Axes.Count == 0)
             {
-                LXOrbwalker.CustomOrbwalkMode = false;
+                DeathWalker.CustomOrbwalkMode = false;
             }
         }
 
         public override void useSpells()
         {
-            var target = ARAMTargetSelector.getBestTarget(LXOrbwalker.GetAutoAttackRange());
+            var target = ARAMTargetSelector.getBestTarget(DeathWalker.getTargetSearchDist());
             var Etarget = ARAMTargetSelector.getBestTarget(E.Range);
             var RTarget = ARAMTargetSelector.getBestTarget(2000f);
             CatchAxes();
@@ -199,19 +200,19 @@ namespace ARAMDetFull.Champions
             //Game.PrintChat("I'm Combo");
             if (Axes.Count == 0)
             {
-                LXOrbwalker.CustomOrbwalkMode = false;
+                DeathWalker.CustomOrbwalkMode = false;
                 return;
             }
-            if (LXOrbwalker.inDanger)
+            if (ARAMSimulator.inDanger)
                 return;
             var Axe = getClosestAxe(out shouldUseWForIt);
 
             if (Axe == null)
             {
-                LXOrbwalker.CustomOrbwalkMode = false;
+                DeathWalker.CustomOrbwalkMode = false;
                 return;
             }
-            //  if (shouldUseWForIt) { LXOrbwalker.SetAttack(false); } else { LXOrbwalker.SetAttack(true);}
+            //  if (shouldUseWForIt) { DeathWalker.setAttack(false); } else { DeathWalker.setAttack(true);}
             Catch(shouldUseWForIt, Axe);
                   
         }
@@ -227,8 +228,8 @@ namespace ARAMDetFull.Champions
         public void Catch(bool shouldUseWForIt, PossibleReticle Axe)
         {
             if (shouldUseWForIt && W.IsReady() && !Axe.isCatchingNow()) W.Cast();
-            LXOrbwalker.CustomOrbwalkMode = true;
-            LXOrbwalker.Orbwalk(Axe.Position.Extend(player.Position,player.BoundingRadius-100), LXOrbwalker.GetPossibleTarget());
+            DeathWalker.CustomOrbwalkMode = true;
+            DeathWalker.deathWalkTarget(Axe.Position.Extend(player.Position,player.BoundingRadius-100), DeathWalker.getBestTarget());
         }
         public void CastQ()
         {
@@ -237,7 +238,7 @@ namespace ARAMDetFull.Champions
             if (getPerValue(true) >= ManaQCombo && GetQStacks() + 1 <= QMax) Q.Cast();
                  
         }
-        private void CastW(Obj_AI_Base target)
+        private void CastW(AttackableUnit target)
         {
             if (hasWBuff() || !W.IsReady()) return;
 
@@ -308,7 +309,7 @@ namespace ARAMDetFull.Champions
         }
         public bool minionThere()
         {
-            var List = MinionManager.GetMinions(player.Position, LXOrbwalker.GetAutoAttackRange())
+            var List = MinionManager.GetMinions(player.Position, DeathWalker.getTargetSearchDist())
                 .Where(m => HealthPrediction.GetHealthPrediction(m,
                     (int)(player.Distance(m) / Orbwalking.GetMyProjectileSpeed()) * 1000) <=
                             Q.GetDamage(m) + player.GetAutoAttackDamage(m)
@@ -400,8 +401,8 @@ namespace ARAMDetFull.Champions
                 AxeGameObject = Axe;
                 networkID = Axe.NetworkId;
                 Position = Axe.Position;
-                CreationTime = LXOrbwalker.now;
-                EndTime = LXOrbwalker.now + 2000;
+                CreationTime = DeathWalker.now;
+                EndTime = DeathWalker.now + 2000;
             }
 
             public bool canCatch(bool UseW,out bool ShouldUseW)
@@ -416,9 +417,9 @@ namespace ARAMDetFull.Champions
                 }
                 Spell W = new Spell(SpellSlot.W);
                 var distance = player.GetPath(Position).ToList().To2D().PathLength()-50;
-                var catchNormal = (distance * 1000) / player.MoveSpeed + LXOrbwalker.now < EndTime; // Not buffed with W, Normal
+                var catchNormal = (distance * 1000) / player.MoveSpeed + DeathWalker.now < EndTime; // Not buffed with W, Normal
                 var AdditionalSpeed = (5*W.Level + 35)*0.01*player.MoveSpeed;
-                var catchBuff = distance / (player.MoveSpeed + AdditionalSpeed) + LXOrbwalker.now < EndTime; //Buffed with W
+                var catchBuff = distance / (player.MoveSpeed + AdditionalSpeed) + DeathWalker.now < EndTime; //Buffed with W
                 if (catchNormal)
                 {
                     ShouldUseW = false;

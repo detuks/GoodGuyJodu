@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 
 namespace ARAMDetFull.Champions
@@ -146,7 +146,7 @@ namespace ARAMDetFull.Champions
             }
 
             foreach (var friend in
-               LXOrbwalker.AllAllys.Where(x => x.IsAlly).Where(x => !x.IsDead).Where(x => !x.IsZombie))
+               DeathWalker.AllAllys.Where(x => x.IsAlly).Where(x => !x.IsDead).Where(x => !x.IsZombie))
             {
                 var health = 35;
 
@@ -168,7 +168,7 @@ namespace ARAMDetFull.Champions
 
             foreach (var friend in
                 from friend in
-                    LXOrbwalker.AllAllys
+                    DeathWalker.AllAllys
                         .Where(x => !x.IsEnemy && !x.IsMe)
                         .Where(friend => W.IsInRange(friend.ServerPosition, W.Range))
                 let healthPercent = 75

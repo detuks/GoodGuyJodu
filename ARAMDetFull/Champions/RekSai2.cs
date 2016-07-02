@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -36,7 +36,7 @@ namespace ARAMDetFull.Champions
             };
 
 
-            LXOrbwalker.AfterAttack += afterAttack;
+            DeathWalker.AfterAttack += afterAttack;
             Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
         }
 
@@ -44,15 +44,6 @@ namespace ARAMDetFull.Champions
         {
             if (!sender.IsMe)
                 return;
-
-            if (args.SData.Name.ToLowerInvariant() == "reksaiq")
-                LXOrbwalker.ResetAutoAttackTimer();
-
-            if (args.SData.Name.ToLowerInvariant().Contains("reksaiqatt")
-                || args.SData.Name.ToLowerInvariant() == "reksaie")
-                Utility.DelayAction.Add(500, LXOrbwalker.ResetAutoAttackTimer);
-
-
         }
 
         private void afterAttack(AttackableUnit unit, AttackableUnit target)

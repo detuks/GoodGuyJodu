@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 
 namespace ARAMDetFull.Champions
@@ -79,7 +79,7 @@ namespace ARAMDetFull.Champions
             base.killSteal();
             if(E.IsReady())
             foreach (var hero in
-                    LXOrbwalker.AllAllys
+                    DeathWalker.AllAllys
                         .Where(
                             hero =>
                                 hero.IsValidTarget(E.Range, false) && hero.IsAlly &&

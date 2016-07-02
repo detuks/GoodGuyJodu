@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
+using DetuksSharp;
 
 namespace ARAMDetFull.Champions
 {
@@ -121,13 +122,13 @@ namespace ARAMDetFull.Champions
         {
             if (E.IsCharging || eActive)
             {
-                LXOrbwalker.SetAttack(false);
-                LXOrbwalker.SetMovement(false);
+                DeathWalker.setAttack(false);
+                DeathWalker.setMovement(false);
             }
             else
             {
-                LXOrbwalker.SetAttack(true);
-                LXOrbwalker.SetMovement(true);
+                DeathWalker.setAttack(true);
+                DeathWalker.setMovement(true);
             }
         }
 

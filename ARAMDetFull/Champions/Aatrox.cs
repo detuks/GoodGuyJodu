@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 
 namespace ARAMDetFull.Champions
@@ -22,7 +22,7 @@ namespace ARAMDetFull.Champions
                             new ConditionalItem(ItemId.Ravenous_Hydra_Melee_Only),
                             new ConditionalItem(ItemId.Randuins_Omen),
                             new ConditionalItem(ItemId.The_Black_Cleaver),
-                            new ConditionalItem(ItemId.Guardian_Angel),
+                            new ConditionalItem(ItemId.Banshees_Veil),
                         },
                 startingItems = new List<ItemId>
                         {

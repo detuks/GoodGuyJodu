@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -13,7 +14,7 @@ namespace ARAMDetFull.Champions
     {
         public Varus()
         {
-            LXOrbwalker.BeforeAttack += beforeAttack;
+            DeathWalker.BeforeAttack += beforeAttack;
 
             ARAMSimulator.champBuild = new Build
             {
@@ -33,7 +34,7 @@ namespace ARAMDetFull.Champions
             };
         }
 
-        private void beforeAttack(LXOrbwalker.BeforeAttackEventArgs args)
+        private void beforeAttack(DeathWalker.BeforeAttackEventArgs args)
         {
             args.Process = !Q.IsCharging;
         }

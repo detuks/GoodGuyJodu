@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -298,7 +298,7 @@ namespace ARAMDetFull.Champions
             }
 
             if (E.IsReady() && player.Distance(target) < E.Range  &&
-                target.Health > Q.GetDamage(target) + player.GetAutoAttackDamage(target) && LXOrbwalker.CanMove() &&
+                target.Health > Q.GetDamage(target) + player.GetAutoAttackDamage(target) && DeathWalker.canMove() &&
                 0 < E.Instance.Ammo)
             {
                 CastE(target, barrels);
@@ -306,11 +306,11 @@ namespace ARAMDetFull.Champions
             var meleeRangeBarrel =
                 barrels.FirstOrDefault(
                     b =>
-                        b.Health < 2 && b.Distance(player) < LXOrbwalker.GetAutoAttackRange(player, b) &&
+                        b.Health < 2 && b.Distance(player) < DeathWalker.getRealAutoAttackRange(player, b) &&
                         b.CountEnemiesInRange(BarrelExplosionRange) > 0);
             if (meleeRangeBarrel != null)
             {
-                LXOrbwalker.ForcedTarget = meleeRangeBarrel;
+                DeathWalker.ForcedTarget = meleeRangeBarrel;
             }
             if (Q.IsReady())
             {

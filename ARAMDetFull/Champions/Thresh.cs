@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
+using DetuksSharp;
 
 namespace ARAMDetFull.Champions
 {
@@ -37,12 +38,12 @@ namespace ARAMDetFull.Champions
 
         private bool FollowQ
         {
-            get { return LXOrbwalker.now <= QTick + QFollowTime; }
+            get { return DeathWalker.now <= QTick + QFollowTime; }
         }
 
         private bool FollowQBlock
         {
-            get { return LXOrbwalker.now - QTick >= QFollowTime; }
+            get { return DeathWalker.now - QTick >= QFollowTime; }
         }
 
 
@@ -54,7 +55,7 @@ namespace ARAMDetFull.Champions
             {
                 if (Q.Cast(target) == Spell.CastStates.SuccessfullyCasted)
                 {
-                    QTick = LXOrbwalker.now;
+                    QTick = DeathWalker.now;
                     QTarget = target;
                 }
             }

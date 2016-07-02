@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -37,7 +38,7 @@ namespace ARAMDetFull.Champions
             };
             Obj_AI_Base.OnDelete += Obj_AI_Base_OnDelete;
             Obj_AI_Base.OnCreate += Obj_AI_Base_OnCreate;
-            LXOrbwalker.BeforeAttack += Orbwalking_BeforeAttack;
+            DeathWalker.BeforeAttack += Orbwalking_BeforeAttack;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
             Interrupter.OnPossibleToInterrupt += OnInterruptableSpell;
         }
@@ -67,7 +68,7 @@ namespace ARAMDetFull.Champions
             }
         }
 
-        private void Orbwalking_BeforeAttack(LXOrbwalker.BeforeAttackEventArgs args)
+        private void Orbwalking_BeforeAttack(DeathWalker.BeforeAttackEventArgs args)
         {
             if (FarmId != args.Target.NetworkId)
                 FarmId = args.Target.NetworkId;
@@ -123,10 +124,10 @@ namespace ARAMDetFull.Champions
         {
             if (Combo)
             {
-                LXOrbwalker.SetAttack(!E.IsReady());
+                DeathWalker.setAttack(!E.IsReady());
             }
             else
-                LXOrbwalker.SetAttack(true);
+                DeathWalker.setAttack(true);
 
             if (R.IsReady())
             {
@@ -255,7 +256,7 @@ namespace ARAMDetFull.Champions
 
         public void farmE()
         {
-            if (Farm && !LXOrbwalker.CanAttack() )
+            if (Farm && !DeathWalker.canAttack() )
             {
 
                 var mobs = MinionManager.GetMinions(player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth);

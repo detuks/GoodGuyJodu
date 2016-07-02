@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -15,7 +16,7 @@ namespace ARAMDetFull.Champions
 
         public Renekton()
         {
-            LXOrbwalker.BeforeAttack += Orbwalking_BeforeAttack;
+            DeathWalker.BeforeAttack += Orbwalking_BeforeAttack;
 
             ARAMSimulator.champBuild = new Build
             {
@@ -35,11 +36,10 @@ namespace ARAMDetFull.Champions
             };
         }
 
-        private void Orbwalking_BeforeAttack(LXOrbwalker.BeforeAttackEventArgs args)
+        private void Orbwalking_BeforeAttack(DeathWalker.BeforeAttackEventArgs args)
         {
-            Obj_AI_Base target = args.Target;
-            if(target is Obj_AI_Hero)
-                if (W.IsReady() && args.Target == target)
+            if(args.Target is Obj_AI_Hero)
+                if (W.IsReady())
                     W.Cast();
         }
 

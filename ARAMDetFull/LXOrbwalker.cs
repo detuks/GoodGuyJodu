@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 using Color = System.Drawing.Color;
 
 namespace ARAMDetFull
 {
-    public class LXOrbwalker
+    public class DeathWalker2
     {
 
         public static int now
@@ -133,9 +134,9 @@ namespace ARAMDetFull
             }
             if (!(sender is MissileClient) || !sender.IsValid)
                 return;
-            var missile = (MissileClient)sender;
-            if (missile.SpellCaster is Obj_AI_Hero && missile.SpellCaster.IsValid && IsAutoAttack(missile.SData.Name))
-                FireAfterAttack(missile.SpellCaster, _lastTarget);
+           // var missile = (MissileClient)sender;
+           // if (missile.SpellCaster is Obj_AI_Hero && missile.SpellCaster.IsValid && IsAutoAttack(missile.SData.Name))
+            //    FireAfterAttack(missile.SpellCaster, _lastTarget);
         }
 
         public static void OrbwalkTo(Vector3 goalPosition, bool useDelay = true, bool onlyChamps = false)
@@ -149,7 +150,7 @@ namespace ARAMDetFull
 
         public static void getTheFukaway()
         {
-            _delayAttackTill = LXOrbwalker.now + Game.Ping / 2 + 500;
+            _delayAttackTill = DeathWalker.now + Game.Ping / 2 + 500;
         }
 
         public static void Orbwalk(Vector3 goalPosition, AttackableUnit target,bool useDelay = true)
@@ -159,7 +160,7 @@ namespace ARAMDetFull
                     if (target != null && target.IsValidTarget() && CanAttack() && IsAllowedToAttack())
                     {
                         if (MyHero.IssueOrder(GameObjectOrder.AttackUnit, target))
-                            _lastAATick = LXOrbwalker.now + Game.Ping/2;
+                            _lastAATick = DeathWalker.now + Game.Ping/2;
                     }
                     if (!CanMove() || !IsAllowedToMove())
                         return;
@@ -185,9 +186,9 @@ namespace ARAMDetFull
         private static void MoveTo(Vector3 position, float holdAreaRadius = -1, bool useDelay = true)
         {
             var delay = (useDelay) ? moveDelay : 0;
-            if (LXOrbwalker.now - _lastMovement < delay)
+            if (DeathWalker.now - _lastMovement < delay)
                 return;
-            _lastMovement = LXOrbwalker.now;
+            _lastMovement = DeathWalker.now;
             if (!CanMove())
                 return;
             if (holdAreaRadius < 0)
@@ -233,23 +234,20 @@ namespace ARAMDetFull
 
         private static void OnProcessSpell(Obj_AI_Base unit, GameObjectProcessSpellCastEventArgs spell)
         {
-            if (IsAutoAttackReset(spell.SData.Name) && unit.IsMe)
-                Utility.DelayAction.Add(250, ResetAutoAttackTimer);
-
             if (!IsAutoAttack(spell.SData.Name))
                 return;
             if (unit.IsMe)
             {
-                _lastAATick = LXOrbwalker.now;
+                _lastAATick = DeathWalker.now;
                 // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
                 if (spell.Target is Obj_AI_Base)
                 {
                     FireOnTargetSwitch((Obj_AI_Base)spell.Target);
                     _lastTarget = (Obj_AI_Base)spell.Target;
                 }
-                if (unit.IsMelee())
+                /*if (unit.IsMelee())
                     Utility.DelayAction.Add(
-                        (int)(unit.AttackCastDelay * 1000 + Game.Ping * 0.5) + 50, () => FireAfterAttack(unit, _lastTarget));
+                        (int)(unit.AttackCastDelay * 1000 + Game.Ping * 0.5) + 50, () => FireAfterAttack(unit, _lastTarget));*/
             }
             FireOnAttack(unit, _lastTarget);
         }
@@ -414,10 +412,10 @@ namespace ARAMDetFull
 
         public static bool CanAttack()
         {
-            if (_lastAATick <= LXOrbwalker.now && _delayAttackTill <= LXOrbwalker.now)
+            if (_lastAATick <= DeathWalker.now && _delayAttackTill <= DeathWalker.now)
             {
                 float danger = (inDanger && MyHero.FlatMagicDamageMod > MyHero.FlatPhysicalDamageMod*1.4f) ? 300 : 0;
-                return LXOrbwalker.now + Game.Ping / 2 + 25 >= _lastAATick + MyHero.AttackDelay * 1000 + danger && _attack;
+                return DeathWalker.now + Game.Ping / 2 + 25 >= _lastAATick + MyHero.AttackDelay * 1000 + danger && _attack;
             }
             return false;
         }
@@ -425,8 +423,8 @@ namespace ARAMDetFull
         public static bool CanMove()
         {
             var extraWindup = (CustomOrbwalkMode)?100:320;
-            if (_lastAATick <= LXOrbwalker.now)
-                return LXOrbwalker.now >= _lastAATick + MyHero.AttackCastDelay * 1000 + extraWindup && _movement || MyHero.ChampionName == "Kalista";
+            if (_lastAATick <= DeathWalker.now)
+                return DeathWalker.now >= _lastAATick + MyHero.AttackCastDelay * 1000 + extraWindup && _movement || MyHero.ChampionName == "Kalista";
             return false;
         }
 
@@ -573,21 +571,21 @@ namespace ARAMDetFull
             }
         }
 
-        private static void FireAfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
+        private static void FireAfterAttack(AttackableUnit unit, AttackableUnit target)
         {
             _lastMovement = 0;
             if (AfterAttack != null)
             {
-                AfterAttack(unit, target);
+                //AfterAttack(unit, target);
             }
         }
 
-        private static void FireOnAttack(Obj_AI_Base unit, Obj_AI_Base target)
+        private static void FireOnAttack(AttackableUnit unit, AttackableUnit target)
         {
             if (OnAttack != null)
             {
-                OnAttack(unit, target);
-            }
+                //OnAttack(unit, target);
+            }//
         }
     }
 }

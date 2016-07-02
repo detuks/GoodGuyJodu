@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -14,7 +15,7 @@ namespace ARAMDetFull.Champions
 
         public Darius()
         {
-            LXOrbwalker.AfterAttack += ExecuteAfterAttack;
+            DeathWalker.AfterAttack += ExecuteAfterAttack;
 
             ARAMSimulator.champBuild = new Build
             {

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 
 namespace ARAMDetFull.Champions
@@ -102,13 +103,13 @@ namespace ARAMDetFull.Champions
 
         public void gatherAze()
         {
-            LXOrbwalker.CustomOrbwalkMode = false;
+            DeathWalker.CustomOrbwalkMode = false;
             if (olafAxe == null)
                 return;
             if (!safeGap(olafAxe.Position.To2D()))
                 return;
-            LXOrbwalker.CustomOrbwalkMode = true;
-            LXOrbwalker.Orbwalk(olafAxe.Position, LXOrbwalker.GetPossibleTarget());
+            DeathWalker.CustomOrbwalkMode = true;
+            DeathWalker.deathWalkTarget(olafAxe.Position,DeathWalker.getBestTarget());
 
         }
 

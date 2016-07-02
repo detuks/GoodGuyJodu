@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 
 namespace ARAMDetFull
@@ -107,9 +108,9 @@ namespace ARAMDetFull
             private int lastCast = 0;
             public override void useSpell()
             {
-                if (!spell.IsReady() || lastCast + 700 > LXOrbwalker.now)
+                if (!spell.IsReady() || lastCast + 700 > DeathWalker.now)
                     return;
-                lastCast = LXOrbwalker.now;
+                lastCast = DeathWalker.now;
 
                 if (spell.Instance.Name.ToLower().Equals("snowballfollowupcast"))
                 {

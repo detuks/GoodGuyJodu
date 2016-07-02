@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -134,7 +134,7 @@ namespace ARAMDetFull.Champions
                         EQ.Width + enemy.BoundingRadius)
                     {
                         E.Cast(orb, true);
-                        W.LastCastAttemptT = LXOrbwalker.now;
+                        W.LastCastAttemptT = DeathWalker.now;
                         return;
                     }
                 }
@@ -149,8 +149,8 @@ namespace ARAMDetFull.Champions
             if (prediction.Hitchance >= HitChance.High)
             {
                 Q.Cast(player.ServerPosition.To2D().Extend(prediction.CastPosition.To2D(), Q.Range - 100));
-                QEComboT = LXOrbwalker.now;
-                W.LastCastAttemptT = LXOrbwalker.now;
+                QEComboT = DeathWalker.now;
+                W.LastCastAttemptT = DeathWalker.now;
             }
         }
 
@@ -197,7 +197,7 @@ namespace ARAMDetFull.Champions
                 Q.Cast(qTarget, false, true);
 
             //E
-            if (LXOrbwalker.now - W.LastCastAttemptT > Game.Ping + 150 && E.IsReady() && useE)
+            if (DeathWalker.now - W.LastCastAttemptT > Game.Ping + 150 && E.IsReady() && useE)
                 foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>())
                 {
                     if (enemy.IsValidTarget(EQ.Range))
@@ -263,31 +263,31 @@ namespace ARAMDetFull.Champions
                 if (prediction.Hitchance >= HitChance.High)
                 {
                     W.Cast(player.ServerPosition.To2D().Extend(prediction.CastPosition.To2D(), Q.Range - 100));
-                    WEComboT = LXOrbwalker.now;
+                    WEComboT = DeathWalker.now;
                 }
             }
         }
 
         private void Obj_AI_Hero_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
-            if (sender.IsMe && LXOrbwalker.now - QEComboT < 500 &&
+            if (sender.IsMe && DeathWalker.now - QEComboT < 500 &&
                 (args.SData.Name == "SyndraQ"))
             {
-                W.LastCastAttemptT = LXOrbwalker.now + 400;
+                W.LastCastAttemptT = DeathWalker.now + 400;
                 E.Cast(args.End, true);
             }
 
-            if (sender.IsMe && LXOrbwalker.now - WEComboT < 500 &&
+            if (sender.IsMe && DeathWalker.now - WEComboT < 500 &&
                 (args.SData.Name == "SyndraW" || args.SData.Name == "syndrawcast"))
             {
-                W.LastCastAttemptT = LXOrbwalker.now + 400;
+                W.LastCastAttemptT = DeathWalker.now + 400;
                 E.Cast(args.End, true);
             }
         }
 
         private void Farm(bool laneClear)
         {
-            if (!LXOrbwalker.CanMove()) return;
+            if (!DeathWalker.canMove()) return;
 
             var rangedMinionsQ = MinionManager.GetMinions(player.ServerPosition, Q.Range + Q.Width + 30,
                 MinionTypes.Ranged);
@@ -330,7 +330,7 @@ namespace ARAMDetFull.Champions
                         //WObject
                         var gObjectPos = GetGrabableObjectPos(false);
 
-                        if (gObjectPos.To2D().IsValid() && LXOrbwalker.now - W.LastCastAttemptT > Game.Ping + 150)
+                        if (gObjectPos.To2D().IsValid() && DeathWalker.now - W.LastCastAttemptT > Game.Ping + 150)
                         {
                             W.Cast(gObjectPos);
                         }

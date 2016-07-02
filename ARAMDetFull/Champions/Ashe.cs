@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 
 namespace ARAMDetFull.Champions
@@ -35,7 +35,7 @@ namespace ARAMDetFull.Champions
             };
         }
 
-        private void AfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
+        private void AfterAttack(AttackableUnit unit, AttackableUnit target)
         {
             if (target is Obj_AI_Hero && Q.IsReady())
             {

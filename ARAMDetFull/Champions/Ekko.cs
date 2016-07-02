@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 
 namespace ARAMDetFull.Champions
@@ -61,7 +61,7 @@ namespace ARAMDetFull.Champions
                 Q.Cast(t);
             if (player.Mana > RMANA + QMANA + WMANA)
             {
-                foreach (var enemy in LXOrbwalker.AllEnemys.Where(enemy => enemy.IsValidTarget(Q.Range)))
+                foreach (var enemy in DeathWalker.AllEnemys.Where(enemy => enemy.IsValidTarget(Q.Range)))
                     Q.Cast(enemy, true);
             }
         }
@@ -82,7 +82,7 @@ namespace ARAMDetFull.Champions
                 W.Cast(t);
             else if (ObjectManager.Player.Mana > RMANA + WMANA + EMANA)
             {
-                foreach (var enemy in LXOrbwalker.AllEnemys.Where(enemy => enemy.IsValidTarget(W.Range)))
+                foreach (var enemy in DeathWalker.AllEnemys.Where(enemy => enemy.IsValidTarget(W.Range)))
                     W.Cast(enemy, true);
             }
         }
@@ -128,7 +128,7 @@ namespace ARAMDetFull.Champions
         {
             if (!R.IsReady() || target == null)
                 return;
-            foreach (var t in LXOrbwalker.AllEnemys.Where(t => RMissile != null && RMissile.IsValid && t.IsValidTarget() && RMissile.Position.Distance(Prediction.GetPrediction(t, R.Delay).CastPosition) < 350 && RMissile.Position.Distance(t.ServerPosition) < 350))
+            foreach (var t in DeathWalker.AllEnemys.Where(t => RMissile != null && RMissile.IsValid && t.IsValidTarget() && RMissile.Position.Distance(Prediction.GetPrediction(t, R.Delay).CastPosition) < 350 && RMissile.Position.Distance(t.ServerPosition) < 350))
             {
 
                 var comboDmg = GetRdmg(t) + GetWdmg(t);

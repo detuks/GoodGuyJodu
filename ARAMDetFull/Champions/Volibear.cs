@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -30,7 +31,7 @@ namespace ARAMDetFull.Champions
                             ItemId.Giants_Belt,ItemId.Boots_of_Speed
                         }
             };
-            LXOrbwalker.BeforeAttack += beforeAttack;
+            DeathWalker.BeforeAttack += beforeAttack;
             Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
             Console.WriteLine("Volibear in");
         }
@@ -41,7 +42,7 @@ namespace ARAMDetFull.Champions
 
         }
 
-        private void beforeAttack(LXOrbwalker.BeforeAttackEventArgs args)
+        private void beforeAttack(DeathWalker.BeforeAttackEventArgs args)
         {
             if (args.Unit.IsMe && args.Target is Obj_AI_Hero && Q.IsReady())
             {

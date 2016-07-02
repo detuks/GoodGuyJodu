@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 
 namespace ARAMDetFull.Champions
@@ -16,7 +16,7 @@ namespace ARAMDetFull.Champions
 
         public bool justUsedDrain
         {
-            get { return drainStart + 500 > LXOrbwalker.now; }
+            get { return drainStart + 500 > DeathWalker.now; }
         }
 
         public Fiddlestick()
@@ -61,7 +61,7 @@ namespace ARAMDetFull.Champions
             }
 
             if (E.CastOnUnit(target))
-                drainStart = LXOrbwalker.now;
+                drainStart = DeathWalker.now;
         }
 
         public override void useR(Obj_AI_Base target)
@@ -76,15 +76,15 @@ namespace ARAMDetFull.Champions
         {
             if (player.HasBuff("Drain") || justUsedDrain)
             {
-                LXOrbwalker.SetMovement(false);
-                LXOrbwalker.SetAttack(false);
+                DeathWalker.setMovement(false);
+                DeathWalker.setAttack(false);
             }
             if (justUsedDrain)
                 return;
             if (!player.HasBuff("Drain"))
             {
-                LXOrbwalker.SetMovement(true);
-                LXOrbwalker.SetAttack(true);
+                DeathWalker.setMovement(true);
+                DeathWalker.setAttack(true);
             }
 
             var tar = ARAMTargetSelector.getBestTarget(Q.Range);

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 
 namespace ARAMDetFull.Champions
@@ -14,7 +15,7 @@ namespace ARAMDetFull.Champions
 
         public Warwick()
         {
-            LXOrbwalker.AfterAttack += aAtack;
+            DeathWalker.AfterAttack += aAtack;
 
             ARAMSimulator.champBuild = new Build
             {
@@ -33,8 +34,8 @@ namespace ARAMDetFull.Champions
                         }
             };
         }
-
-        private void aAtack(Obj_AI_Base unit, Obj_AI_Base target)
+        
+        private void aAtack(AttackableUnit unit, AttackableUnit target)
         {
             if (!W.IsReady())
             {

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using ARAMDetFull.Champions;
-using LeagueSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 using SharpDX.Direct3D9;
@@ -16,6 +16,7 @@ using System.ComponentModel;
 using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
+using DetuksSharp;
 
 namespace ARAMDetFull
 {
@@ -668,6 +669,9 @@ namespace ARAMDetFull
                 case "Akali":
                     champ = new Akali();
                     break;
+                case "Riven":
+                    champ = new Riven();
+                    break;
                     //Akali
             }
         }
@@ -717,10 +721,10 @@ namespace ARAMDetFull
 
         public static void buyItems()
         {
-            if (lastBuy<LXOrbwalker.now-2300)
+            if (lastBuy<DeathWalker.now-2300)
             {
                 AutoShopper.buyNext();
-                lastBuy = LXOrbwalker.now;
+                lastBuy = DeathWalker.now;
             }
                /* foreach (var item in nextItem.itemIds)
                 {
@@ -728,7 +732,7 @@ namespace ARAMDetFull
                     {
                         Console.WriteLine("Buy itemmss: "+item);
                         player.BuyItem((ItemId)item);
-                        lastBuy = LXOrbwalker.now;
+                        lastBuy = DeathWalker.now;
                     }
                 }
             checkItems();*/
@@ -767,7 +771,6 @@ namespace ARAMDetFull
             }
             MapControl.setupMapControl();
             AutoLevelChamp.setAutoLevel();
-            LXOrbwalker.setpOrbwalker();
             AutoShopper.init();
             setUpItems();
             setChamp();
@@ -778,6 +781,10 @@ namespace ARAMDetFull
             {
                 champ.setUpSpells();
             }
+
+            DeathWalker.CustomRunCS = (player.IsMelee) ? 250 : 150;
+            DeathWalker.CustomMoveDelay =  324;
+            DeathWalker.BottingMode =  true;
         }
 
         private static void onDelete(GameObject sender, EventArgs args)
@@ -839,6 +846,8 @@ namespace ARAMDetFull
 
         private static bool needRecall = false;
         private static int lastRecall = 0;
+        public static bool inDanger = false;
+        public static float farmRange = 900;
 
         [SecurityPermission(SecurityAction.Assert, Unrestricted = true)]
         public static void updateArmaPlay()
@@ -879,7 +888,7 @@ namespace ARAMDetFull
             var closestEnemy = HeroManager.Enemies.Where(ene => !ene.IsDead && ene.IsTargetable && !ARAMTargetSelector.IsInvulnerable(ene)).OrderBy(ene =>  player.Position.Distance(ene.Position, true)).FirstOrDefault();
             if (closestEnemy != null && ramboMode)
             {
-                LXOrbwalker.OrbwalkTo(closestEnemy.Position,false,true);
+                DeathWalker.deathWalk(closestEnemy.Position,true);
                 return;
             }
 
@@ -891,7 +900,7 @@ namespace ARAMDetFull
             agrobalance = Aggresivity.getAgroBalance();
 
             balance = (ARAMTargetSelector.IsInvulnerable(player) || player.IsZombie) ? 250 : MapControl.balanceAroundPointAdvanced(player.Position.To2D(), 250 - agrobalance * 5) + agrobalance;
-            LXOrbwalker.inDanger = balance < 0;
+            inDanger = balance < 0;
 
             if (Game.MapId == GameMapId.SummonersRift)
             {
@@ -906,12 +915,12 @@ namespace ARAMDetFull
                     needRecall = false;
                 if (((player.HealthPercent < 32 && player.CountEnemiesInRange(1000)==0) || needRecall) && balance > 5 )
                 {
-                    if (lastRecall + 9000 < LXOrbwalker.now)
+                    if (lastRecall + 9000 < DeathWalker.now)
                     {
                         needRecall = true;
                         var recall = new Spell(SpellSlot.Recall);
                         recall.Cast();
-                        lastRecall = LXOrbwalker.now;
+                        lastRecall = DeathWalker.now;
                         return;
                     }
                 }
@@ -926,7 +935,7 @@ namespace ARAMDetFull
             {
                 try
                 {
-                    if (player.GetEnemiesInRange(LXOrbwalker.farmRange).Count(ene => !ene.IsDead && !ene.IsZombie) != 0)
+                    if (player.GetEnemiesInRange(ARAMSimulator.farmRange).Count(ene => !ene.IsDead && !ene.IsZombie) != 0)
                         champ.killSteal();
                     else
                         champ.farm();
@@ -971,14 +980,14 @@ namespace ARAMDetFull
             {
                 Aggresivity.addAgresiveMove(new AgresiveMove(45,1500,true));
                 //Console.WriteLine("go get easy");
-                LXOrbwalker.OrbwalkTo(easyKill.Position.To2D().Extend(player.Position.To2D(), player.AttackRange*0.7f).To3D(),true);
+                DeathWalker.deathWalk(easyKill.Position.To2D().Extend(player.Position.To2D(), player.AttackRange*0.7f).To3D(),true);
             }
 
 
             if (balance < 0)
-                LXOrbwalker.OrbwalkTo(player.Position.To2D().Extend(fromNex.Position.To2D(), 600).To3D(),false,true);
+                DeathWalker.deathWalk(player.Position.To2D().Extend(fromNex.Position.To2D(), 600).To3D(),true);
 
-            if ((!player.IsMelee || fightLevel<2) && moveToRelicIfForHeal())
+            if ((!player.IsMelee || fightLevel<2) && HeroManager.Enemies.Any(h => !h.IsDead) && moveToRelicIfForHeal())
             {
                 return;
             }
@@ -991,9 +1000,9 @@ namespace ARAMDetFull
 
             if (towerAttackedMe)
             {
-                LXOrbwalker.CustomOrbwalkMode = false;
+                DeathWalker.CustomOrbwalkMode = false;
                // Game.PrintChat("ouch tower!");
-                LXOrbwalker.OrbwalkTo(player.Position.To2D().Extend(fromNex.Position.To2D(), 600).To3D(), true);
+                DeathWalker.deathWalk(player.Position.To2D().Extend(fromNex.Position.To2D(), 600).To3D(), true);
                 return;
             }
             
@@ -1001,10 +1010,10 @@ namespace ARAMDetFull
             if (awayTo.IsValid() && awayTo.X != 0 )
             {
 
-                LXOrbwalker.CustomOrbwalkMode = false;
+                DeathWalker.CustomOrbwalkMode = false;
                 if(champ != null)
                     champ.kiteBack(awayTo);
-                LXOrbwalker.OrbwalkTo(awayTo.To3D(),true);
+                DeathWalker.deathWalk(awayTo.To3D(),true);
                 return;
                 
             }
@@ -1012,12 +1021,12 @@ namespace ARAMDetFull
             {
 
                 var closestObj =
-                    LXOrbwalker.EnemyObjectives.Where(
-                        obj => obj.IsValidTarget(500) && !obj.IsDead && !obj.IsInvulnerable)
+                    DeathWalker.EnemyObjectives.Where(
+                        obj => obj.IsValidTarget(700) && !obj.IsDead && !obj.IsInvulnerable)
                         .OrderBy(obj => obj.Position.Distance(player.Position, true)).FirstOrDefault();
-                if (closestObj != null)
+                if (closestObj != null && (!(closestObj is Obj_AI_Turret) ||  Sector.towerContainsAlly((Obj_AI_Turret)closestObj)))
                 {
-                    LXOrbwalker.OrbwalkTo(
+                    DeathWalker.deathWalk(
                         closestObj.Position.Extend(player.Position, player.AttackRange * 0.6f), true);
                     return;
                 }
@@ -1027,7 +1036,7 @@ namespace ARAMDetFull
                     var safeMeleeEnem = ARAMTargetSelector.getSafeMeleeTarget();
                     if (safeMeleeEnem != null)
                     {
-                        LXOrbwalker.OrbwalkTo(
+                        DeathWalker.deathWalk(
                             safeMeleeEnem.Position.Extend(safeMeleeEnem.Direction, player.AttackRange*0.3f), true);
                         return;
                     }
@@ -1037,7 +1046,7 @@ namespace ARAMDetFull
                 if (fightOn != null && MapControl.balanceAroundPointAdvanced(fightOn.Position.To2D(),280,450) > (-130) && fightOn.Distance(player, true) < 2500 * 2500 && (!player.IsMelee() || !Sector.inTowerRange(fightOn.Position.To2D())))
                 {
                     Aggresivity.addAgresiveMove(new AgresiveMove(40* MapControl.fightLevel(), 2000,true,true));
-                    LXOrbwalker.OrbwalkTo(fightOn.Position.Extend(player.Position, player.AttackRange * 0.8f), true);
+                    DeathWalker.deathWalk(fightOn.Position.Extend(player.Position, player.AttackRange * 0.8f), true);
                 }
                 else
                 {/*
@@ -1046,7 +1055,7 @@ namespace ARAMDetFull
                         return;
                     }*/
 
-                    if (!LXOrbwalker.inDanger)
+                    if (!inDanger)
                     {
 
                         Sector orbSector = null;
@@ -1079,11 +1088,11 @@ namespace ARAMDetFull
                         }
                         if (orbSector == null)
                             return;
-                        LXOrbwalker.OrbwalkTo(orbSector.getRandomPointIn().To3D());
+                        DeathWalker.deathWalk(orbSector.getRandomPointIn().To3D(),false,true);
                     }
                     else
                     {
-                        LXOrbwalker.OrbwalkTo(player.Position.To2D().Extend(fromNex.Position.To2D(),600).To3D());
+                        DeathWalker.deathWalk(player.Position.To2D().Extend(fromNex.Position.To2D(),600).To3D(),false);
                     }
                 }
             }
@@ -1112,7 +1121,7 @@ namespace ARAMDetFull
                 }
                 if ((needHeal && player.HealthPercent>18 && MapControl.fightIsOn() == null) || (!relicHeal.Name.Contains("Health")) && dist < 2500)
                 {
-                    LXOrbwalker.OrbwalkTo(relicHeal.Position);
+                    DeathWalker.deathWalk(relicHeal.Position);
                     return true;
                 }
             }

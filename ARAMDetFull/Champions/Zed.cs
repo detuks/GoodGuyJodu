@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
+using DetuksSharp;
+using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
@@ -23,9 +24,9 @@ namespace ARAMDetFull.Champions
 
         public override void useW(Obj_AI_Base target)
         {
-            if (!W.IsReady() || shadowW != null || lastW+1000>LXOrbwalker.now)
+            if (!W.IsReady() || shadowW != null || lastW+1000>DeathWalker.now)
                 return;
-            lastW = LXOrbwalker.now;
+            lastW = DeathWalker.now;
             W.Cast(target.Position);
         }
 
@@ -244,14 +245,14 @@ namespace ARAMDetFull.Champions
                 //PredictionOutput p1o = Prediction.GetPrediction(target, 0.350f);
                 Vector3 shadowPos = target.Position + Vector3.Normalize(target.Position - shadowR.Position) * E.Range;
                 if (W.IsReady() && shadowW == null &&
-                    ((!getWshad && recast < LXOrbwalker.now && !serverTookWCast)))
+                    ((!getWshad && recast < DeathWalker.now && !serverTookWCast)))
                 {
                     //V2E(shadowR.Position, po.UnitPosition, E.Range)
                     Console.WriteLine("cast WWW");
                     W.Cast(shadowPos);
                     serverTookWCast = false;
                     wIsCasted = true;
-                    recast = LXOrbwalker.now + 300;
+                    recast = DeathWalker.now + 300;
                 }
                 if (E.IsReady() && shadowW != null || shadowR != null)
                 {
