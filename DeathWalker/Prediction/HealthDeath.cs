@@ -9,7 +9,7 @@ using LeagueSharp.Common;
 
 namespace DetuksSharp.Prediction
 {
-    class HealthDeath
+    public class HealthDeath
     {
 
         private static int _lastTick;

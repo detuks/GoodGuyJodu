@@ -405,21 +405,21 @@ namespace DetuksSharp
             {
                 /* turrets */
                 foreach (var turret in
-                   EnemyTowers.Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
+                   EnemyTowers.Where(t => t.IsValidTarget() && !t.IsDead && !t.IsInvulnerable && inAutoAttackRange(t)))
                 {
                     return turret;
                 }
 
                 /* inhibitor */
                 foreach (var turret in
-                    EnemyBarracs.Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
+                    EnemyBarracs.Where(t => t.IsValidTarget() && !t.IsDead && !t.IsInvulnerable && inAutoAttackRange(t)))
                 {
                     return turret;
                 }
 
                 /* nexus */
                 foreach (var nexus in
-                    EnemyHQ.Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
+                    EnemyHQ.Where(t => t.IsValidTarget() && !t.IsDead && !t.IsInvulnerable && inAutoAttackRange(t)))
                 {
                     return nexus;
                 }
@@ -513,21 +513,21 @@ namespace DetuksSharp
             {
                 /* turrets */
                 foreach (var turret in
-                   EnemyTowers.Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
+                   EnemyTowers.Where(t => t.IsValidTarget() && !t.IsDead && !t.IsInvulnerable && inAutoAttackRange(t)))
                 {
                     return turret;
                 }
 
                 /* inhibitor */
                 foreach (var turret in
-                    EnemyBarracs.Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
+                    EnemyBarracs.Where(t => t.IsValidTarget() && !t.IsDead && !t.IsInvulnerable && inAutoAttackRange(t)))
                 {
                     return turret;
                 }
 
                 /* nexus */
                 foreach (var nexus in
-                    EnemyHQ.Where(t => t.IsValidTarget() && inAutoAttackRange(t)))
+                    EnemyHQ.Where(t => t.IsValidTarget() && !t.IsDead && !t.IsInvulnerable && inAutoAttackRange(t)))
                 {
                     return nexus;
                 }
