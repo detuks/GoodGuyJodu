@@ -19,16 +19,16 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                 {
-                    new ConditionalItem(ItemId.Statikk_Shiv),
-                    new ConditionalItem(ItemId.Mercurys_Treads),
-                    new ConditionalItem(ItemId.Youmuus_Ghostblade),
-                    new ConditionalItem(ItemId.Phantom_Dancer,ItemId.Warmogs_Armor,ItemCondition.ENEMY_LOSING),
-                    new ConditionalItem(ItemId.Spirit_Visage, ItemId.Randuins_Omen, ItemCondition.ENEMY_AP),
+                    new ConditionalItem(ItemId.Blade_of_the_Ruined_King),
+                    new ConditionalItem(ItemId.Berserkers_Greaves,ItemId.Mercurys_Treads,ItemCondition.ENEMY_LOSING),
+                    new ConditionalItem(ItemId.Phantom_Dancer),
+                    new ConditionalItem(ItemId.Youmuus_Ghostblade,ItemId.Warmogs_Armor,ItemCondition.ENEMY_LOSING),
                     new ConditionalItem(ItemId.The_Black_Cleaver),
+                    new ConditionalItem(ItemId.Infinity_Edge, ItemId.Frozen_Mallet,ItemCondition.ENEMY_LOSING),
                 },
                 startingItems = new List<ItemId>
                 {
-                    ItemId.Dagger,ItemId.Brawlers_Gloves,ItemId.Boots_of_Speed
+                    ItemId.Vampiric_Scepter, ItemId.Boots_of_Speed
                 }
             };
         }

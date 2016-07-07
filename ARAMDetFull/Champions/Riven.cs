@@ -74,6 +74,7 @@ namespace ARAMDetFull.Champions
                         Q.IsReady())
                     {
                         Utility.DelayAction.Add(30, delegate { Q.Cast(targ.Position); });
+                        Aggresivity.addAgresiveMove(new AgresiveMove(30, 3000));
                         //Console.WriteLine("force q");
 
                         // Riven.forceQ = true;
@@ -125,6 +126,7 @@ namespace ARAMDetFull.Champions
             if (target is Obj_AI_Hero)
             {
                 Q.Cast(target.Position);
+                Aggresivity.addAgresiveMove(new AgresiveMove(30, 3000));
             }
         }
 
@@ -156,7 +158,7 @@ namespace ARAMDetFull.Champions
 
         public override void useSpells()
         {
-            var tar = ARAMTargetSelector.getBestTarget(getRivenReach()+500);
+            var tar = ARAMTargetSelector.getBestTarget(getRivenReach()+430);
             doCombo(tar);
         }
 
@@ -174,7 +176,7 @@ namespace ARAMDetFull.Champions
         public float getRivenReach()
         {
             int Qtimes = getQJumpCount();
-            return player.AttackRange + Qtimes*250 + (E.IsReady() ? 390 : 0);
+            return player.AttackRange + Qtimes*200 + (E.IsReady() ? 390 : 0);
         }
 
         public  void doCombo(Obj_AI_Base target)
@@ -184,7 +186,7 @@ namespace ARAMDetFull.Champions
             
             rushDownQ =  rushDmgBasedOnDist(target) * 0.7f > target.Health;
             rushDown = rushDmgBasedOnDist(target) * 1.1f > target.Health;
-            if (rushDown)
+            if (rushDown || player.CountEnemiesInRange(600)>2)
                 useRSmart(target);
             if(rushDown || safeGap(target))
                 useESmart(target);
@@ -227,6 +229,7 @@ namespace ARAMDetFull.Champions
                     Vector2 to = player.Position.To2D().Extend(target.Position.To2D(), 50);
                     // Player.IssueOrder(GameObjectOrder.MoveTo,to.To3D());
                     Q.Cast(target.ServerPosition);
+                    Aggresivity.addAgresiveMove(new AgresiveMove(30, 3000));
                 }
             }
         }
@@ -243,7 +246,7 @@ namespace ARAMDetFull.Champions
             if (W.IsReady() && target.Distance(player.ServerPosition) < range)
             {
                 W.Cast();
-                Utility.DelayAction.Add(50, delegate { DeathWalker.resetAutoAttackTimer(true); });
+                //Utility.DelayAction.Add(50, delegate { DeathWalker.resetAutoAttackTimer(true); });
             }
         }
 
@@ -281,6 +284,7 @@ namespace ARAMDetFull.Champions
             if (!ultIsOn() && !E.IsReady() && target.Distance(player.ServerPosition) < (Q.Range + target.BoundingRadius))
             {
                 R.Cast();
+                Aggresivity.addAgresiveMove(new AgresiveMove(150,8000));
                 if (rrAA)
                 {
                     player.IssueOrder(GameObjectOrder.MoveTo, target.Position);

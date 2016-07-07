@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
+using SharpDX;
 
 namespace ARAMDetFull.Champions
 {
@@ -56,7 +57,10 @@ namespace ARAMDetFull.Champions
             if (!E.IsReady() || target == null)
                 return;
             if (safeGap(target))
-                E.CastOnUnit(target);
+            {
+                if(!gapCloseE(target.Position.To2D() ,new List<Obj_AI_Hero>() {target as Obj_AI_Hero}))
+                    useESmart(target as Obj_AI_Hero);
+            }
         }
 
 
@@ -74,7 +78,7 @@ namespace ARAMDetFull.Champions
             if (tar != null) useQ(tar);
             tar = ARAMTargetSelector.getBestTarget(W.Range);
             if (tar != null) useW(tar);
-            tar = ARAMTargetSelector.getBestTarget(E.Range);
+            tar = ARAMTargetSelector.getBestTarget(E.Range+600);
             if (tar != null) useE(tar);
             tar = ARAMTargetSelector.getBestTarget(R.Range);
             if (tar != null) useR(tar);
@@ -91,6 +95,102 @@ namespace ARAMDetFull.Champions
             }
         }
 
+        public bool useESmart(Obj_AI_Hero target, List<Obj_AI_Hero> ignore = null)
+        {
+            if (!E.IsReady())
+                return false;
+            float trueAARange = player.AttackRange + target.BoundingRadius;
+            float trueERange = target.BoundingRadius + E.Range;
+
+            float dist = player.Distance(target);
+            Vector2 dashPos = new Vector2();
+            if (target.IsMoving && target.Path.Count() != 0)
+            {
+                Vector2 tpos = target.Position.To2D();
+                Vector2 path = target.Path[0].To2D() - tpos;
+                path.Normalize();
+                dashPos = tpos + (path * 100);
+            }
+            float targ_ms = (target.IsMoving && player.Distance(dashPos) > dist) ? target.MoveSpeed : 0;
+            float msDif = (player.MoveSpeed - targ_ms) == 0 ? 0.0001f : (player.MoveSpeed - targ_ms);
+            float timeToReach = (dist - trueAARange) / msDif;
+            if (dist > trueAARange && dist < E.Range)
+            {
+                if (timeToReach > 1.7f || timeToReach < 0.0f)
+                {
+                    E.Cast(target);
+                }
+            }
+            return false;
+        }
+
+        public bool gapCloseE(Vector2 pos, List<Obj_AI_Hero> ignore = null)
+        {
+            if (!E.IsReady())
+                return false;
+
+            Vector2 pPos = player.ServerPosition.To2D();
+            Obj_AI_Base bestEnem = null;
+
+
+            float distToPos = player.Distance(pos);
+            Vector2 bestLoc = pPos + (Vector2.Normalize(pos - pPos) * (player.MoveSpeed * 0.35f));
+            float bestDist = pos.Distance(pPos) - 50;
+            try
+            {
+                foreach (Obj_AI_Base enemy in ObjectManager.Get<Obj_AI_Base>().Where(ob => enemyIsJumpable(ob, ignore)))
+                {
+
+                    float trueRange = E.Range + enemy.BoundingRadius;
+                    float distToEnem = player.Distance(enemy);
+                    if (distToEnem < trueRange && distToEnem > 15)
+                    {
+                        Vector2 posAfterE = pPos + (Vector2.Normalize(enemy.Position.To2D() - pPos) * E.Range);
+                        float distE = pos.Distance(posAfterE);
+                        if (distE < bestDist)
+                        {
+                            bestLoc = posAfterE;
+                            bestDist = distE;
+                            bestEnem = enemy;
+                            // Console.WriteLine("Gap to best enem");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+            if (bestEnem != null)
+            {
+                Console.WriteLine("should use gap");
+                E.Cast(bestEnem);
+                return true;
+            }
+            return false;
+
+        }
+
+        public bool enemyIsJumpable(Obj_AI_Base enemy, List<Obj_AI_Hero> ignore = null)
+        {
+            if (enemy.IsValid && enemy.IsEnemy && !enemy.IsInvulnerable && !enemy.MagicImmune && !enemy.IsDead && !(enemy is FollowerObject))
+            {
+                if (ignore != null)
+                    foreach (Obj_AI_Hero ign in ignore)
+                    {
+                        if (ign.NetworkId == enemy.NetworkId)
+                            return false;
+                    }
+                foreach (BuffInstance buff in enemy.Buffs)
+                {
+                    if (buff.Name == "YasuoDashWrapper")
+                        return false;
+                }
+                return true;
+            }
+            return false;
+        }
         public override void setUpSpells()
         {
             //Create the spells

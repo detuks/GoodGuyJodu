@@ -106,9 +106,9 @@ namespace ARAMDetFull.Champions
         public override void setUpSpells()
         {
             Q = new Spell(SpellSlot.Q);
-            W = new Spell(SpellSlot.W, 1200);
+            W = new Spell(SpellSlot.W, 1000);
             E = new Spell(SpellSlot.E);
-            R = new Spell(SpellSlot.R, 20000);
+            R = new Spell(SpellSlot.R, 3000);
 
             W.SetSkillshot(250f, (float)(24.32f * Math.PI / 180), 902f, true, SkillshotType.SkillshotCone);
             E.SetSkillshot(377f, 299f, 1400f, false, SkillshotType.SkillshotLine);

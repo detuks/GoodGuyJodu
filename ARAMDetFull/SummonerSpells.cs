@@ -117,7 +117,10 @@ namespace ARAMDetFull
                     if (snowed != null)
                     {
                         if (MapControl.safeGap(snowed))
+                        {
                             spell.Cast();
+                            Aggresivity.addAgresiveMove(new AgresiveMove(100,2500,true));
+                        }
                     }
                 }
                 else

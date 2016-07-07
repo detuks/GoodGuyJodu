@@ -104,6 +104,11 @@ namespace ARAMDetFull.Champions
 
         }
 
+        public override void farm()
+        {
+
+        }
+
         public List<Obj_AI_Hero> AllyInRange(float range)
         {
             return

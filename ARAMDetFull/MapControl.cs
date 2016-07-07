@@ -15,6 +15,7 @@ using SkillshotType = LeagueSharp.Common.SkillshotType;
 using Spell = LeagueSharp.Common.Spell;
 using ARAMDetFull.SpellsSDK;
 using DetuksSharp;
+using DetuksSharp.Prediction;
 using LeagueSharp.Data.DataTypes;
 using LeagueSharp.Data.Enumerations;
 using SpellDatabase = LeagueSharp.SDK.SpellDatabase;
@@ -37,6 +38,13 @@ namespace ARAMDetFull
             public int activeDangers = 0;
             
             protected List<SpellDatabaseEntry> champSpells = new List<SpellDatabaseEntry>();
+
+            public AttackableUnit getFocusTarget()
+            {
+                HealthDeath.DamageMaker dm = null;
+                HealthDeath.activeDamageMakers.TryGetValue(hero.NetworkId, out dm);
+                return dm?.target;
+            }
 
             public ChampControl(Obj_AI_Hero champ)
             {
@@ -489,12 +497,14 @@ namespace ARAMDetFull
                 var reach = ene.reach + rangePlus;
                 if (!ene.hero.IsDead && ene.hero.Distance(point, true) < reach* reach && !unitIsUseless(ene.hero) && !notVisibleAndMostLieklyNotThere(ene.hero))
                 {
-                    eneBalance -= (int) ((ene.hero.HealthPercent + 20 - ene.hero.Deaths*4 + ene.hero.ChampionsKilled*4)*
-                                      ((ARAMSimulator.player.Level < 7)
-                                          ? 1.3f
-                                          : 1f));
+                    eneBalance -= (int) ((ene.hero.HealthPercent + 20 - ene.hero.Deaths*4 + ene.hero.ChampionsKilled*4));
                     if (!ene.hero.IsFacing(ObjectManager.Player))
                         eneBalance = (int)(eneBalance * 0.64f);
+                    var focus = ene.getFocusTarget();
+                    if (focus != null && focus.IsValid && focus.IsAlly && focus is Obj_AI_Hero)
+                    {
+                        eneBalance = (int) (eneBalance*(focus.IsMe?1.20:0.80));
+                    }
                 }
                 balance += eneBalance;
             }

@@ -48,7 +48,7 @@ namespace ARAMDetFull.Champions
         private void AfterAttack(AttackableUnit unit, AttackableUnit target)
         {
             var hero = target as Obj_AI_Hero;
-            if (hero == null || DeathWalker.CurrentMode != DeathWalker.Mode.Combo) return;
+            if (hero == null ) return;
 
             if (Q.IsReady())
             {
@@ -57,7 +57,7 @@ namespace ARAMDetFull.Champions
 
             if (W.IsReady() && !Q.IsReady() && player.Mana >= 120 && !tooEasyKill(hero))
             {
-                W.Cast(hero);
+                W.Cast(hero.Position);
             }
 
             if (!useQonTarg(hero, QhitChance.hard))
@@ -68,21 +68,21 @@ namespace ARAMDetFull.Champions
         {
             if (!Q.IsReady() || target == null)
                 return;
-            useQonTarg((Obj_AI_Hero)target, QhitChance.medium);
+            useQonTarg((Obj_AI_Hero)target, QhitChance.medium,true);
         }
 
         public override void useW(Obj_AI_Base target)
         {
             if (!W.IsReady())
                 return;
-            W.Cast(player);
+            W.Cast(player.Position);
         }
 
         public override void useE(Obj_AI_Base target)
         {
             if (!E.IsReady() || target == null)
                 return;
-            if(safeGap(player.Position.Extend(target.Position,400).To2D()))
+            if(target.HealthPercent < 50 && safeGap(player.Position.Extend(target.Position,400).To2D()))
                 E.Cast(target);
         }
 
@@ -98,12 +98,16 @@ namespace ARAMDetFull.Champions
         {
             var tar = ARAMTargetSelector.getBestTarget(Q.Range);
             if (tar != null) useQ(tar);
-            tar = ARAMTargetSelector.getBestTarget(W.Range);
-            if (tar != null) useW(tar);
+            //tar = ARAMTargetSelector.getBestTarget(W.Range);
+            //if (tar != null) useW(tar);
             tar = ARAMTargetSelector.getBestTarget(E.Range);
             if (tar != null) useE(tar);
             tar = ARAMTargetSelector.getBestTarget(R.Range);
             if (tar != null) useR(tar);
+        }
+
+        public override void farm()
+        {
         }
 
         public override void setUpSpells()
@@ -210,12 +214,12 @@ namespace ARAMDetFull.Champions
             }
         }
 
-        public bool useQonTarg(Obj_AI_Hero target, QhitChance hitChance)
+        public bool useQonTarg(Obj_AI_Hero target, QhitChance hitChance, bool minionsOnly = false)
         {
             if (!Q.IsReady())
                 return false;
 
-            if (targValidForQ(target))
+            if (targValidForQ(target) && !minionsOnly)
             {
                 Q.CastOnUnit(target);
                 return true;
