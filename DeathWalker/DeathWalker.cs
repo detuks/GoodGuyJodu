@@ -437,12 +437,12 @@ namespace DetuksSharp
             if (azir)
             {
                 enemiesAround = ObjectManager.Get<Obj_AI_Base>()
-                .Where(targ => targ.IsValid && inAutoAttackRange(targ) && targ.IsEnemy).ToList();
+                .Where(targ => targ.IsValid && inAutoAttackRange(targ) && targ.IsEnemy && targ.IsHPBarRendered).ToList();
             }
             else
             {
                 enemiesAround = ObjectManager.Get<Obj_AI_Base>()
-                    .Where(targ => targ.IsValidTarget(getTargetSearchDist()) && targ.IsEnemy).ToList();
+                    .Where(targ => targ.IsValidTarget(getTargetSearchDist()) && targ.IsEnemy && targ.IsHPBarRendered).ToList();
             }
 
             Obj_AI_Base best = null;
