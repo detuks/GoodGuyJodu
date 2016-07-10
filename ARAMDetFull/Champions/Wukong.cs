@@ -50,7 +50,7 @@ namespace ARAMDetFull.Champions
         {
             if (!E.IsReady() || target == null)
                 return;
-            if (!Sector.inTowerRange(target.Position.To2D()) && ((MapControl.fightIsOn() != null && MapControl.fightIsOn().NetworkId == target.NetworkId)))
+            if (safeGap(target))
                 E.CastOnUnit(target);
         }
 
@@ -59,7 +59,7 @@ namespace ARAMDetFull.Champions
         {
             if (!R.IsReady() || target == null)
                 return;
-            if (player.CountEnemiesInRange(250)>1)
+            if (player.CountEnemiesInRange(350)>1)
             {
                 R.Cast();
             }

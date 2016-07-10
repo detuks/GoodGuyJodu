@@ -22,16 +22,16 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                         {
-                            new ConditionalItem(ItemId.Sunfire_Cape),
+                            new ConditionalItem(ItemId.Locket_of_the_Iron_Solari),
                             new ConditionalItem(ItemId.Mercurys_Treads,ItemId.Ninja_Tabi,ItemCondition.ENEMY_AP),
-                            new ConditionalItem(ItemId.Spirit_Visage),
-                            new ConditionalItem(ItemId.Iceborn_Gauntlet),
-                            new ConditionalItem(ItemId.Randuins_Omen),
+                            new ConditionalItem(ItemId.Sunfire_Cape),
                             new ConditionalItem(ItemId.Banshees_Veil),
+                            new ConditionalItem(ItemId.Iceborn_Gauntlet),
+                            new ConditionalItem(ItemId.Spirit_Visage,ItemId.Warmogs_Armor,ItemCondition.ENEMY_AP),
                         },
                 startingItems = new List<ItemId>
                         {
-                            ItemId.Giants_Belt
+                            ItemId.Sheen
                         }
             };
         }
@@ -59,7 +59,7 @@ namespace ARAMDetFull.Champions
                     QTarget = target;
                 }
             }
-            if (FollowQ && !Sector.inTowerRange(target.Position.To2D()))
+            if (FollowQ && safeGap(target))
             {
                 Q.Cast();
             }
@@ -91,7 +91,7 @@ namespace ARAMDetFull.Champions
         {
             if (target == null)
                 return;
-            if (target.IsValidTarget(R.Range) && R.IsReady() && EnemyInRange(2,400))
+            if (target.IsValidTarget(R.Range) && R.IsReady() && EnemyInRange(2,500))
             {
                 R.Cast();
             }

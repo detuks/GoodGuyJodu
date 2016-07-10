@@ -173,6 +173,7 @@
     <Compile Include="Champions\Taliyah.cs" />
     <Compile Include="Champions\Talon.cs" />
     <Compile Include="Champions\Taric.cs" />
+    <Compile Include="Champions\Teemo.cs" />
     <Compile Include="Champions\Thresh.cs" />
     <Compile Include="Champions\Tristana.cs" />
     <Compile Include="Champions\TwistedFate.cs" />

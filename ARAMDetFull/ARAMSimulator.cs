@@ -672,7 +672,10 @@ namespace ARAMDetFull
                 case "Riven":
                     champ = new Riven();
                     break;
-                    //Akali
+                case "Teemo":
+                    champ = new Teemo();
+                    break;
+                    //Teemo
             }
         }
 

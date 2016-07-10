@@ -426,7 +426,7 @@ namespace ARAMDetFull
 
         public static Obj_AI_Hero fightIsOn()
         {
-            foreach (var enem in enemy_champions.Where(ene => !ene.hero.IsDead && ene.hero.IsVisible).OrderBy(ene => ene.hero.Distance(ObjectManager.Player,true)))
+            foreach (var enem in enemy_champions.Where(ene => !ene.hero.IsDead && ene.hero.IsVisible && !ene.hero.IsZombie).OrderBy(ene => ene.hero.Distance(ObjectManager.Player,true)))
             {
                 if (myControler.canDoDmgTo(enem.hero)*0.7f > enem.hero.Health)
                     return enem.hero;
