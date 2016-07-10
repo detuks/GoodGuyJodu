@@ -28,7 +28,7 @@ namespace ARAMDetFull.Champions
                         },
                 startingItems = new List<ItemId>
                         {
-                            ItemId.Haunting_Guise
+                            ItemId.Ruby_Crystal,ItemId.Amplifying_Tome,ItemId.Boots_of_Speed
                         }
             };
         }

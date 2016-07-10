@@ -77,11 +77,16 @@ namespace ARAMDetFull.Champions
             if (tar != null) useR(tar);
         }
 
+        public override void farm()
+        {
+
+        }
+
         public override void setUpSpells()
         {
             //Create the spells
             Q = new Spell(SpellSlot.Q, 375f);
-            W = new Spell(SpellSlot.W, 475f);
+            W = new Spell(SpellSlot.W, 375f);
             E = new Spell(SpellSlot.E, 640f);
             R = new Spell(SpellSlot.R, 375f);
 

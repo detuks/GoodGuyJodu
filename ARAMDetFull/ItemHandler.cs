@@ -32,6 +32,7 @@ namespace UnderratedAIO.Helpers
         public static Items.Item Dervish = new Items.Item(3137, 0);
         public static Items.Item Zhonya = new Items.Item(3157, 0);
         public static Items.Item Wooglet = new Items.Item(3090, 0);
+        public static Items.Item locket = new Items.Item((int)ItemId.Locket_of_the_Iron_Solari, 0);
 
 
         public static void useItems()
@@ -61,6 +62,13 @@ namespace UnderratedAIO.Helpers
                 if (player.HealthPercent<30 && ARAMSimulator.balance<-60)
                 {
                     Items.UseItem(Zhonya.Id);
+                }
+            }
+            if (Items.HasItem(locket.Id) && Items.CanUseItem(locket.Id))
+            {
+                if (player.HealthPercent < 50 && ARAMSimulator.balance < -60)
+                {
+                    Items.UseItem(locket.Id);
                 }
             }
             if (Items.HasItem(randuins.Id) && Items.CanUseItem(randuins.Id))

@@ -67,8 +67,8 @@ namespace ARAMDetFull.Champions
 
         public override void useW(Obj_AI_Base target)
         {
-            if (!W.IsReady())
-            EngageFriendLatern();
+            if (W.IsReady())
+                EngageFriendLatern();
         }
 
         public override void useE(Obj_AI_Base target)
@@ -177,13 +177,13 @@ namespace ARAMDetFull.Champions
 
 
             foreach (var friend in
-                ObjectManager.Get<Obj_AI_Hero>()
+                HeroManager.Allies
                     .Where(
                         hero =>
                             hero.IsAlly && hero.Distance(player) <= W.Range + 200  && hero.Health / hero.MaxHealth * 100 >= 10 &&
-                            hero.CountEnemysInRange(350) >= 1))
+                            hero.CountEnemysInRange(550) >= 1))
             {
-                 W.Cast(friend.Position, true);
+                 W.Cast(friend.Position);
                  return;
             }
         }
