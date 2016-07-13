@@ -35,16 +35,16 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                         {
-                            new ConditionalItem(ItemId.Rod_of_Ages),
+                            new ConditionalItem(ItemId.Archangels_Staff),
                             new ConditionalItem(ItemId.Sorcerers_Shoes),
-                            new ConditionalItem(ItemId.Rylais_Crystal_Scepter),
                             new ConditionalItem(ItemId.Rabadons_Deathcap),
-                            new ConditionalItem(ItemId.Liandrys_Torment),
-                            new ConditionalItem(ItemId.Void_Staff),
+                            new ConditionalItem(ItemId.Rylais_Crystal_Scepter),
+                            new ConditionalItem(ItemId.Zhonyas_Hourglass),
+                            new ConditionalItem(ItemId.Abyssal_Scepter,ItemId.Void_Staff,ItemCondition.ENEMY_AP),
                         },
                 startingItems = new List<ItemId>
                         {
-                            ItemId.Catalyst_the_Protector
+                            ItemId.Tear_of_the_Goddess,ItemId.Boots_of_Speed
                         }
             };
         }

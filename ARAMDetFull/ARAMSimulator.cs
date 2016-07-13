@@ -675,7 +675,10 @@ namespace ARAMDetFull
                 case "Teemo":
                     champ = new Teemo();
                     break;
-                    //Teemo
+                case "AurelionSol":
+                    champ = new AurelionSol();
+                    break;
+                    //AurelionSol
             }
         }
 

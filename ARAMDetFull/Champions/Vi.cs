@@ -71,6 +71,8 @@ namespace ARAMDetFull.Champions
         {
             if (!R.IsReady() || t == null)
                 return;
+            if (t.HealthPercent < 60 && safeGap(t))
+                R.CastOnUnit(t);
             var qDamage = player.GetSpellDamage(t, SpellSlot.Q);
             var eDamage = player.GetSpellDamage(t, SpellSlot.E) * E.Instance.Ammo;
             var rDamage = player.GetSpellDamage(t, SpellSlot.R);

@@ -386,6 +386,8 @@ namespace ARAMDetFull
 
         public static void setupMapControl()
         {
+            ally_champions.Clear();
+            enemy_champions.Clear();
             foreach (var hero in ObjectManager.Get<Obj_AI_Hero>())
             {
                 if(hero.IsMe)
@@ -571,7 +573,7 @@ namespace ARAMDetFull
             var closesEnem = ClosestEnemyTobase();
             //var closesEnemTower = ClosestEnemyTobase();
             var hprelics = ObjectManager.Get<Obj_AI_Base>().Where(
-                r => r.IsValid && !r.IsDead && (r.Name.Contains("HealthRelic") || (r.Name.ToLower().Contains("brad") && ObjectManager.Player.ChampionName == "Bard") || (r.Name.ToLower().Contains("blobdrop") && ObjectManager.Player.ChampionName == "Zac")) 
+                r => r.IsValid && !r.IsDead && (r.Name.Contains("HealthRelic") || (r.Name.ToLower().Contains("bard") && ObjectManager.Player.ChampionName == "Bard") || (r.Name.ToLower().Contains("blobdrop") && ObjectManager.Player.ChampionName == "Zac")) 
                     && !usedRelics.Contains(r.NetworkId) && (closesEnem == null || (r.Name.ToLower().Contains("blobdrop") && ObjectManager.Player.ChampionName == "Zac") || r.Distance(ARAMSimulator.fromNex.Position, true) - 500 < closesEnem.Distance(ARAMSimulator.fromNex.Position, true))).ToList().OrderBy(r => ARAMSimulator.player.Distance(r, true));
             return hprelics.FirstOrDefault();
         }

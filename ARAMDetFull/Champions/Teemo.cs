@@ -108,7 +108,7 @@ namespace ARAMDetFull.Champions
             
             W = new Spell(SpellSlot.W, 650);
             Q = new Spell(SpellSlot.Q, 680);
-            R = new Spell(SpellSlot.R, 230);
+            R = new Spell(SpellSlot.R, 630);
             Q.SetTargetted(0f, 2000f);
             R.SetSkillshot(0.1f, 75f, float.MaxValue, false, SkillshotType.SkillshotCircle);
         }

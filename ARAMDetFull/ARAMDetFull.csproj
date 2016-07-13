@@ -100,6 +100,7 @@
     <Compile Include="Champions\Anivia.cs" />
     <Compile Include="Champions\Annie.cs" />
     <Compile Include="Champions\Ashe.cs" />
+    <Compile Include="Champions\AurelionSol.cs" />
     <Compile Include="Champions\Azir.cs" />
     <Compile Include="Champions\Blitzcrank.cs" />
     <Compile Include="Champions\Brad.cs" />

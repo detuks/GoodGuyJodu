@@ -19,16 +19,24 @@ namespace ARAMDetFull.Champions
                 {
                     new ConditionalItem(ItemId.Lich_Bane),
                     new ConditionalItem(ItemId.Sorcerers_Shoes),
-                    new ConditionalItem(ItemId.Zhonyas_Hourglass),
+                    new ConditionalItem(ItemId.Ludens_Echo),
                     new ConditionalItem(ItemId.Rabadons_Deathcap),
-                    new ConditionalItem(ItemId.Void_Staff),
-                    new ConditionalItem(ItemId.Banshees_Veil),
+                    new ConditionalItem(ItemId.Morellonomicon),
+                    new ConditionalItem(ItemId.Zhonyas_Hourglass),
                 },
                 startingItems = new List<ItemId>
                 {
                     ItemId.Sheen,ItemId.Boots_of_Speed
                 }
             };
+            DeathWalker.BeforeAttack +=DeathWalkerOnBeforeAttack;
+        }
+
+        private void DeathWalkerOnBeforeAttack(DeathWalker.BeforeAttackEventArgs args)
+        {
+            if (!W.IsReady() || !(args.Target is Obj_AI_Hero))
+                return;
+            W.Cast();
         }
 
         public override void useQ(Obj_AI_Base target)
@@ -40,9 +48,6 @@ namespace ARAMDetFull.Champions
 
         public override void useW(Obj_AI_Base target)
         {
-            if (!W.IsReady())
-                return;
-            W.Cast();
         }
 
         public override void useE(Obj_AI_Base target)
@@ -56,10 +61,12 @@ namespace ARAMDetFull.Champions
 
         public override void useR(Obj_AI_Base target)
         {
-            if (!R.IsReady() || target == null)
+            if (!R.IsReady() || target == null || target.Distance(player)<1600)
                 return;
-           // if ((target.HasBuff("dianamoonlight") && safeGap(target)) || target.HealthPercent < 28)
-            //    R.Cast(target);
+            if (target.HasBuff("dianamoonlight"))
+                R.Cast(target.Position);
+            else if (safeGap(target))
+               R.Cast();
         }
 
         public override void useSpells()
@@ -75,7 +82,7 @@ namespace ARAMDetFull.Champions
             //Create the spells
             W = new Spell(SpellSlot.W, 550);
             E = new Spell(SpellSlot.E, 0);
-            R = new Spell(SpellSlot.R, 0);
+            R = new Spell(SpellSlot.R, 2500);
 
             Q = new Spell(SpellSlot.Q, 1450);
             Q.SetSkillshot(0.25f, 40f, 1000f, false, SkillshotType.SkillshotLine);
