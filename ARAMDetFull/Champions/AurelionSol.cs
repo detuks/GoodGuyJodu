@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -97,8 +98,12 @@ namespace ARAMDetFull.Champions
         {
             var tar = ARAMTargetSelector.getBestTarget(Q.Range);
             if (tar != null) useQ(tar);
-            tar = ARAMTargetSelector.getBestTarget(W.Range);
-            if (tar != null) useW(tar);
+            tar = ARAMTargetSelector.getBestTarget(W.Range+200);
+            if (tar != null)
+                useW(tar);
+            else if(HasPassive())
+                W.Cast();
+
             tar = ARAMTargetSelector.getBestTarget(R.Range);
             if (tar != null) useR(tar);
         }

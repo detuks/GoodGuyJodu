@@ -127,7 +127,16 @@ namespace ARAMDetFull
                 var bestItem =
                     chain.Where(sel => sel.price <= player.Gold && (!inventoryFull() || canBuyOnfull.Contains(sel.item.Id))).OrderByDescending(sel2 => sel2.price).FirstOrDefault();
                 if (bestItem == null || bestItem.price == 0)
+                {
+                    if (inventoryFull())
+                    {
+                        if (player.Level >= 9 && !player.HasBuff("ElixirOfIron"))
+                            return (int)ItemId.Elixir_of_Iron;
+                        if (!player.HasBuff("OracleExtractSight"))
+                            return (int)ItemId.Oracles_Extract;
+                    }
                     return -1;
+                }
                 //Console.WriteLine("Buy: " + bestItem.item.Name);
                 return bestItem.item.Id;
             }

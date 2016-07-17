@@ -23,13 +23,13 @@ namespace ARAMDetFull.Champions
                             new ConditionalItem(ItemId.Mercurys_Treads,ItemId.Ninja_Tabi,ItemCondition.ENEMY_AP),
                             new ConditionalItem(ItemId.Sunfire_Cape),
                             new ConditionalItem(ItemId.Spirit_Visage),
-                            new ConditionalItem(ItemId.Randuins_Omen),
-                            new ConditionalItem(ItemId.Thornmail),
                             new ConditionalItem(ItemId.Warmogs_Armor),
+                            new ConditionalItem(ItemId.Locket_of_the_Iron_Solari,ItemId.Randuins_Omen,ItemCondition.ENEMY_AP),
+                            new ConditionalItem(ItemId.Banshees_Veil,ItemId.Thornmail, ItemCondition.ENEMY_AP),
                         },
                 startingItems = new List<ItemId>
                         {
-                            ItemId.Mercurys_Treads
+                            (ItemId)3751
                         }
             };
             AntiGapcloser.OnEnemyGapcloser += OnEnemyGapcloser;

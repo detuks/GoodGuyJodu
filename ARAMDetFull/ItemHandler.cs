@@ -66,7 +66,7 @@ namespace UnderratedAIO.Helpers
             }
             if (Items.HasItem(locket.Id) && Items.CanUseItem(locket.Id))
             {
-                if (player.HealthPercent < 50 && ARAMSimulator.balance < -60)
+                if (player.HealthPercent < 80 && player.CountEnemiesInRange(550)>0)
                 {
                     Items.UseItem(locket.Id);
                 }

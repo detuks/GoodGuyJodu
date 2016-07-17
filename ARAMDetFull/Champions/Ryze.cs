@@ -75,11 +75,11 @@ namespace ARAMDetFull.Champions
         public override void setUpSpells()
         {
             //Create the spells
-            Q = new Spell(SpellSlot.Q, 900, TargetSelector.DamageType.Magical);
-            W = new Spell(SpellSlot.W, 600, TargetSelector.DamageType.Magical);
-            E = new Spell(SpellSlot.E, 600, TargetSelector.DamageType.Magical);
-            R = new Spell(SpellSlot.R,600);
-            Q.SetSkillshot(0.25f, 50, 1700, true, SkillshotType.SkillshotLine);
+            Q = new Spell(SpellSlot.Q, 865);
+            W = new Spell(SpellSlot.W, 585);
+            E = new Spell(SpellSlot.E, 585);
+            R = new Spell(SpellSlot.R);
+            Q.SetSkillshot(0.25f, 50f, 1700f, true, SkillshotType.SkillshotLine);
         }
 
         public override void farm()

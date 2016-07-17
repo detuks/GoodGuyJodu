@@ -13,8 +13,7 @@ namespace ARAMDetFull.Champions
     {
         public Nami()
         {
-            GameObject.OnCreate += RangeAttackOnCreate;
-
+            DeathWalker.BeforeAttack += DeathWalkerOnBeforeAttack;
             ARAMSimulator.champBuild = new Build
             {
                 coreItems = new List<ConditionalItem>
@@ -31,6 +30,14 @@ namespace ARAMDetFull.Champions
                             ItemId.Chalice_of_Harmony,ItemId.Boots_of_Speed
                         }
             };
+        }
+
+        private void DeathWalkerOnBeforeAttack(DeathWalker.BeforeAttackEventArgs args)
+        {
+            if (E.IsReady() && args.Unit is Obj_AI_Hero && args.Unit.IsAlly && args.Target is Obj_AI_Hero && E.IsInRange(args.Unit))
+            {
+                E.Cast(args.Unit);
+            }
         }
 
         public override void useQ(Obj_AI_Base target)
@@ -81,42 +88,13 @@ namespace ARAMDetFull.Champions
             useR(tar);
         }
 
-        private void RangeAttackOnCreate(GameObject sender, EventArgs args)
-        {
-            if (!sender.IsValid<MissileClient>())
-            {
-                return;
-            }
-
-            var missile = (MissileClient)sender;
-
-            // Caster ally hero / not me
-            if (!missile.SpellCaster.IsValid<Obj_AI_Hero>() || !missile.SpellCaster.IsAlly || missile.SpellCaster.IsMe ||
-                missile.SpellCaster.IsMelee())
-            {
-                return;
-            }
-
-            // Target enemy hero
-            if (!missile.Target.IsValid<Obj_AI_Hero>() || !missile.Target.IsEnemy)
-            {
-                return;
-            }
-
-            var caster = (Obj_AI_Hero)missile.SpellCaster;
-
-            if (E.IsReady() && E.IsInRange(missile.SpellCaster))
-            {
-                E.CastOnUnit(caster); // add delay
-            }
-        }
-
+        
         public override void setUpSpells()
         {
             Q = new Spell(SpellSlot.Q, 875);
             W = new Spell(SpellSlot.W, 725);
             E = new Spell(SpellSlot.E, 800);
-            R = new Spell(SpellSlot.R, 1200);
+            R = new Spell(SpellSlot.R, 1800);
 
             Q.SetSkillshot(1f, 150f, float.MaxValue, false, SkillshotType.SkillshotCircle);
             R.SetSkillshot(0.5f, 220f, 850f, false, SkillshotType.SkillshotLine);

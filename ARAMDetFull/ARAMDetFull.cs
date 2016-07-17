@@ -170,6 +170,10 @@ namespace ARAMDetFull
             {
                 if (Config.Item("db_targ").GetValue<KeyBind>().Active)
                 {
+                    foreach (var buf in ObjectManager.Player.Buffs)
+                    {
+                        Console.WriteLine(buf.Name);
+                    }
                     
                     /*var player = HeroManager.Player;
                     foreach (var spell in
