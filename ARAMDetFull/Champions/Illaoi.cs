@@ -91,7 +91,7 @@ namespace ARAMDetFull.Champions
         {
             if (!E.IsReady() || target == null)
                 return;
-            if (player.CountEnemiesInRange(500) > 2)
+            if (player.CountEnemiesInRange(500) >= 2)
                 R.Cast();
         }
 
