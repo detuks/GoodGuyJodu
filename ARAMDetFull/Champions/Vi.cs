@@ -14,6 +14,7 @@ namespace ARAMDetFull.Champions
 
         public Vi()
         {
+            DeathWalker.BeforeAttack += DeathWalkerOnBeforeAttack;
             ARAMSimulator.champBuild = new Build
             {
                 coreItems = new List<ConditionalItem>
@@ -30,6 +31,12 @@ namespace ARAMDetFull.Champions
                             ItemId.Phage
                         }
             };
+        }
+
+        private void DeathWalkerOnBeforeAttack(DeathWalker.BeforeAttackEventArgs args)
+        {
+            if (E.IsReady() && args.Target is Obj_AI_Hero)
+                E.Cast();
         }
 
         public override void useQ(Obj_AI_Base target)
@@ -106,8 +113,6 @@ namespace ARAMDetFull.Champions
         {
             var tar = ARAMTargetSelector.getBestTarget(Q.Range);
             if (tar != null) useQ(tar);
-            tar = ARAMTargetSelector.getBestTarget(E.Range);
-            if (tar != null) useE(tar);
             tar = ARAMTargetSelector.getBestTarget(R.Range);
             if (tar != null) useR(tar);
         }
