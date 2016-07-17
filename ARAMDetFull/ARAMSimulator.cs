@@ -919,7 +919,7 @@ namespace ARAMDetFull
                 }
                 if(player.HealthPercent>85)
                     needRecall = false;
-                if (((player.HealthPercent < 32 && player.CountEnemiesInRange(1000)==0) || needRecall) && balance > 5 )
+                if ((( (player.HealthPercent < 32 || (player.MaxMana > 450 && player.ManaPercent < 15)) && player.CountEnemiesInRange(1000)==0) || needRecall) && balance > 5 )
                 {
                     if (lastRecall + 9000 < DeathWalker.now)
                     {
