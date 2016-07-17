@@ -98,12 +98,12 @@ namespace ARAMDetFull.Champions
 
         public override void useSpells()
         {
-            var tar = ARAMTargetSelector.getBestTarget(Q.Range);
-            if (tar != null) useQ(tar);
+            var tar = ARAMTargetSelector.getBestTarget(E.Range);
+            if (tar != null) useE(tar);
             tar = ARAMTargetSelector.getBestTarget(W.Range);
             if (tar != null) useW(tar);
-            tar = ARAMTargetSelector.getBestTarget(E.Range);
-            if (tar != null) useE(tar);
+            tar = ARAMTargetSelector.getBestTarget(Q.Range);
+            if (tar != null) useQ(tar);
             tar = ARAMTargetSelector.getBestTarget(R.Range);
             if (tar != null) useR(tar);
         }
@@ -119,10 +119,6 @@ namespace ARAMDetFull.Champions
             Q.SetSkillshot(.484f, 0, 500, false, SkillshotType.SkillshotCircle);
             E.SetSkillshot(.066f, 50, 1900, true, SkillshotType.SkillshotLine);
         }
-
-
-        public override void farm()
-        {
-        }
+        
     }
 }
