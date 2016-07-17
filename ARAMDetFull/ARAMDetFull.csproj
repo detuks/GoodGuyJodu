@@ -125,6 +125,7 @@
     <Compile Include="Champions\Graves.cs" />
     <Compile Include="Champions\Hecarim.cs" />
     <Compile Include="Champions\Heimerdinger.cs" />
+    <Compile Include="Champions\Illaoi.cs" />
     <Compile Include="Champions\Jarvan.cs" />
     <Compile Include="Champions\Jayce.cs" />
     <Compile Include="Champions\Jinx.cs" />
@@ -177,6 +178,7 @@
     <Compile Include="Champions\Teemo.cs" />
     <Compile Include="Champions\Thresh.cs" />
     <Compile Include="Champions\Tristana.cs" />
+    <Compile Include="Champions\Tryndamere.cs" />
     <Compile Include="Champions\TwistedFate.cs" />
     <Compile Include="Champions\Twitch.cs" />
     <Compile Include="Champions\Udyr.cs" />

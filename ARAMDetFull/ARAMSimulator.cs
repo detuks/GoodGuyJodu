@@ -678,7 +678,13 @@ namespace ARAMDetFull
                 case "AurelionSol":
                     champ = new AurelionSol();
                     break;
-                    //AurelionSol
+                case "Tryndamere":
+                    champ = new Tryndamere();
+                    break;
+                case "Illaoi":
+                    champ = new Illaoi();
+                    break;
+                    //Illaoi
             }
         }
 
