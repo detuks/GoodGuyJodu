@@ -92,7 +92,10 @@ namespace ARAMDetFull.Champions
             if (!E.IsReady() || target == null)
                 return;
             if (player.CountEnemiesInRange(500) >= 2)
+            {
                 R.Cast(target.Position);
+                Aggresivity.addAgresiveMove(new AgresiveMove(120,8000));
+            }
         }
 
         public override void useSpells()

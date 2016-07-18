@@ -16,18 +16,18 @@ namespace ARAMDetFull.Champions
             ARAMSimulator.champBuild = new Build
             {
                 coreItems = new List<ConditionalItem>
-                        {
-                            new ConditionalItem(ItemId.Rod_of_Ages),
-                            new ConditionalItem(ItemId.Mercurys_Treads),
-                            new ConditionalItem(ItemId.Iceborn_Gauntlet),
-                            new ConditionalItem(ItemId.Sunfire_Cape),
-                            new ConditionalItem(ItemId.Abyssal_Scepter),
-                            new ConditionalItem(ItemId.Banshees_Veil),
-                        },
+                {
+                    new ConditionalItem(ItemId.Sunfire_Cape),
+                    new ConditionalItem(ItemId.Mercurys_Treads,ItemId.Ninja_Tabi,ItemCondition.ENEMY_AP),
+                    new ConditionalItem(ItemId.Abyssal_Scepter),
+                    new ConditionalItem(ItemId.Locket_of_the_Iron_Solari),
+                    new ConditionalItem(ItemId.Warmogs_Armor),
+                    new ConditionalItem(ItemId.Spirit_Visage,ItemId.Iceborn_Gauntlet,ItemCondition.ENEMY_AP),
+                },
                 startingItems = new List<ItemId>
-                        {
-                            ItemId.Catalyst_the_Protector
-                        }
+                {
+                    (ItemId)3751
+                }
             };
         }
 
