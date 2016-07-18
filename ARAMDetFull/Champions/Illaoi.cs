@@ -30,25 +30,8 @@ namespace ARAMDetFull.Champions
                     (ItemId)3133
                 }
             };
-            AttackableUnit.OnDamage += AttackableUnitOnOnDamage;
         }
-
-        private void AttackableUnitOnOnDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
-        {
-            if (args.TargetNetworkId != player.NetworkId)
-                return;
-            if (R.IsReady() && player.HealthPercent < 25)
-            {
-                R.Cast();
-                Aggresivity.addAgresiveMove(new AgresiveMove(9999, 5000, true));
-            }
-
-            if (Q.IsReady() && player.HealthPercent < 30 && !player.HasBuff("UndyingRage"))
-            {
-                Q.Cast();
-            }
-        }
-
+        
         public override void useQ(Obj_AI_Base target)
         {
             if (!Q.IsReady() || target == null)
@@ -94,7 +77,7 @@ namespace ARAMDetFull.Champions
             if (player.CountEnemiesInRange(500) >= 2)
             {
                 R.Cast(target.Position);
-                Aggresivity.addAgresiveMove(new AgresiveMove(120,8000));
+                Aggresivity.addAgresiveMove(new AgresiveMove(1200,8000));
             }
         }
 
@@ -102,12 +85,12 @@ namespace ARAMDetFull.Champions
         {
             var tar = ARAMTargetSelector.getBestTarget(E.Range);
             if (tar != null) useE(tar);
+            tar = ARAMTargetSelector.getBestTarget(R.Range);
+            if (tar != null) useR(tar);
             tar = ARAMTargetSelector.getBestTarget(W.Range);
             if (tar != null) useW(tar);
             tar = ARAMTargetSelector.getBestTarget(Q.Range);
             if (tar != null) useQ(tar);
-            tar = ARAMTargetSelector.getBestTarget(R.Range);
-            if (tar != null) useR(tar);
         }
 
 
