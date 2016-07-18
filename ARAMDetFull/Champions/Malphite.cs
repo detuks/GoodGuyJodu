@@ -59,7 +59,7 @@ namespace ARAMDetFull.Champions
                 return;
             if (target.IsValidTarget(R.Range+100) && R.IsReady())
             {
-                if(target.Health/target.MaxHealth < 0.5f )
+                if(target.HealthPercent < 50 && safeGap(target) )
                     R.Cast(target);
                 else
                     R.CastIfWillHit(target, 2);

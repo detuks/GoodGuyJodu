@@ -21,9 +21,9 @@ namespace ARAMDetFull.Champions
                     new ConditionalItem(ItemId.The_Black_Cleaver),
                     new ConditionalItem(ItemId.Mercurys_Treads,ItemId.Ninja_Tabi,ItemCondition.ENEMY_AP),
                     new ConditionalItem(ItemId.Spirit_Visage),
+                    new ConditionalItem(ItemId.Warmogs_Armor),
                     new ConditionalItem((ItemId)3053),
                     new ConditionalItem((ItemId)3812, (ItemId)3748, ItemCondition.ENEMY_LOSING),
-                    new ConditionalItem(ItemId.Warmogs_Armor),
                 },
                 startingItems = new List<ItemId>
                 {

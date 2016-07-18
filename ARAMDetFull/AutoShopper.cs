@@ -128,7 +128,7 @@ namespace ARAMDetFull
                     chain.Where(sel => sel.price <= player.Gold && (!inventoryFull() || canBuyOnfull.Contains(sel.item.Id))).OrderByDescending(sel2 => sel2.price).FirstOrDefault();
                 if (bestItem == null || bestItem.price == 0)
                 {
-                    if (inventoryFull())
+                    if (inventoryFull() && chain.Count == 0)
                     {
                         if (player.Level >= 9 && !player.HasBuff("ElixirOfIron"))
                             return (int)ItemId.Elixir_of_Iron;
