@@ -18,11 +18,11 @@ namespace ARAMDetFull.Champions
                 coreItems = new List<ConditionalItem>
                 {
                     new ConditionalItem(ItemId.Rod_of_Ages),
-                    new ConditionalItem(ItemId.Ionian_Boots_of_Lucidity),
-                    new ConditionalItem(ItemId.Lich_Bane),
-                    new ConditionalItem(ItemId.Abyssal_Scepter, ItemId.Frozen_Heart, ItemCondition.ENEMY_AP),
-                    new ConditionalItem(ItemId.Void_Staff),
-                    new ConditionalItem(ItemId.Banshees_Veil),
+					new ConditionalItem(ItemId.Ionian_Boots_of_Lucidity),
+					new ConditionalItem(ItemId.Lich_Bane),
+					new ConditionalItem(ItemId.Abyssal_Scepter, ItemId.Iceborn_Gauntlet, ItemCondition.ENEMY_AP),
+					new ConditionalItem(ItemId.Locket_of_the_Iron_Solari),
+					new ConditionalItem(ItemId.Rabadons_Deathcap),
                 },
                 startingItems = new List<ItemId>
                 {
