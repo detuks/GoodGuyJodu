@@ -25,7 +25,7 @@ namespace ARAMDetFull.Champions
                     new ConditionalItem(ItemId.Mercurys_Treads, ItemId.Ninja_Tabi, ItemCondition.ENEMY_AP),
                     new ConditionalItem(ItemId.The_Bloodthirster),
                     new ConditionalItem(ItemId.Guardian_Angel),
-                    new ConditionalItem(ItemId.Deaths_Dance),
+                    new ConditionalItem((ItemId)3812),
                 },
                 startingItems = new List<ItemId>
                 {

@@ -29,7 +29,7 @@ namespace ARAMDetFull.Champions
                             new ConditionalItem(ItemId.Phantom_Dancer),
                             new ConditionalItem(ItemId.Infinity_Edge),
                             new ConditionalItem(ItemId.Mercurial_Scimitar),
-                            new ConditionalItem(ItemId.Lord_Dominiks_Regards),
+                            new ConditionalItem((ItemId)3036),
                         },
                 startingItems = new List<ItemId>
                         {

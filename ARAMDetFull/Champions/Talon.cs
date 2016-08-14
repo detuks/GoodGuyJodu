@@ -26,7 +26,7 @@ namespace ARAMDetFull.Champions
                             new ConditionalItem(ItemId.Ravenous_Hydra_Melee_Only),
                             new ConditionalItem(ItemId.The_Black_Cleaver),
                             new ConditionalItem(ItemId.Maw_of_Malmortius),
-                            new ConditionalItem(ItemId.Lord_Dominiks_Regards),
+                            new ConditionalItem((ItemId)3036),
                         },
                 startingItems = new List<ItemId>
                         {
