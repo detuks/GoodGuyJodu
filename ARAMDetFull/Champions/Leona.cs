@@ -18,12 +18,12 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                         {
+                            new ConditionalItem(ItemId.Mercurys_Treads, ItemId.Ninja_Tabi, ItemCondition.ENEMY_AP),
                             new ConditionalItem(ItemId.Sunfire_Cape),
-                            new ConditionalItem(ItemId.Mercurys_Treads,ItemId.Ninja_Tabi,ItemCondition.ENEMY_AP),
-                            new ConditionalItem(ItemId.Iceborn_Gauntlet),
-                            new ConditionalItem(ItemId.Spirit_Visage,ItemId.Randuins_Omen,ItemCondition.ENEMY_AP),
-                            new ConditionalItem(ItemId.Abyssal_Scepter),
+                            new ConditionalItem(ItemId.Locket_of_the_Iron_Solari),
                             new ConditionalItem(ItemId.Banshees_Veil),
+                            new ConditionalItem(ItemId.Randuins_Omen),
+                            new ConditionalItem(ItemId.Warmogs_Armor),
                         },
                 startingItems = new List<ItemId>
                         {
