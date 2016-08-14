@@ -28,8 +28,8 @@ namespace ARAMDetFull.Champions
                             new ConditionalItem(ItemId.Berserkers_Greaves),
                             new ConditionalItem(ItemId.Phantom_Dancer),
                             new ConditionalItem(ItemId.Infinity_Edge),
-                            new ConditionalItem(ItemId.Last_Whisper),
-                            new ConditionalItem(ItemId.Guinsoos_Rageblade,ItemId.Banshees_Veil,ItemCondition.ENEMY_LOSING),
+                            new ConditionalItem(ItemId.Mercurial_Scimitar),
+                            new ConditionalItem(ItemId.Lord_Dominiks_Regards),
                         },
                 startingItems = new List<ItemId>
                         {
