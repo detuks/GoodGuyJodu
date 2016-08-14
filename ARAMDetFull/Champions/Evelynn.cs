@@ -20,12 +20,12 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                         {
+                            new ConditionalItem(ItemId.Ludens_Echo),
+                            new ConditionalItem(ItemId.Ionian_Boots_of_Lucidity),
+                            new ConditionalItem(ItemId.Rabadons_Deathcap),
                             new ConditionalItem(ItemId.Rylais_Crystal_Scepter),
-                            new ConditionalItem(ItemId.Sorcerers_Shoes),
-                            new ConditionalItem(ItemId.Liandrys_Torment),
-                            new ConditionalItem(ItemId.Zhonyas_Hourglass),
-                            new ConditionalItem(ItemId.Abyssal_Scepter),
-                            new ConditionalItem(ItemId.Banshees_Veil),
+                            new ConditionalItem(ItemId.Lich_Bane),
+                            new ConditionalItem(ItemId.Void_Staff),
                         },
                 startingItems = new List<ItemId>
                         {
