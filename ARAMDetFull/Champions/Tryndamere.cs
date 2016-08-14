@@ -23,7 +23,7 @@ namespace ARAMDetFull.Champions
                     new ConditionalItem(ItemId.Infinity_Edge),
                     new ConditionalItem(ItemId.Blade_of_the_Ruined_King),
                     new ConditionalItem(ItemId.Youmuus_Ghostblade),
-                    new ConditionalItem(ItemId.The_Bloodthirster),
+                    new ConditionalItem(ItemId.The_Bloodthirster, ItemId.Maw_of_Malmortius, ItemCondition.ENEMY_AP),
                 },
                 startingItems = new List<ItemId>
                 {
