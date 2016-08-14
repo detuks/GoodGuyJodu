@@ -21,12 +21,12 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                         {
-                            new ConditionalItem(ItemId.Ravenous_Hydra_Melee_Only),
-                            new ConditionalItem(ItemId.Mercurys_Treads),
-                            new ConditionalItem(ItemId.Last_Whisper),
                             new ConditionalItem(ItemId.Youmuus_Ghostblade),
-                            new ConditionalItem(ItemId.The_Bloodthirster),
-                            new ConditionalItem(ItemId.Banshees_Veil),
+                            new ConditionalItem(ItemId.Boots_of_Mobility),
+                            new ConditionalItem(ItemId.Ravenous_Hydra_Melee_Only),
+                            new ConditionalItem(ItemId.The_Black_Cleaver),
+                            new ConditionalItem(ItemId.Maw_of_Malmortius),
+                            new ConditionalItem(ItemId.Lord_Dominiks_Regards),
                         },
                 startingItems = new List<ItemId>
                         {
