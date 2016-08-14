@@ -21,11 +21,11 @@ namespace ARAMDetFull.Champions
                 coreItems = new List<ConditionalItem>
                 {
                     new ConditionalItem(ItemId.Ravenous_Hydra_Melee_Only),
-                    new ConditionalItem(ItemId.Mercurys_Treads, ItemId.Ninja_Tabi, ItemCondition.ENEMY_AP),
                     new ConditionalItem(ItemId.The_Black_Cleaver),
-                    new ConditionalItem(ItemId.Last_Whisper),
+                    new ConditionalItem(ItemId.Mercurys_Treads, ItemId.Ninja_Tabi, ItemCondition.ENEMY_AP),
+                    new ConditionalItem(ItemId.The_Bloodthirster),
                     new ConditionalItem(ItemId.Guardian_Angel),
-                    new ConditionalItem(ItemId.Banshees_Veil),
+                    new ConditionalItem(ItemId.Deaths_Dance),
                 },
                 startingItems = new List<ItemId>
                 {
