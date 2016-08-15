@@ -69,7 +69,7 @@ namespace ARAMDetFull
                     sequence = new[] { 2, 3, 3, 1, 3, 4, 3, 1, 3, 1, 4, 1, 1, 2, 2, 4, 2, 2 };
                     break;
                 case "Anivia":
-                    sequence = new[] { 1, 3, 1, 3, 3, 4, 3, 2, 3, 2, 4, 1, 1, 1, 2, 4, 2, 2 };
+                    sequence = new[] { 1, 3, 3, 1, 2, 4, 3, 3, 3, 1, 4, 1, 1, 2, 2, 4, 2, 2 };
                     break;
                 case "Annie":
                     sequence = new[] { 2, 1, 1, 3, 1, 4, 1, 2, 1, 2, 4, 2, 2, 3, 3, 4, 3, 3 };
@@ -99,10 +99,10 @@ namespace ARAMDetFull
                     sequence = new[] { 1, 3, 2, 2, 2, 4, 2, 3, 2, 3, 4, 3, 3, 1, 1, 4, 1, 1 };
                     break;
                 case "Corki":
-                    sequence = new[] { 1, 2, 3, 1, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
+                    sequence = new[] { 1, 3, 1, 2, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
                     break;
                 case "Darius":
-                    sequence = new[] { 1, 3, 1, 2, 1, 4, 1, 2, 1, 2, 4, 2, 3, 2, 3, 4, 3, 3 };
+                    sequence = new[] { 2, 3, 1, 1, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
                     break;
                 case "Diana":
                     sequence = new[] { 2, 1, 2, 3, 1, 4, 1, 1, 1, 2, 4, 2, 2, 3, 3, 4, 3, 3 };
@@ -173,14 +173,17 @@ namespace ARAMDetFull
                 case "Jinx":
                     sequence = new[] { 1, 3, 2, 1, 1, 4, 1, 2, 1, 2, 4, 2, 2, 3, 3, 4, 3, 3 };
                     break;
+                 case "Kalista":
+                    sequence = new[] { 2, 3, 1, 3, 3, 4, 3, 1, 3, 1, 4, 1, 1, 2, 2, 4, 2, 2 };
+                    break;
                 case "Karma":
-                    sequence = new[] { 1, 3, 2, 1, 1, 4, 1, 1, 3, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
+                    sequence = new[] { 1, 3, 1, 2, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
                     break;
                 case "Karthus":
                     sequence = new[] { 1, 3, 2, 1, 1, 4, 1, 1, 3, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
                     break;
                 case "Kassadin":
-                    sequence = new[] { 1, 2, 1, 3, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
+                    sequence = new[] { 1, 2, 3, 3, 3, 4, 3, 1, 3, 1, 4, 1, 1, 2, 2, 4, 2, 2 };
                     break;
                 case "Katarina":
                     sequence = new[] { 1, 3, 2, 2, 2, 4, 2, 3, 2, 1, 4, 1, 1, 1, 3, 4, 3, 3 };
@@ -240,7 +243,7 @@ namespace ARAMDetFull
                     sequence = new[] { 3, 1, 3, 2, 3, 4, 3, 1, 3, 1, 4, 1, 1, 2, 2, 4, 2, 2 };
                     break;
                 case "Morgana":
-                    sequence = new[] { 1, 2, 2, 3, 2, 4, 2, 1, 2, 1, 4, 1, 1, 3, 3, 4, 3, 3 };
+                    sequence = new[] { 2, 1, 2, 3, 2, 4, 2, 1, 2, 1, 4, 1, 1, 3, 3, 4, 3, 3 };
                     break;
                 case "Nami":
                     sequence = new[] { 1, 2, 2, 3, 2, 4, 2, 1, 2, 1, 4, 1, 1, 3, 3, 4, 3, 3 };
@@ -252,7 +255,7 @@ namespace ARAMDetFull
                     sequence = new[] { 2, 3, 2, 1, 2, 4, 2, 3, 2, 3, 4, 3, 3, 1, 1, 4, 1, 1 };
                     break;
                 case "Nidalee":
-                    sequence = new[] { 2, 3, 1, 3, 1, 4, 3, 2, 3, 1, 4, 3, 1, 1, 2, 4, 2, 2 };
+                    sequence = new[] { 2, 1, 3, 1, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
                     break;
                 case "Nocturne":
                     sequence = new[] { 1, 2, 1, 3, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
@@ -345,7 +348,7 @@ namespace ARAMDetFull
                     sequence = new[] { 2, 3, 3, 1, 3, 4, 3, 1, 3, 1, 4, 1, 1, 2, 2, 4, 2, 2 };
                     break;
                 case "Trundle":
-                    sequence = new[] { 1, 2, 1, 3, 1, 4, 1, 2, 1, 3, 4, 2, 3, 2, 3, 4, 2, 3 };
+                    sequence = new[] { 1, 3, 2, 1, 1, 4, 1, 2, 1, 2, 4, 2, 2, 3, 3, 4, 3, 3 };
                     break;
                 case "Tryndamere":
                     sequence = new[] { 3, 1, 2, 1, 1, 4, 1, 2, 1, 2, 4, 2, 2, 3, 3, 4, 3, 3 };
@@ -357,7 +360,7 @@ namespace ARAMDetFull
                     sequence = new[] { 3, 2, 1, 3, 3, 4, 3, 1, 3, 1, 4, 1, 1, 2, 2, 4, 2, 2 };
                     break;
                 case "Udyr":
-                    sequence = new[] { 4, 2, 3, 4, 4, 2, 4, 2, 4, 2, 2, 1, 3, 3, 3, 3, 1, 1 };
+                    sequence = new[] { 1, 2, 1, 3, 1, 2, 1, 2, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4 };
                     break;
                 case "Urgot":
                     sequence = new[] { 3, 1, 1, 2, 1, 4, 1, 2, 1, 3, 4, 2, 3, 2, 3, 4, 2, 3 };
