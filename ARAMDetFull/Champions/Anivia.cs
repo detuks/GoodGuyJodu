@@ -25,10 +25,10 @@ namespace ARAMDetFull.Champions
                 coreItems = new List<ConditionalItem>
                 {
                     new ConditionalItem(ItemId.Rod_of_Ages),
-                    new ConditionalItem(ItemId.Item Archangels_Staff),
+                    new ConditionalItem(ItemId.Archangels_Staff),
                     new ConditionalItem(ItemId.Sorcerers_Shoes),
                     new ConditionalItem(ItemId.Rabadons_Deathcap),
-                    new ConditionalItem(ItemId.Void_Staff, ItemId.Liandrys_Torment, ENEMY_MR),
+                    new ConditionalItem(ItemId.Void_Staff, ItemId.Liandrys_Torment, ItemCondition.ENEMY_MR),
                     new ConditionalItem(ItemId.Zhonyas_Hourglass),
                 },
                 startingItems = new List<ItemId>
