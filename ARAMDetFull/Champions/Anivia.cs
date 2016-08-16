@@ -25,15 +25,15 @@ namespace ARAMDetFull.Champions
                 coreItems = new List<ConditionalItem>
                 {
                     new ConditionalItem(ItemId.Rod_of_Ages),
+                    new ConditionalItem(ItemId.Item Archangels_Staff),
                     new ConditionalItem(ItemId.Sorcerers_Shoes),
-                    new ConditionalItem(ItemId.Athenes_Unholy_Grail),
-                    new ConditionalItem(ItemId.Zhonyas_Hourglass),
                     new ConditionalItem(ItemId.Rabadons_Deathcap),
-                    new ConditionalItem(ItemId.Void_Staff),
+                    new ConditionalItem(ItemId.Void_Staff, ItemId.Liandrys_Torment, ENEMY_MR),
+                    new ConditionalItem(ItemId.Zhonyas_Hourglass),
                 },
                 startingItems = new List<ItemId>
                 {
-                    ItemId.Catalyst_the_Protector
+                    ItemId.Tear_of_the_Goddess
                 }
             };
             Obj_AI_Base.OnDelete += Obj_AI_Base_OnDelete;
