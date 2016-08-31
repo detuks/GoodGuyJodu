@@ -175,7 +175,7 @@ namespace DetuksSharp.Prediction
         {
             damagerSources.Remove(sender.NetworkId);
 
-            if (sender is MissileClient || sender is Obj_SpellMissile)
+            if (sender is MissileClient)
             {
                 if (activeDamageMakers.ContainsKey(sender.NetworkId))
                     activeDamageMakers.Remove(sender.NetworkId);
