@@ -11,7 +11,7 @@ namespace YasuoSharpV2
         /*  1) better old shit
          *  2) chase prioritize EQ
          *  3) evade with E smoother (check if will colade while dashing +check delay)
-         *  4)
+         *  4) W usage to be Better!
          * 
          * 
          * 

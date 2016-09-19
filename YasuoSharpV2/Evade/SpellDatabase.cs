@@ -35,7 +35,26 @@ namespace YasuoSharpV2
 
             #region Test
 
-           
+            if (Config.TestOnAllies)
+            {
+                Spells.Add(
+                    new SpellData
+                    {
+                        ChampionName = ObjectManager.Player.ChampionName,
+                        SpellName = "TestSkillShot",
+                        Slot = SpellSlot.R,
+                        Type = SkillShotType.SkillshotCircle,
+                        Delay = 600,
+                        Range = 650,
+                        Radius = 350,
+                        MissileSpeed = int.MaxValue,
+                        FixedRange = false,
+                        AddHitbox = true,
+                        DangerValue = 5,
+                        IsDangerous = true,
+                        MissileSpellName = "TestSkillShot",
+                    });
+            }
 
             #endregion Test
 
@@ -140,7 +159,7 @@ namespace YasuoSharpV2
                     Delay = 250,
                     Range = 1000,
                     Radius = 60,
-                    MissileSpeed = 1500,
+                    MissileSpeed = 1550,
                     FixedRange = true,
                     AddHitbox = true,
                     DangerValue = 3,
@@ -304,6 +323,48 @@ namespace YasuoSharpV2
                 });
 
             #endregion Ashe
+
+            #region Bard
+
+            Spells.Add(
+                new SpellData
+                {
+                    ChampionName = "Bard",
+                    SpellName = "BardQ",
+                    Slot = SpellSlot.Q,
+                    Type = SkillShotType.SkillshotMissileLine,
+                    Delay = 250,
+                    Range = 950,
+                    Radius = 60,
+                    MissileSpeed = 1600,
+                    FixedRange = true,
+                    AddHitbox = true,
+                    DangerValue = 3,
+                    IsDangerous = true,
+                    MissileSpellName = "BardQMissile",
+                    CanBeRemoved = true,
+                    CollisionObjects = new[] { CollisionObjectTypes.Champions, CollisionObjectTypes.YasuoWall }
+                });
+
+            Spells.Add(
+                new SpellData
+                {
+                    ChampionName = "Bard",
+                    SpellName = "BardR",
+                    Slot = SpellSlot.R,
+                    Type = SkillShotType.SkillshotCircle,
+                    Delay = 500,
+                    Range = 3400,
+                    Radius = 350,
+                    MissileSpeed = 2100,
+                    FixedRange = false,
+                    AddHitbox = true,
+                    DangerValue = 2,
+                    IsDangerous = false,
+                    MissileSpellName = "BardR",
+                });
+
+            #endregion
 
             #region Blitzcrank
 
@@ -553,7 +614,7 @@ namespace YasuoSharpV2
                     Delay = 300,
                     Range = 825,
                     Radius = 250,
-                    MissileSpeed = 1125,
+                    MissileSpeed = 1000,
                     FixedRange = false,
                     AddHitbox = true,
                     DangerValue = 2,
@@ -628,6 +689,29 @@ namespace YasuoSharpV2
 
             #endregion Darius
 
+            #region Diana
+
+            Spells.Add(
+                new SpellData
+                {
+                    ChampionName = "Diana",
+                    SpellName = "DianaArc",
+                    Slot = SpellSlot.Q,
+                    Type = SkillShotType.SkillshotCircle,
+                    Delay = 250,
+                    Range = 895,
+                    Radius = 195,
+                    MissileSpeed = 1600,
+                    FixedRange = true,
+                    AddHitbox = true,
+                    DangerValue = 3,
+                    IsDangerous = true,
+                    MissileSpellName = "DianaArc",
+                    FromObjects = new[] { "Diana_Q_Trail.troy" },
+                    CollisionObjects = new[] { CollisionObjectTypes.YasuoWall }
+                });
+
+            #endregion Diana
             #region DrMundo
 
             Spells.Add(
@@ -708,7 +792,7 @@ namespace YasuoSharpV2
                     Delay = 250,
                     Range = 1100,
                     Radius = 55,
-                    MissileSpeed = 1450,
+                    MissileSpeed = 1600,
                     FixedRange = true,
                     AddHitbox = true,
                     DangerValue = 4,
@@ -1222,7 +1306,7 @@ namespace YasuoSharpV2
                     Type = SkillShotType.SkillshotMissileLine,
                     Delay = 250,
                     Range = 1700,
-                    Radius = 150,
+                    Radius = 120,
                     MissileSpeed = 900,
                     FixedRange = false,
                     AddHitbox = true,
@@ -1348,7 +1432,7 @@ namespace YasuoSharpV2
                 new SpellData
                 {
                     ChampionName = "Jinx",
-                    SpellName = "JinxRWrapper",
+                    SpellName = "JinxR",
                     Slot = SpellSlot.R,
                     Type = SkillShotType.SkillshotMissileLine,
                     Delay = 600,
@@ -1477,7 +1561,7 @@ namespace YasuoSharpV2
                     Slot = SpellSlot.R,
                     Type = SkillShotType.SkillshotCircle,
                     Delay = 250,
-                    Range = 700,
+                    Range = 450,
                     Radius = 270,
                     MissileSpeed = int.MaxValue,
                     FixedRange = false,
@@ -1740,7 +1824,7 @@ namespace YasuoSharpV2
                     Type = SkillShotType.SkillshotMissileLine,
                     Delay = 250,
                     Range = 905,
-                    Radius = 100,
+                    Radius = 120,
                     MissileSpeed = 2000,
                     FixedRange = true,
                     AddHitbox = true,
@@ -1850,6 +1934,43 @@ namespace YasuoSharpV2
                     MissileSpellName = "LucianQ",
                 });
 
+            Spells.Add(
+                new SpellData
+                {
+                    ChampionName = "Lucian",
+                    SpellName = "LucianW",
+                    Slot = SpellSlot.W,
+                    Type = SkillShotType.SkillshotMissileLine,
+                    Delay = 250,
+                    Range = 1000,
+                    Radius = 55,
+                    MissileSpeed = 1600,
+                    FixedRange = true,
+                    AddHitbox = true,
+                    DangerValue = 2,
+                    IsDangerous = false,
+                    MissileSpellName = "lucianwmissile",
+                });
+
+            Spells.Add(
+                new SpellData
+                {
+                    ChampionName = "Lucian",
+                    SpellName = "LucianRMis",
+                    Slot = SpellSlot.R,
+                    Type = SkillShotType.SkillshotMissileLine,
+                    Delay = 500,
+                    Range = 1400,
+                    Radius = 110,
+                    MissileSpeed = 2800,
+                    FixedRange = true,
+                    AddHitbox = true,
+                    DangerValue = 2,
+                    IsDangerous = false,
+                    MissileSpellName = "lucianrmissileoffhand",
+                    ExtraMissileNames = new[] { "lucianrmissile" },
+                });
+
             #endregion Lucian
 
             #region Lulu
@@ -1870,7 +1991,25 @@ namespace YasuoSharpV2
                     DangerValue = 2,
                     IsDangerous = false,
                     MissileSpellName = "LuluQMissile",
-                    ExtraMissileNames = new[] { "LuluQMissileTwo" },
+                    CollisionObjects = new[] { CollisionObjectTypes.YasuoWall },
+                });
+
+            Spells.Add(
+                new SpellData
+                {
+                    ChampionName = "Lulu",
+                    SpellName = "LuluQPix",
+                    Slot = SpellSlot.Q,
+                    Type = SkillShotType.SkillshotMissileLine,
+                    Delay = 250,
+                    Range = 950,
+                    Radius = 60,
+                    MissileSpeed = 1450,
+                    FixedRange = true,
+                    AddHitbox = true,
+                    DangerValue = 2,
+                    IsDangerous = false,
+                    MissileSpellName = "LuluQMissileTwo",
                     CollisionObjects = new[] { CollisionObjectTypes.YasuoWall },
                 });
 
@@ -2020,7 +2159,7 @@ namespace YasuoSharpV2
                     SpellName = "NamiQ",
                     Slot = SpellSlot.Q,
                     Type = SkillShotType.SkillshotCircle,
-                    Delay = 1000,
+                    Delay = 950,
                     Range = 1625,
                     Radius = 150,
                     MissileSpeed = int.MaxValue,
@@ -2278,6 +2417,30 @@ namespace YasuoSharpV2
 
             #endregion Rengar
 
+            #region RekSai
+
+            Spells.Add(
+                new SpellData
+                {
+                    ChampionName = "RekSai",
+                    SpellName = "reksaiqburrowed",
+                    Slot = SpellSlot.Q,
+                    Type = SkillShotType.SkillshotMissileLine,
+                    Delay = 500,
+                    Range = 1625,
+                    Radius = 60,
+                    MissileSpeed = 1950,
+                    FixedRange = true,
+                    AddHitbox = true,
+                    DangerValue = 3,
+                    IsDangerous = false,
+                    MissileSpellName = "RekSaiQBurrowedMis",
+                    CollisionObjects =
+                        new[] { CollisionObjectTypes.Champions, CollisionObjectTypes.Minion, CollisionObjectTypes.YasuoWall },
+                });
+
+            #endregion RekSai
+
             #region Riven
 
             Spells.Add(
@@ -2349,6 +2512,30 @@ namespace YasuoSharpV2
 
             #endregion Rumble
 
+            #region Ryze
+
+            Spells.Add(
+                new SpellData
+                {
+                    ChampionName = "Ryze",
+                    SpellName = "RyzeQ",
+                    Slot = SpellSlot.Q,
+                    Type = SkillShotType.SkillshotMissileLine,
+                    Delay = 250,
+                    Range = 845,
+                    Radius = 50,
+                    MissileSpeed = 1700,
+                    FixedRange = true,
+                    AddHitbox = true,
+                    DangerValue = 2,
+                    IsDangerous = false,
+                    MissileSpellName = "RyzeQ",
+                    CanBeRemoved = true,
+                    CollisionObjects =
+                        new[] { CollisionObjectTypes.Champions, CollisionObjectTypes.Minion, CollisionObjectTypes.YasuoWall },
+                });
+            #endregion
+
             #region Sejuani
 
             Spells.Add(
@@ -2416,6 +2603,24 @@ namespace YasuoSharpV2
                         new[] { CollisionObjectTypes.Champions, CollisionObjectTypes.Minion, CollisionObjectTypes.YasuoWall },
                 });
 
+            Spells.Add(
+                new SpellData
+                {
+                    ChampionName = "Sion",
+                    SpellName = "SionR",
+                    Slot = SpellSlot.R,
+                    Type = SkillShotType.SkillshotMissileLine,
+                    Delay = 500,
+                    Range = 800,
+                    Radius = 120,
+                    MissileSpeed = 1000,
+                    FixedRange = true,
+                    AddHitbox = true,
+                    DangerValue = 3,
+                    IsDangerous = true,
+                    CollisionObjects =
+                        new[] { CollisionObjectTypes.Champions },
+                });
             #endregion Sion
 
             #region Soraka
@@ -2582,7 +2787,7 @@ namespace YasuoSharpV2
                 new SpellData
                 {
                     ChampionName = "Sona",
-                    SpellName = "SonaCrescendo",
+                    SpellName = "SonaR",
                     Slot = SpellSlot.R,
                     Type = SkillShotType.SkillshotMissileLine,
                     Delay = 250,
@@ -2593,7 +2798,7 @@ namespace YasuoSharpV2
                     AddHitbox = true,
                     DangerValue = 5,
                     IsDangerous = true,
-                    MissileSpellName = "SonaCrescendo",
+                    MissileSpellName = "SonaR",
                     CollisionObjects = new[] { CollisionObjectTypes.YasuoWall },
                 });
 
@@ -2968,7 +3173,7 @@ namespace YasuoSharpV2
                     Type = SkillShotType.SkillshotMissileLine,
                     Delay = 250,
                     Range = 1200,
-                    Radius = 100,
+                    Radius = 120,
                     MissileSpeed = 1950,
                     FixedRange = true,
                     AddHitbox = true,
@@ -2982,6 +3187,25 @@ namespace YasuoSharpV2
             #endregion Varus
 
             #region Veigar
+
+            Spells.Add(
+                new SpellData
+                {
+                    ChampionName = "Veigar",
+                    SpellName = "VeigarBalefulStrike",
+                    Slot = SpellSlot.Q,
+                    Type = SkillShotType.SkillshotMissileLine,
+                    Delay = 250,
+                    Range = 950,
+                    Radius = 70,
+                    MissileSpeed = 2000,
+                    FixedRange = true,
+                    AddHitbox = true,
+                    DangerValue = 2,
+                    IsDangerous = false,
+                    MissileSpellName = "VeigarBalefulStrikeMis",
+                    CollisionObjects = new[] { CollisionObjectTypes.YasuoWall },
+                });
 
             Spells.Add(
                 new SpellData
@@ -3008,8 +3232,8 @@ namespace YasuoSharpV2
                     SpellName = "VeigarEventHorizon",
                     Slot = SpellSlot.E,
                     Type = SkillShotType.SkillshotRing,
-                    Delay = 250,
-                    Range = 600,
+                    Delay = 500,
+                    Range = 700,
                     Radius = 80,
                     MissileSpeed = int.MaxValue,
                     FixedRange = false,
@@ -3018,7 +3242,7 @@ namespace YasuoSharpV2
                     IsDangerous = true,
                     DontAddExtraDuration = true,
                     RingRadius = 350,
-                    ExtraDuration = 3000,
+                    ExtraDuration = 3300,
                     DontCross = true,
                     MissileSpellName = "",
                 });
@@ -3463,6 +3687,29 @@ namespace YasuoSharpV2
 
             #endregion Ziggs
 
+            #region Zilean
+
+            Spells.Add(
+                new SpellData
+                {
+                    ChampionName = "Zilean",
+                    SpellName = "ZileanQ",
+                    Slot = SpellSlot.Q,
+                    Type = SkillShotType.SkillshotCircle,
+                    Delay = 300,
+                    Range = 900,
+                    Radius = 210,
+                    MissileSpeed = 2000,
+                    FixedRange = false,
+                    AddHitbox = true,
+                    DangerValue = 2,
+                    IsDangerous = false,
+                    MissileSpellName = "ZileanQMissile",
+                    CollisionObjects = new[] { CollisionObjectTypes.YasuoWall }
+                });
+
+            #endregion Zilean
+
             #region Zyra
 
             Spells.Add(
@@ -3509,7 +3756,7 @@ namespace YasuoSharpV2
                     SpellName = "zyrapassivedeathmanager",
                     Slot = SpellSlot.E,
                     Type = SkillShotType.SkillshotMissileLine,
-                    Delay = 700,
+                    Delay = 500,
                     Range = 1474,
                     Radius = 70,
                     MissileSpeed = 2000,
