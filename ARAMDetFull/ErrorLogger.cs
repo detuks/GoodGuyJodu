@@ -24,7 +24,7 @@ namespace ARAMDetFull
         {
             try
             {
-                if (value.Contains("xception") && !knowsExceptions.Contains(value))
+                if (value.Contains("xception") && !knowsExceptions.Contains(value) && !value.Contains("OnUnhandledException"))
                 {
                     knowsExceptions.Add(value);
                     DataGathering.sendError(value);

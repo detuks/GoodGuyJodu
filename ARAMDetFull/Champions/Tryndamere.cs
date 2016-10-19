@@ -19,11 +19,11 @@ namespace ARAMDetFull.Champions
                 coreItems = new List<ConditionalItem>
                 {
                     new ConditionalItem(ItemId.Statikk_Shiv),
-                    new ConditionalItem(ItemId.Mercurys_Treads, ItemId.Berserkers_Greaves, ItemCondition.ENEMY_LOSING),
+                    new ConditionalItem(ItemId.Berserkers_Greaves, ItemId.Mercurys_Treads, ItemCondition.ENEMY_LOSING),
                     new ConditionalItem(ItemId.Infinity_Edge),
                     new ConditionalItem(ItemId.Blade_of_the_Ruined_King),
                     new ConditionalItem(ItemId.Youmuus_Ghostblade),
-                    new ConditionalItem(ItemId.Maw_of_Malmortius, ItemId.The_Bloodthirster, ItemCondition.ENEMY_AP),
+                    new ConditionalItem(ItemId.The_Bloodthirster),
                 },
                 startingItems = new List<ItemId>
                 {

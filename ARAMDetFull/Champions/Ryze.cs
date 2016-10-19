@@ -66,8 +66,8 @@ namespace ARAMDetFull.Champions
             if (tar != null) useW(tar);
             tar = ARAMTargetSelector.getBestTarget(E.Range);
             if (tar != null) useE(tar);
-            tar = ARAMTargetSelector.getBestTarget(R.Range);
-            if (tar != null) useR(tar);
+            //tar = ARAMTargetSelector.getBestTarget(R.Range);
+            //if (tar != null) useR(tar);
 
 
         }

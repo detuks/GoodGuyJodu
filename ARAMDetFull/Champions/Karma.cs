@@ -19,10 +19,10 @@ namespace ARAMDetFull.Champions
                 coreItems = new List<ConditionalItem>
                     {
                         new ConditionalItem(ItemId.Morellonomicon),
-                        new ConditionalItem(ItemId.Ludens_Echo),
                         new ConditionalItem(ItemId.Sorcerers_Shoes),
+                        new ConditionalItem(ItemId.Ludens_Echo),
                         new ConditionalItem(ItemId.Rabadons_Deathcap),
-                        new ConditionalItem(ItemId.Abyssal_Scepter, ItemId.Zhonyas_Hourglass, ItemCondition.ENEMY_AP),
+                        new ConditionalItem(ItemId.Abyssal_Scepter,ItemId.Zhonyas_Hourglass,ItemCondition.ENEMY_AP),
                         new ConditionalItem(ItemId.Void_Staff),
                     },
                 startingItems = new List<ItemId>

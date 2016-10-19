@@ -371,7 +371,7 @@ namespace ARAMDetFull
                     },
                     startingItems = new List<ItemId>
                     {
-                        ItemId.Boots_of_Speed,ItemId.Long_Sword,ItemId.Long_Sword,
+                        ItemId.Vampiric_Scepter,
                     }
                 };
                 

@@ -28,7 +28,7 @@ namespace ARAMDetFull.Champions
                             new ConditionalItem(ItemId.Berserkers_Greaves),
                             new ConditionalItem(ItemId.Blade_of_the_Ruined_King),
                             new ConditionalItem(ItemId.The_Bloodthirster),
-                            new ConditionalItem(ItemId.Phantom_Dancer),
+                            new ConditionalItem(ItemId.Guinsoos_Rageblade),
                             new ConditionalItem(ItemId.Infinity_Edge),
                         },
                 startingItems = new List<ItemId>

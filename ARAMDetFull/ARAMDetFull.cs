@@ -82,6 +82,7 @@ namespace ARAMDetFull
 
                 //Debug
                 Config.AddSubMenu(new Menu("Debug", "debug"));
+                Config.SubMenu("extra").AddItem(new MenuItem("botOff", "Bot off")).SetValue(false);
                 Config.SubMenu("debug").AddItem(new MenuItem("db_targ", "Debug Target")).SetValue(new KeyBind('T', KeyBindType.Press, false));
 
 
@@ -168,6 +169,9 @@ namespace ARAMDetFull
         {
             try
             {
+                if (Config.Item("botOff").GetValue<bool>())
+                    return;
+
                 if (Config.Item("db_targ").GetValue<KeyBind>().Active)
                 {
                     foreach (var buf in ObjectManager.Player.Buffs)
