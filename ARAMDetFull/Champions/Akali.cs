@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
+using LeagueSharp.SDK.Utils;
 
 namespace ARAMDetFull.Champions
 {
@@ -19,9 +20,9 @@ namespace ARAMDetFull.Champions
                         {
                             new ConditionalItem(ItemId.Hextech_Gunblade),
                             new ConditionalItem(ItemId.Sorcerers_Shoes,ItemId.Mercurys_Treads,ItemCondition.ENEMY_LOSING),
-                            new ConditionalItem(ItemId.Zhonyas_Hourglass),
+                            new ConditionalItem(ItemId.Abyssal_Scepter,ItemId.Zhonyas_Hourglass,ItemCondition.ENEMY_AP),
+                            new ConditionalItem(ItemId.Rylais_Crystal_Scepter),
                             new ConditionalItem(ItemId.Lich_Bane),
-                            new ConditionalItem(ItemId.Abyssal_Scepter,ItemId.Rylais_Crystal_Scepter,ItemCondition.ENEMY_AP),
                             new ConditionalItem(ItemId.Rabadons_Deathcap),
                         },
                 startingItems = new List<ItemId>
@@ -35,14 +36,16 @@ namespace ARAMDetFull.Champions
         {
             if (!Q.IsReady() || target == null)
                 return;
-            Q.Cast(target);
+            if(Q.Cast(target) == Spell.CastStates.SuccessfullyCasted && target.InAutoAttackRange())
+                Aggresivity.addAgresiveMove(new AgresiveMove(50, 1000, true));
+
         }
 
         public override void useW(Obj_AI_Base target)
         {
             if (!W.IsReady())
                 return;
-            if(player.CountEnemiesInRange(500)>0)
+            if(player.CountEnemiesInRange(500)>1)
                 W.Cast(player.Position);
         }
 
@@ -58,8 +61,11 @@ namespace ARAMDetFull.Champions
         {
             if (!R.IsReady() || target == null)
                 return;
-            if (safeGap(target) || GetComboDamage(target)*0.8f>target.Health)
+            if (safeGap(target) || GetComboDamage(target)*0.8f > target.Health)
+            {
                 R.Cast(target);
+                Aggresivity.addAgresiveMove(new AgresiveMove(50,2500,true));
+            }
         }
 
         public override void useSpells()
@@ -87,17 +93,26 @@ namespace ARAMDetFull.Champions
         private float GetComboDamage(Obj_AI_Base vTarget)
         {
             var fComboDamage = 0d;
-
-            if (Q.IsReady())
+            float manaCost = 0;
+            if (Q.IsReady() && Q.ManaCost<=player.Mana)
+            {
                 fComboDamage += player.GetSpellDamage(vTarget, SpellSlot.Q) +
                                 player.GetSpellDamage(vTarget, SpellSlot.Q, 1);
-            if (E.IsReady())
+                manaCost += Q.ManaCost - 20;
+            }
+
+            if (E.IsReady() && E.ManaCost+ manaCost <= player.Mana)
+            {
                 fComboDamage += player.GetSpellDamage(vTarget, SpellSlot.E);
+                manaCost += E.ManaCost - 5;
+            }
 
             if (R.IsReady())
-                fComboDamage += player.GetSpellDamage(vTarget, SpellSlot.R) * R.Instance.Ammo;
-            
-            
+            {
+                fComboDamage += player.GetSpellDamage(vTarget, SpellSlot.R)*R.Instance.Ammo;
+            }
+
+
             return (float)fComboDamage;
         }
 

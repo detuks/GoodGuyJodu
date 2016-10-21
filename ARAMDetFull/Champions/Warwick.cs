@@ -30,7 +30,7 @@ namespace ARAMDetFull.Champions
                         },
                 startingItems = new List<ItemId>
                         {
-                            ItemId.Giants_Belt
+                            //ItemId.Giants_Belt
                         }
             };
         }

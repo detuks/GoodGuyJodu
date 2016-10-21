@@ -20,9 +20,9 @@ namespace ARAMDetFull.Champions
                             new ConditionalItem(ItemId.Perfect_Hex_Core),
                             new ConditionalItem(ItemId.Sorcerers_Shoes),
                             new ConditionalItem(ItemId.Rylais_Crystal_Scepter),
-                            new ConditionalItem(ItemId.Rabadons_Deathcap),
+                            new ConditionalItem(ItemId.Morellonomicon),
                             new ConditionalItem(ItemId.Abyssal_Scepter,ItemId.Zhonyas_Hourglass,ItemCondition.ENEMY_AP),
-                            new ConditionalItem(ItemId.Ludens_Echo,ItemId.Liandrys_Torment,ItemCondition.ENEMY_LOSING),
+                            new ConditionalItem(ItemId.Rabadons_Deathcap,ItemId.Liandrys_Torment,ItemCondition.ENEMY_LOSING),
                         },
                 startingItems = new List<ItemId>
                         {

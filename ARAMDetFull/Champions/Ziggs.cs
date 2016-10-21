@@ -23,16 +23,16 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                         {
-                            new ConditionalItem(ItemId.Athenes_Unholy_Grail),
+                            new ConditionalItem(ItemId.Archangels_Staff),
                             new ConditionalItem(ItemId.Sorcerers_Shoes),
-                            new ConditionalItem(ItemId.Ludens_Echo),
                             new ConditionalItem(ItemId.Rabadons_Deathcap),
+                            new ConditionalItem(ItemId.Ludens_Echo),
                             new ConditionalItem(ItemId.Void_Staff),
                             new ConditionalItem(ItemId.Banshees_Veil),
                         },
                 startingItems = new List<ItemId>
                         {
-                            ItemId.Chalice_of_Harmony,ItemId.Boots_of_Speed
+                            ItemId.Tear_of_the_Goddess,ItemId.Boots_of_Speed
                         }
             };
         }

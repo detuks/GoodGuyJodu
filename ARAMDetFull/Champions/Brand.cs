@@ -193,7 +193,10 @@ namespace ARAMDetFull.Champions
                         (!E.IsReady() && E.IsReady((int)(player.Spellbook.GetSpell(SpellSlot.W).Cooldown * 1000)))) // Cooldown substraction E ready
                     {
                         // Cast W on high hitchance
-                        W.CastIfHitchanceEquals(target, HitChance.VeryHigh);
+                        if(player.Mana < 130)
+                            W.CastIfWillHit(target, 2);
+                        else
+                            W.CastIfHitchanceEquals(target, HitChance.VeryHigh);
                     }
                 }
                 // E

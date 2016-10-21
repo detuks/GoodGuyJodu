@@ -123,7 +123,7 @@ namespace ARAMDetFull.Champions
 
         public static bool EnemyInRange(int numOfEnemy, float range)
         {
-            return Utility.CountEnemysInRange(ObjectManager.Player, (int)range) >= numOfEnemy;
+            return ObjectManager.Player.CountEnemysInRange((int)range) >= numOfEnemy;
         }
 
         public static Vector3 ReversePosition(Vector3 positionMe, Vector3 positionEnemy)

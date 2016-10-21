@@ -68,8 +68,12 @@ namespace ARAMDetFull.Champions
         {
             if (!R.IsReady())
                 return;
-            if (!Sector.inTowerRange(target.Position.To2D()) &&  (MapControl.fightIsOn() != null ) && player.HealthPercent>45)
+            if (!Sector.inTowerRange(target.Position.To2D()) && (MapControl.fightIsOn() != null) &&
+                player.HealthPercent > 45)
+            {
                 R.Cast(target.Position);
+                Aggresivity.addAgresiveMove(new AgresiveMove(100,5000,true));
+            }
         }
 
         public override void useSpells()

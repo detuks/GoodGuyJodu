@@ -345,7 +345,13 @@ namespace ARAMDetFull
             if (condition == ItemCondition.ENEMY_LOSING)
             {
                 var allTowers = ObjectManager.Get<Obj_AI_Turret>().ToList();
-                if (allTowers.Count(tow => tow.IsDead && tow.IsEnemy) < allTowers.Count(tow => tow.IsDead && tow.IsAlly))
+                var eneTowCount = allTowers.Count(tow => !tow.IsDead && tow.IsEnemy);
+                var allyTowCount = allTowers.Count(tow => !tow.IsDead && tow.IsAlly);
+                if (allyTowCount == eneTowCount)
+                {
+                    return HeroManager.Player.Deaths > HeroManager.Player.ChampionsKilled ? secondary : primary;
+                }
+                if (eneTowCount < allyTowCount)
                     selected = primary;
                 else
                     selected = secondary;

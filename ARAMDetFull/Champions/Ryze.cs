@@ -26,7 +26,7 @@ namespace ARAMDetFull.Champions
                         },
                 startingItems = new List<ItemId>
                         {
-                            ItemId.Catalyst_the_Protector
+                            ItemId.Tear_of_the_Goddess,ItemId.Ruby_Crystal
                         }
             };
         }

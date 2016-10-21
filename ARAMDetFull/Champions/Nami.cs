@@ -21,9 +21,9 @@ namespace ARAMDetFull.Champions
                             new ConditionalItem(ItemId.Athenes_Unholy_Grail),
                             new ConditionalItem(ItemId.Sorcerers_Shoes),
                             new ConditionalItem(ItemId.Rabadons_Deathcap),
-                            new ConditionalItem(ItemId.Zhonyas_Hourglass),
-                            new ConditionalItem(ItemId.Abyssal_Scepter),
-                            new ConditionalItem(ItemId.Banshees_Veil),
+                            new ConditionalItem(ItemId.Morellonomicon),
+                            new ConditionalItem(ItemId.Rylais_Crystal_Scepter,ItemId.Locket_of_the_Iron_Solari,ItemCondition.ENEMY_LOSING),
+                            new ConditionalItem(ItemId.Ludens_Echo,ItemId.Ardent_Censer,ItemCondition.ENEMY_LOSING),
                         },
                 startingItems = new List<ItemId>
                         {
@@ -50,8 +50,8 @@ namespace ARAMDetFull.Champions
 
         public override void useW(Obj_AI_Base target)
         {
-            if (!W.IsReady() || target == null)
-                return;
+            //if (!W.IsReady() || target == null)
+           //     return;
             HealLogic(target);
         }
 
@@ -80,7 +80,7 @@ namespace ARAMDetFull.Champions
         {
             var tar = ARAMTargetSelector.getBestTarget(Q.Range);
             useQ(tar);
-            tar = ARAMTargetSelector.getBestTarget(W.Range);
+            tar = ARAMTargetSelector.getBestTarget(W.Range+400);
             useW(tar);
             tar = ARAMTargetSelector.getBestTarget(E.Range);
             useE(tar);
@@ -111,13 +111,14 @@ namespace ARAMDetFull.Champions
 
         private void HealLogic(Obj_AI_Base target)
         {
-            var ally = AllyBelowHp(35, W.Range);
+            var ally = AllyBelowHp((player.ManaPercent>70)?70:35, W.Range);
             if (ally != null) // force heal low ally
             {
                 W.CastOnUnit(ally);
                 return;
             }
-
+            if (target == null)
+                return;
             if (player.Distance(target) > W.Range) // target out of range try bounce
             {
                 var bounceTarget =

@@ -36,9 +36,11 @@ namespace ARAMDetFull
             public float dangerReach = 0;
 
             public int activeDangers = 0;
-            
-            protected List<SpellDatabaseEntry> champSpells = new List<SpellDatabaseEntry>();
 
+            public int lastAttackedUnitId = -1;
+
+            protected List<SpellDatabaseEntry> champSpells = new List<SpellDatabaseEntry>();
+            
             public AttackableUnit getFocusTarget()
             {
                 HealthDeath.DamageMaker dm = null;
@@ -68,7 +70,20 @@ namespace ARAMDetFull
                 {
                     champSpells.Add(spell);
                 }
-
+                Obj_AI_Base.OnDoCast += (sender, args) =>
+                {
+                    if (sender.NetworkId != hero.NetworkId)
+                        return;
+                    if(args.Target != null && args.Target is Obj_AI_Base)
+                        lastAttackedUnitId = args.Target.NetworkId;
+                };
+                Obj_AI_Base.OnAggro += (sender, args) =>
+                {
+                    if (sender.NetworkId != hero.NetworkId)
+                        return;
+                    if (args != null)
+                        lastAttackedUnitId = args.NetworkId;
+                };
                 getReach();
             }
 
@@ -189,6 +204,8 @@ namespace ARAMDetFull
                     return;
                 lastMinionSpellUse = DeathWalker.now;
                 if (hero.MaxMana > 300 && hero.ManaPercent < 78)
+                    return;
+                if (hero.MaxMana >199 && hero.MaxMana < 201 && hero.ManaPercent < 95)
                     return;
                 foreach (var spell in spells)
                 {
