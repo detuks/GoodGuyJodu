@@ -153,7 +153,7 @@ namespace ARAMDetFull
             {
                 if (!spell.IsReady())
                     return;
-                if (player.CountEnemysInRange(600) > 1 && player.HealthPercent < 40)
+                if (ARAMSimulator.balance < -250 && player.HealthPercent > 70 && player.HealthPercent > 40 && player.CountEnemiesInRange(500)>0)
                 {
                         spell.Cast(player.Position.Extend(ARAMSimulator.fromNex.Position, 450));
                 }

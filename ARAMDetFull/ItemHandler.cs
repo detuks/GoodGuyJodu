@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ARAMDetFull;
 using LeagueSharp;using DetuksSharp;
 using LeagueSharp.Common;
@@ -33,6 +34,9 @@ namespace UnderratedAIO.Helpers
         public static Items.Item Zhonya = new Items.Item(3157, 0);
         public static Items.Item Wooglet = new Items.Item(3090, 0);
         public static Items.Item locket = new Items.Item((int)ItemId.Locket_of_the_Iron_Solari, 0);
+        public static Items.Item banner = new Items.Item((int)ItemId.Banner_of_Command, 0);
+        public static Items.Item hexmk1 = new Items.Item(3030, 0);
+        public static Items.Item hexmk2 = new Items.Item(3152, 0);
 
 
         public static void useItems()
@@ -55,6 +59,13 @@ namespace UnderratedAIO.Helpers
             if (player.BaseSkinName != "Renekton")
             {
                 castHydra(target);
+            }
+            if (Items.HasItem(hexmk2.Id) && Items.CanUseItem(hexmk2.Id))
+            {
+                if (ARAMSimulator.balance > -50)
+                    hexmk2.Cast(target.Position);
+                else
+                    hexmk2.Cast(player.Position.Extend(ARAMSimulator.fromNex.Position, 677));
             }
 
             if (Items.HasItem(Zhonya.Id) && Items.CanUseItem(Zhonya.Id))
@@ -110,6 +121,16 @@ namespace UnderratedAIO.Helpers
             if (Items.HasItem(youmuu.Id) && Items.CanUseItem(youmuu.Id) && player.Distance(target) < player.AttackRange + 50)
             {
                 youmuu.Cast();
+            }
+            if (Items.HasItem(banner.Id) && Items.CanUseItem(banner.Id))
+            {
+                var min = MinionManager.GetMinions(500, MinionTypes.Ranged, MinionTeam.Ally).FirstOrDefault();
+                if(min != null && min.HealthPercent>75)
+                    banner.Cast(min);
+            }
+            if (Items.HasItem(hexmk1.Id) && Items.CanUseItem(hexmk1.Id))
+            {
+                hexmk1.Cast(target.Position);
             }
         }
 

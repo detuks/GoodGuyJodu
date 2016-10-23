@@ -50,7 +50,7 @@ namespace ARAMDetFull
 
             public List<Obj_AI_Base> getAttackers()
             {
-                return HealthDeath.activeDamageMakers.Values.Where(dm => dm.source.IsValid && dm.target != null && dm.target == hero).Select(dm=> dm.source).ToList();
+                return HealthDeath.activeDamageMakers.Values.Where(dm => dm.source.IsValid && dm.target != null && dm.target.NetworkId == hero.NetworkId).Select(dm=> dm.source).ToList();
             }
 
             public bool isTransformChampion()
@@ -98,7 +98,7 @@ namespace ARAMDetFull
                     if (cSpell.SpellTags == null || !(cSpell.SpellTags.Any(takeInCOunt.Contains)))
                         continue;
                     var spell = hero.Spellbook.GetSpell(cSpell.Slot);
-                    if ((spell.CooldownExpires - Game.Time) > 3.5f || spell.State == SpellState.NotLearned)
+                    if ((spell.CooldownExpires - Game.Time) > 2.5f || spell.State == SpellState.NotLearned || spell.ManaCost>hero.Mana)
                         continue;
                     var range = (spell.SData.CastRange < 1000) ? spell.SData.CastRange : 1000;
                     if (spell.SData.CastRange > range)
@@ -212,9 +212,25 @@ namespace ARAMDetFull
                     if (spell.Value.Slot == SpellSlot.R || spell.Value.Instance.Cooldown > 10 || !spell.Value.IsReady() || spell.Value.ManaCost > hero.Mana || spell.Key.SpellTags == null || !spell.Key.SpellTags.Contains(SpellTags.Damage)
                         || (isTransformChampion() && sBook.GetSpell(spell.Key.Slot).Name.ToLower() != spell.Key.SpellName.ToLower()))
                         continue;
+                    //Farm spell
+                    if (spell.Value.IsSkillshot && !spell.Value.Collision)
+                    {
+                        var farmMinions = MinionManager.GetMinions((spell.Value.Range != 0) ? spell.Value.Range : 300);
+                        var farmLocation = (spell.Value.Type == SkillshotType.SkillshotCircle)?spell.Value.GetCircularFarmLocation(farmMinions): spell.Value.GetLineFarmLocation(farmMinions);
+                        if (farmLocation.MinionsHit > 2)
+                        {
+                            spell.Value.Cast(farmLocation.Position);
+                            return;
+                        }
+                        //dont waste for single kills
+                        return;
+                    }
+
+                    //if line
                     var minions = MinionManager.GetMinions((spell.Value.Range != 0) ? spell.Value.Range : 500);
                     foreach (var minion in minions)
                     {
+
                         if(minion.Health > spell.Value.GetDamage(minion))
                             continue;
                         var movementSpells = new List<SpellTags> { SpellTags.Dash, SpellTags.Blink, SpellTags.Teleport };
@@ -531,7 +547,7 @@ namespace ARAMDetFull
             return balance;
         }
 
-        private static int getMinionImpactOnHero(ChampControl champ)
+        public static int getMinionImpactOnHero(ChampControl champ)
         {
             var minionAttackerCount = champ.getAttackers().Count(att => att is Obj_AI_Minion);
             return (int)(minionAttackerCount * ((18 - myControler.hero.Level) * 2f));
