@@ -53,8 +53,8 @@ namespace DetuksSharp
         {
             "azirbasicattacksoldier",
         };
-
         private static double start = DateTime.Now.TimeOfDay.TotalMilliseconds;
+
         public static int now
         {
             get { return (int)(DateTime.Now.TimeOfDay.TotalMilliseconds - start); }
@@ -376,7 +376,7 @@ namespace DetuksSharp
 
         public static void deathWalk(Vector3 goalPosition, bool onlyChamps = false, bool delayMovement = false)
         {
-            if((CurrentMode == Mode.None || BottingMode) && !CustomOrbwalkMode)
+            if ((CurrentMode == Mode.None || BottingMode) && !CustomOrbwalkMode)
                 deathWalkTarget(goalPosition, getBestTarget(false, onlyChamps),false,delayMovement);
         }
 
@@ -387,7 +387,6 @@ namespace DetuksSharp
                 doAttack(target);
             }
             var rng = new Random();
-            cantMoveTill = now + rng.Next(290, 560);
             if (canMove() && !noMove)
             {
                 if (target != null && (CurrentMode == Mode.Lasthit || CurrentMode == Mode.Harass))
@@ -395,6 +394,7 @@ namespace DetuksSharp
                 if (killUnit != null && !(killUnit is Obj_AI_Hero) && killUnit.IsValid && !killUnit.IsDead && killUnit.Position.Distance(player.Position) > getRealAutoAttackRange(killUnit) - 30)//Get in range
                     moveTo(killUnit.Position);
                 moveTo(goalPosition);
+                cantMoveTill = now + rng.Next(290, 560);
             }
         }
 
