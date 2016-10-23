@@ -54,9 +54,10 @@ namespace DetuksSharp
             "azirbasicattacksoldier",
         };
 
+        private static double start = DateTime.Now.TimeOfDay.TotalMilliseconds;
         public static int now
         {
-            get { return (int)DateTime.Now.TimeOfDay.TotalMilliseconds; }
+            get { return (int)(DateTime.Now.TimeOfDay.TotalMilliseconds - start); }
         }
 
         public static Menu menu;
@@ -385,7 +386,8 @@ namespace DetuksSharp
             {
                 doAttack(target);
             }
-            CustomMoveDelayTemp = delayMovement ? 400 : 0;
+            var rng = new Random();
+            cantMoveTill = now + rng.Next(290, 560);
             if (canMove() && !noMove)
             {
                 if (target != null && (CurrentMode == Mode.Lasthit || CurrentMode == Mode.Harass))
