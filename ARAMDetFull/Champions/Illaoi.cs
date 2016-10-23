@@ -61,6 +61,7 @@ namespace ARAMDetFull.Champions
             if (!W.IsReady() || target == null)
                 return;
             W.Cast();
+            Aggresivity.addAgresiveMove(new AgresiveMove(160,800,true));
         }
 
         public override void useE(Obj_AI_Base target)
@@ -72,12 +73,12 @@ namespace ARAMDetFull.Champions
 
         public override void useR(Obj_AI_Base target)
         {
-            if (!E.IsReady() || target == null)
+            if (!R.IsReady() || target == null)
                 return;
-            if (player.CountEnemiesInRange(500) >= 2)
+            if (player.CountEnemiesInRange(450) >= 2)
             {
                 R.Cast(target.Position);
-                Aggresivity.addAgresiveMove(new AgresiveMove(1200,8000));
+                Aggresivity.addAgresiveMove(new AgresiveMove(1200,4500));
             }
         }
 

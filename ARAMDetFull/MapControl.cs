@@ -213,7 +213,7 @@ namespace ARAMDetFull
                         || (isTransformChampion() && sBook.GetSpell(spell.Key.Slot).Name.ToLower() != spell.Key.SpellName.ToLower()))
                         continue;
                     //Farm spell
-                    if (spell.Value.IsSkillshot && !spell.Value.Collision)
+                    if (spell.Value.IsSkillshot && !spell.Value.Collision && spell.Value.GetDamage(hero)>5)
                     {
                         var farmMinions = MinionManager.GetMinions((spell.Value.Range != 0) ? spell.Value.Range : 300);
                         var farmLocation = (spell.Value.Type == SkillshotType.SkillshotCircle)?spell.Value.GetCircularFarmLocation(farmMinions): spell.Value.GetLineFarmLocation(farmMinions);

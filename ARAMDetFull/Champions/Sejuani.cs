@@ -20,7 +20,7 @@ namespace ARAMDetFull.Champions
                     new ConditionalItem(ItemId.Sunfire_Cape),
                     new ConditionalItem(ItemId.Mercurys_Treads,ItemId.Ninja_Tabi,ItemCondition.ENEMY_AP),
                     new ConditionalItem(ItemId.Abyssal_Scepter),
-                    new ConditionalItem(ItemId.Locket_of_the_Iron_Solari),
+                    new ConditionalItem(ItemId.Banner_of_Command,ItemId.Locket_of_the_Iron_Solari,ItemCondition.ENEMY_AP),
                     new ConditionalItem(ItemId.Warmogs_Armor),
                     new ConditionalItem(ItemId.Spirit_Visage,ItemId.Iceborn_Gauntlet,ItemCondition.ENEMY_AP),
                 },
@@ -91,7 +91,7 @@ namespace ARAMDetFull.Champions
             Q = new Spell(SpellSlot.Q, 650f);
             W = new Spell(SpellSlot.W, 350f);
             E = new Spell(SpellSlot.E, 1000f);
-            R = new Spell(SpellSlot.R, 1175f);
+            R = new Spell(SpellSlot.R, 775f);
 
             Q.SetSkillshot(Q.Instance.SData.SpellCastTime, Q.Instance.SData.LineWidth, Q.Instance.SData.MissileSpeed, false, SkillshotType.SkillshotLine);
             R.SetSkillshot(R.Instance.SData.SpellCastTime, R.Instance.SData.LineWidth, R.Instance.SData.MissileSpeed, false, SkillshotType.SkillshotLine);

@@ -20,24 +20,26 @@ namespace ARAMDetFull.Champions
                         {
                             new ConditionalItem(ItemId.Hextech_Gunblade),
                             new ConditionalItem(ItemId.Sorcerers_Shoes,ItemId.Mercurys_Treads,ItemCondition.ENEMY_LOSING),
-                            new ConditionalItem(ItemId.Abyssal_Scepter,ItemId.Zhonyas_Hourglass,ItemCondition.ENEMY_AP),
-                            new ConditionalItem(ItemId.Rylais_Crystal_Scepter),
                             new ConditionalItem(ItemId.Lich_Bane),
+                            new ConditionalItem(ItemId.Rylais_Crystal_Scepter),
+                            new ConditionalItem(ItemId.Abyssal_Scepter,ItemId.Zhonyas_Hourglass,ItemCondition.ENEMY_AP),
                             new ConditionalItem(ItemId.Rabadons_Deathcap),
                         },
                 startingItems = new List<ItemId>
                         {
-                            ItemId.Hextech_Revolver
+                            ItemId.Hextech_Revolver,ItemId.Boots_of_Speed
                         }
             };
         }
-
+        
         public override void useQ(Obj_AI_Base target)
         {
             if (!Q.IsReady() || target == null)
                 return;
-            if(Q.Cast(target) == Spell.CastStates.SuccessfullyCasted && target.InAutoAttackRange())
+            if (Q.Cast(target) == Spell.CastStates.SuccessfullyCasted && target.InAutoAttackRange())
+            {
                 Aggresivity.addAgresiveMove(new AgresiveMove(50, 1000, true));
+            }
 
         }
 
@@ -46,7 +48,7 @@ namespace ARAMDetFull.Champions
             if (!W.IsReady())
                 return;
             if(player.CountEnemiesInRange(500)>1)
-                W.Cast(player.Position);
+                W.Cast(player.Position.Extend(player.Direction,150));
         }
 
         public override void useE(Obj_AI_Base target)
@@ -61,7 +63,7 @@ namespace ARAMDetFull.Champions
         {
             if (!R.IsReady() || target == null)
                 return;
-            if (safeGap(target) || GetComboDamage(target)*0.8f > target.Health)
+            if ((safeGap(target) && player.Mana>100) || GetComboDamage(target)*0.8f > target.Health)
             {
                 R.Cast(target);
                 Aggresivity.addAgresiveMove(new AgresiveMove(50,2500,true));
@@ -70,14 +72,14 @@ namespace ARAMDetFull.Champions
 
         public override void useSpells()
         {
-            var tar = ARAMTargetSelector.getBestTarget(Q.Range);
+            var tar = ARAMTargetSelector.getBestTarget(R.Range);
+            if (tar != null) useR(tar);
+            tar = ARAMTargetSelector.getBestTarget(Q.Range);
             if (tar != null) useQ(tar);
-            tar = ARAMTargetSelector.getBestTarget(W.Range);
-            if (tar != null)  useW(tar);
             tar = ARAMTargetSelector.getBestTarget(E.Range);
             if (tar != null) useE(tar);
-            tar = ARAMTargetSelector.getBestTarget(R.Range);
-            if (tar != null) useR(tar);
+            tar = ARAMTargetSelector.getBestTarget(W.Range);
+            if (tar != null)  useW(tar);
         }
 
         public override void killSteal()

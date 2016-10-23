@@ -35,7 +35,7 @@ namespace ARAMDetFull.Champions
                             new ConditionalItem(ItemId.Phantom_Dancer),
                             new ConditionalItem(ItemId.Blade_of_the_Ruined_King),
                             new ConditionalItem(ItemId.Mercurial_Scimitar),
-                            new ConditionalItem(ItemId.Last_Whisper),
+                            new ConditionalItem((ItemId)3036),
                         },
                 startingItems = new List<ItemId>
                         {

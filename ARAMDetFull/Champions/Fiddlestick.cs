@@ -28,9 +28,9 @@ namespace ARAMDetFull.Champions
                             new ConditionalItem(ItemId.Zhonyas_Hourglass),
                             new ConditionalItem(ItemId.Ionian_Boots_of_Lucidity),
                             new ConditionalItem(ItemId.Morellonomicon),
-                            new ConditionalItem(ItemId.Void_Staff),
-                            new ConditionalItem(ItemId.Abyssal_Scepter),
                             new ConditionalItem(ItemId.Rabadons_Deathcap),
+                            new ConditionalItem(ItemId.Abyssal_Scepter),
+                            new ConditionalItem(ItemId.Void_Staff),
                         },
                 startingItems = new List<ItemId>
                         {
@@ -72,7 +72,7 @@ namespace ARAMDetFull.Champions
                 player.HealthPercent > 45)
             {
                 R.Cast(target.Position);
-                Aggresivity.addAgresiveMove(new AgresiveMove(100,5000,true));
+                Aggresivity.addAgresiveMove(new AgresiveMove(400,5000,true));
             }
         }
 

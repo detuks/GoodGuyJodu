@@ -14,8 +14,8 @@ namespace ARAMDetFull.Champions
 
         private Spell EQ;
 
-        private static int QEComboT;
-        private static int WEComboT;
+        private static double QEComboT;
+        private static double WEComboT;
 
         public Syndra()
         {

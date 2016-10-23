@@ -110,7 +110,7 @@ namespace ARAMDetFull.Champions
 
         public static bool wIsCasted = false;
         public static bool serverTookWCast = false;
-        public static float recast = 0;
+        public static double recast = 0;
 
         public Zed()
         {

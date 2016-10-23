@@ -14,7 +14,7 @@ namespace ARAMDetFull.Champions
     {
         private const int QFollowTime = 3000;
         private Obj_AI_Base QTarget;
-        private int QTick;
+        private double QTick;
 
         public Thresh()
         {
@@ -22,7 +22,7 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                         {
-                            new ConditionalItem(ItemId.Locket_of_the_Iron_Solari),
+                            new ConditionalItem(ItemId.Banner_of_Command,ItemId.Locket_of_the_Iron_Solari,ItemCondition.ENEMY_AP),
                             new ConditionalItem(ItemId.Mercurys_Treads,ItemId.Ninja_Tabi,ItemCondition.ENEMY_AP),
                             new ConditionalItem(ItemId.Sunfire_Cape),
                             new ConditionalItem(ItemId.Banshees_Veil),

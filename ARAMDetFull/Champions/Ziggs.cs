@@ -104,11 +104,11 @@ namespace ARAMDetFull.Champions
             }
 
             //R aoe in teamfights
-            if ( R.IsReady())
+            if ( R.IsReady() && target!= null)
             {
                 var alliesarround = 0;
                 var n = 0;
-                foreach (var ally in ObjectManager.Get<Obj_AI_Hero>())
+                foreach (var ally in HeroManager.Allies)
                 {
                     if (ally.IsAlly && !ally.IsMe && ally.IsValidTarget(float.MaxValue, false) &&
                         ally.Distance(target) < 700)
@@ -140,7 +140,7 @@ namespace ARAMDetFull.Champions
                 }
             }
 
-            foreach (var pos in from enemy in ObjectManager.Get<Obj_AI_Hero>()
+            foreach (var pos in from enemy in HeroManager.Enemies
                                 where
                                     enemy.IsValidTarget() &&
                                     enemy.Distance(ObjectManager.Player) <=

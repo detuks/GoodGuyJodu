@@ -21,8 +21,8 @@ namespace ARAMDetFull.Champions
 					new ConditionalItem(ItemId.Ionian_Boots_of_Lucidity),
 					new ConditionalItem(ItemId.Lich_Bane),
 					new ConditionalItem(ItemId.Abyssal_Scepter, ItemId.Iceborn_Gauntlet, ItemCondition.ENEMY_AP),
-					new ConditionalItem(ItemId.Locket_of_the_Iron_Solari),
-					new ConditionalItem(ItemId.Rabadons_Deathcap),
+                    new ConditionalItem(ItemId.Banner_of_Command,ItemId.Locket_of_the_Iron_Solari,ItemCondition.ENEMY_AP),
+                    new ConditionalItem(ItemId.Rabadons_Deathcap),
                 },
                 startingItems = new List<ItemId>
                 {

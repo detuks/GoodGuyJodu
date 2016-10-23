@@ -23,7 +23,7 @@ namespace ARAMDetFull.Champions
                     new ConditionalItem(ItemId.Mercurys_Treads, ItemId.Ninja_Tabi, ItemCondition.ENEMY_AP),
                     new ConditionalItem(ItemId.Spirit_Visage, ItemId.Frozen_Heart, ItemCondition.ENEMY_AP),
                     new ConditionalItem(ItemId.Abyssal_Scepter),
-                    new ConditionalItem(ItemId.Locket_of_the_Iron_Solari),
+                    new ConditionalItem(ItemId.Banner_of_Command,ItemId.Locket_of_the_Iron_Solari,ItemCondition.ENEMY_AP),
                     new ConditionalItem(ItemId.Banshees_Veil),
                 },
                 startingItems = new List<ItemId>

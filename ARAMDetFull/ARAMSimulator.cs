@@ -137,7 +137,7 @@ namespace ARAMDetFull
         public static Build champBuild;
 
         public static ItemToShop nextItem;
-        public static int lastBuy = 0;
+        public static double lastBuy = 0;
         public static SummonerSpells sSpells ;
         public static int tankBal = -20;
 
@@ -919,7 +919,7 @@ namespace ARAMDetFull
 
             if (Game.MapId == GameMapId.SummonersRift)
             {
-                if (player.IsRecalling())
+                if (player.IsRecalling() || needRecall && lastRecall +1000 > DeathWalker.now)
                     return;
                 if (player.InFountain() && player.HealthPercent < 90)
                 {
@@ -939,7 +939,7 @@ namespace ARAMDetFull
                         return;
                     }
                 }
-                else if (needRecall)
+                if (needRecall)
                 {
                     player.IssueOrder(GameObjectOrder.MoveTo, fromNex.Position.Randomize(534,1005));
                     return;
@@ -975,7 +975,7 @@ namespace ARAMDetFull
                     else
                     {
                         MapControl.myControler.useSpells();
-                        if(player.MaxMana<350 || player.ManaPercent>50)
+                        if(player.MaxMana<280 || player.ManaPercent>50)
                             MapControl.myControler.useSpellsOnMinions();
                     }
                 }
@@ -1022,7 +1022,7 @@ namespace ARAMDetFull
             }
             
             awayTo = eAwayFromTo();
-            if (awayTo.IsValid() && awayTo.X != 0 )
+            if (balance < 70 && awayTo.IsValid() && awayTo.X != 0 )
             {
 
                 DeathWalker.CustomOrbwalkMode = false;
@@ -1060,8 +1060,8 @@ namespace ARAMDetFull
                 var fightOn = MapControl.fightIsOn();
                 if (fightOn != null && MapControl.balanceAroundPointAdvanced(fightOn.Position.To2D(),280,450) > (-130) && fightOn.Distance(player, true) < 2500 * 2500 && (!player.IsMelee() || !Sector.inTowerRange(fightOn.Position.To2D())))
                 {
-                    Aggresivity.addAgresiveMove(new AgresiveMove(40* MapControl.fightLevel(), 2000,true,true));
-                    DeathWalker.deathWalk(fightOn.Position.Extend(player.Position, player.AttackRange * 0.8f), true);
+                    Aggresivity.addAgresiveMove(new AgresiveMove(40* MapControl.fightLevel(), 3000,true,true));
+                    DeathWalker.deathWalk(fightOn.Position.Extend(player.Position, player.AttackRange * 0.6f), true);
                 }
                 else
                 {/*
@@ -1107,7 +1107,7 @@ namespace ARAMDetFull
                     }
                     else
                     {
-                        DeathWalker.deathWalk(player.Position.To2D().Extend(fromNex.Position.To2D(),600).To3D(),false);
+                        DeathWalker.deathWalk(player.Position.To2D().Extend(fromNex.Position.To2D(),333).To3D(),false);
                     }
                 }
             }

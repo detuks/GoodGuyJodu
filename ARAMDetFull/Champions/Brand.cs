@@ -31,7 +31,7 @@ namespace ARAMDetFull.Champions
                 },
                 startingItems = new List<ItemId>
                 {
-                    ItemId.Boots_of_Speed,ItemId.Fiendish_Codex
+                    ItemId.Boots_of_Speed,(ItemId)3802
                 }
             };
         }
@@ -222,9 +222,17 @@ namespace ARAMDetFull.Champions
                     // Distance check
                     if (target.ServerPosition.Distance(player.Position, true) < R.Range * R.Range)
                     {
-                        // Logic prechecks
-                        if ((useQ && Q.IsReady() && Q.GetPrediction(target).Hitchance == HitChance.VeryHigh || useW && W.IsReady()) && player.Health / player.MaxHealth > 0.4f)
+
+                    if (GoodBounceTarget(target))
+                    {
+                        R.CastOnUnit(target);
+                        return;
+                    }
+
+                    // Logic prechecks
+                    if ((useQ && Q.IsReady() && Q.GetPrediction(target).Hitchance == HitChance.VeryHigh || useW && W.IsReady()) && player.Health / player.MaxHealth > 0.4f)
                             return;
+
 
                         // Single hit
                         if (mainComboKillable && inMinimumRange || player.GetSpellDamage(target, SpellSlot.R) > target.Health)
@@ -238,6 +246,11 @@ namespace ARAMDetFull.Champions
                     }
                 }
             
+        }
+
+        public bool GoodBounceTarget(Obj_AI_Base target)
+        {
+            return target.CountEnemiesInRange(380) > 1;
         }
 
 

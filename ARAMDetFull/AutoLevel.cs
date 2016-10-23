@@ -13,7 +13,7 @@ namespace ARAMDetFull
     {
         private static int[] order = new int[18];
 
-        private static int lastLevelup = DeathWalker.now;
+        private static double lastLevelup = DeathWalker.now;
 
         public static void setAutoLevel()
         {
@@ -123,7 +123,7 @@ namespace ARAMDetFull
                     sequence = new[] { 1, 3, 2, 1, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
                     break;
                 case "FiddleSticks":
-                    sequence = new[] { 3, 2, 3, 1, 3, 4, 3, 3, 1, 1, 4, 1, 1, 2, 2, 4, 2, 2 };
+                    sequence = new[] { 3, 2, 3, 1, 3, 4, 3, 1, 3, 1, 4, 1, 1, 2, 2, 4, 2, 2 };
                     break;
                 case "Fiora":
                     sequence = new[] { 1, 2, 3, 1, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
