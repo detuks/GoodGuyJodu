@@ -11,7 +11,7 @@ namespace ARAMDetFull.Champions
 {
     class Kogmaw : Champion
     {
-
+        
         public Kogmaw()
         {
             ARAMSimulator.champBuild = new Build
@@ -64,7 +64,7 @@ namespace ARAMDetFull.Champions
         public override void setUpSpells()
         {
             Q = new Spell(SpellSlot.Q, 1000f);
-            W = new Spell(SpellSlot.W, float.MaxValue);
+            W = new Spell(SpellSlot.W, 20 * W.Level + 610);
             E = new Spell(SpellSlot.E, 1360f);
             R = new Spell(SpellSlot.R, float.MaxValue);
 
