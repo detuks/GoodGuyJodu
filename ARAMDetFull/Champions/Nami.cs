@@ -122,7 +122,7 @@ namespace ARAMDetFull.Champions
             if (player.Distance(target) > W.Range) // target out of range try bounce
             {
                 var bounceTarget =
-                    ObjectManager.Get<Obj_AI_Hero>()
+                    HeroManager.AllHeroes
                         .SingleOrDefault(hero => hero.IsValidTarget(W.Range) && hero.Distance(target) < W.Range);
 
                 if (bounceTarget != null && bounceTarget.MaxHealth - bounceTarget.Health > WHeal) // use bounce & heal

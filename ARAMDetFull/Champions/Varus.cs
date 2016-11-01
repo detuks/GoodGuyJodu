@@ -42,16 +42,18 @@ namespace ARAMDetFull.Champions
 
         public override void useQ(Obj_AI_Base target)
         {
+            if (Q.IsCharging)
+            {
+                Console.WriteLine("Check targets!!");
+                var prediction = Q.GetPrediction(target);
+                if (prediction.Hitchance >= HitChance.High)
+                {
+                    Console.WriteLine("Relase!!");
+                    Q.Cast(prediction.CastPosition);
+                }
+            }
             if (Q.IsReady())
             {
-                if (Q.IsCharging)
-                {
-                    var prediction = Q.GetPrediction(target);
-                    if (prediction.Hitchance >= HitChance.High)
-                    {
-                        Q.Cast(prediction.CastPosition);
-                    }
-                }
 
                 if (!Q.IsCharging)
                 {
@@ -93,7 +95,7 @@ namespace ARAMDetFull.Champions
             Q.SetSkillshot(0.3f, 80f, 1300f, false, SkillshotType.SkillshotLine);
             E.SetSkillshot(0.5f, 235f, 1500f, false, SkillshotType.SkillshotCircle);
             R.SetSkillshot(0.25f, 100f, 1950f, false, SkillshotType.SkillshotLine);
-            Q.SetCharged("VarusQ", "VarusQ", 250, 1600, 1.2f);
+            Q.SetCharged("VarusQ", "VarusQ", 250, 1700, 1.2f);
         }
 
         public override void useSpells()

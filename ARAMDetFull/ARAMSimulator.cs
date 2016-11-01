@@ -895,8 +895,11 @@ namespace ARAMDetFull
             }
 
             setRambo();
-            if (player.IsDead || player.IsChannelingImportantSpell())
+            if (player.IsDead || (player.IsChannelingImportantSpell() && player.ChampionName != "Varus"))
+            {
                 return;
+            }
+
             var fightLevel = MapControl.fightLevel();
             MapControl.updateReaches();
 
