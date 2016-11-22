@@ -284,8 +284,7 @@ namespace YasuoSharpV2
             {
 
                 E.Cast(goodTarg);
-
-                SmoothMouse.addMouseEvent(target.Position);
+                
                 Q.Cast(target);
             }
             if (!useESmart(target))
@@ -314,7 +313,6 @@ namespace YasuoSharpV2
                 Vector2 clos = LeagueSharp.Common.Geometry.Closest(Player.ServerPosition.To2D(), minionPs);
                 if (Player.Distance(clos) < 475)
                 {
-                    SmoothMouse.addMouseEvent(clos.To3D());
                     Q.Cast(clos, false);
                     return;
                 }
@@ -368,7 +366,6 @@ namespace YasuoSharpV2
             if (!target.IsMoving || Player.Distance(dashPos) <= dist + 40)
                 if (dist < 330 && dist > 100 && W.IsReady())
                 {
-                    SmoothMouse.addMouseEvent(po.UnitPosition);
                     W.Cast(po.UnitPosition);
                 }
         }
@@ -429,7 +426,6 @@ namespace YasuoSharpV2
                     {
                         if (canCastFarQ())
                         {
-                            SmoothMouse.addMouseEvent(minion.Position);
                             Q.Cast(minion);
                         }
                     }
@@ -460,8 +456,6 @@ namespace YasuoSharpV2
                         MinionManager.FarmLocation farm = QEmp.GetLineFarmLocation(minionPs); //MinionManager.GetBestLineFarmLocation(minionPs, 50f, 900f);
                         if (farm.MinionsHit >= YasuoSharp.Config.Item("useEmpQHit").GetValue<Slider>().Value)
                         {
-                            //Console.WriteLine("Cast q simp Emp");
-                            SmoothMouse.addMouseEvent(farm.Position.To3D());
                             QEmp.Cast(farm.Position, false);
                             return;
                         }
@@ -484,7 +478,6 @@ namespace YasuoSharpV2
                         if (Player.Distance(clos) < 475)
                         {
                             Console.WriteLine("Cast q simp");
-                            SmoothMouse.addMouseEvent(clos.To3D());
                             Q.Cast(clos, false);
                             return;
                         }
@@ -591,7 +584,6 @@ namespace YasuoSharpV2
                     PredictionOutput po = QEmp.GetPrediction(target); //QEmp.GetPrediction(target, true);
                     if (po.Hitchance >= HitChance.Medium)
                     {
-                        SmoothMouse.addMouseEvent(po.CastPosition);
                         QEmp.Cast(po.CastPosition);
                         return;
                     }
@@ -613,7 +605,6 @@ namespace YasuoSharpV2
                     PredictionOutput po = Q.GetPrediction(target);
                     if (po.Hitchance >= HitChance.Medium)
                     {
-                        SmoothMouse.addMouseEvent(po.CastPosition);
                         Q.Cast(po.CastPosition);
                     }
                     return;
@@ -817,7 +808,6 @@ namespace YasuoSharpV2
                                 if (missle.Target.IsMe || isMissileCommingAtMe(missle))
                                 {
                                     YasuoSharp.lastSpell = missle.SData.Name;
-                                    SmoothMouse.addMouseEvent(blockWhere);
                                     W.Cast(blockWhere, true);
                                 }
                             }
@@ -851,7 +841,6 @@ namespace YasuoSharpV2
             {
                 if (isSafePoint(posAfter).IsSafe)
                 {
-                    SmoothMouse.addMouseEvent(target.Position);
                     E.Cast(target, false);
                 }
                 return true;
@@ -865,7 +854,6 @@ namespace YasuoSharpV2
                     Console.WriteLine("use gap?");
                     if (isSafePoint(posAfter,true).IsSafe)
                     {
-                        SmoothMouse.addMouseEvent(target.Position);
                         E.Cast(target, false);
                     }
                     return true;
@@ -1031,7 +1019,6 @@ namespace YasuoSharpV2
                         {
                             Vector3 blockwhere = Player.ServerPosition +
                                                  Vector3.Normalize(targMis.particle.Position - Player.Position)*150;
-                            SmoothMouse.addMouseEvent(blockwhere);
                             W.Cast(blockwhere,true);
                             return;
                         }

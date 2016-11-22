@@ -31,10 +31,7 @@ namespace YasuoSharpV2
             public static bool canSave = true;
             public static bool canExport = true;
             public static bool canDelete = true;
-
-            public static bool wasStream = false;
-
-
+        
             public static List<Skillshot> DetectedSkillshots = new List<Skillshot>();
 
             public YasuoSharp()
@@ -143,18 +140,11 @@ namespace YasuoSharpV2
                     GameObject.OnDelete += OnDeleteObject;
                     Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
                     Spellbook.OnStopCast += onStopCast;
-                    Obj_AI_Base.OnFloatPropertyChange += OnFloatPropertyChange;
                     CustomEvents.Unit.OnLevelUp += OnLevelUp;
-
-                    Game.OnSendPacket += OnGameSendPacket;
-                    Game.OnProcessPacket += OnGameProcessPacket;
 
                     SkillshotDetector.OnDetectSkillshot += OnDetectSkillshot;
                     SkillshotDetector.OnDeleteMissile += OnDeleteMissile;
-
-
-                    Orbwalking.BeforeAttack += beforeAttack;
-                    SmoothMouse.start();
+                
                 }
                 catch
                 {
@@ -162,20 +152,7 @@ namespace YasuoSharpV2
                 }
 
             }
-
-
-            private static void OnFloatPropertyChange(GameObject sender, GameObjectFloatPropertyChangeEventArgs args)
-            {
-
-            }
-
-            private static void beforeAttack(Orbwalking.BeforeAttackEventArgs args)
-            {
-                SmoothMouse.addMouseEvent(args.Target.Position);
-                
-            }
-
-
+        
             public static Menu getSkilshotMenu()
             {
                 //Create the skillshots submenus.
@@ -240,18 +217,6 @@ namespace YasuoSharpV2
             {
                 try
                 {
-
-                    if (!wasStream && Config.Item("streamMouse").GetValue<bool>())
-                    {
-                        SmoothMouse.start();
-                        wasStream = true;
-                    }
-                    else if (!Config.Item("streamMouse").GetValue<bool>())
-                    {
-                        wasStream = false;
-                    }
-
-
                     Yasuo.Q.SetSkillshot(Yasuo.getNewQSpeed(), 50f, float.MaxValue, false, SkillshotType.SkillshotLine);
 
                     if (Yasuo.startDash + 475000/((700 + Yasuo.Player.MoveSpeed)) < Environment.TickCount && Yasuo.isDashigPro)
@@ -374,9 +339,9 @@ namespace YasuoSharpV2
                 }
             }
 
-            private static void onDraw(EventArgs args)
-            {
-                if (Config.Item("disDraw").GetValue<bool>())
+        private static void onDraw(EventArgs args)
+        {
+            if (Config.Item("disDraw").GetValue<bool>())
                     return;
 
 
@@ -525,70 +490,7 @@ namespace YasuoSharpV2
                         Yasuo.sBook.LevelUpSpell(Yasuo.levelUpSeq2[args.NewLevel - 1].Slot);
                 }
             }
-
-
-
-            private static void OnGameProcessPacket(GamePacketEventArgs args)
-            {//28 16 176 ??184
-                if (args.PacketData[0] == 41)//135no 100no 183no 34no 101 133 56yesss? 127 41yess
-                {
-                    GamePacket gp = new GamePacket(args.PacketData);
-                    //Console.WriteLine(Encoding.UTF8.GetString(args.PacketData, 0, args.PacketData.Length));
-                    gp.Position = 1;
-                    if (gp.ReadInteger() == Yasuo.Player.NetworkId /*&&  Encoding.UTF8.GetString(args.PacketData, 0, args.PacketData.Length).Contains("Spell3")*/)
-                    {
-                        Console.WriteLine("----");
-                        Yasuo.lastDash.to = Yasuo.Player.Position;
-                        Yasuo.isDashigPro = false;
-                        Yasuo.time = Game.Time - Yasuo.startDash;
-                    }
-                    /* for (int i = 1; i < gp.Size() - 4; i++)
-                     {
-                         gp.Position = i;
-                         if (gp.ReadInteger() == Yasuo.Player.NetworkId)
-                         {
-                             Console.WriteLine("Found: "+i);
-                         }
-                     }
-
-                     Console.WriteLine("End dash");
-                     Yasuo.Q.Cast(Yasuo.Player.Position);*/
-                }
-
-                /*if (args.PacketData[0] == 176) //135no 100no 183no 34no 101 133 56yesss? 127 41yess
-                {
-                    GamePacket gp = new GamePacket(args.PacketData);
-                    //Console.WriteLine(Encoding.UTF8.GetString(args.PacketData, 0, args.PacketData.Length));
-                    gp.Position = 1;
-                    if (gp.ReadInteger() == Yasuo.Player.NetworkId)
-                    {
-                        Console.WriteLine("--- DAhs started Packets---");
-                        Yasuo.lastDash.from = Yasuo.Player.Position;
-                        Yasuo.isDashigPro = true;
-                        Yasuo.castFrom = Yasuo.Player.Position;
-                        Yasuo.startDash = Game.Time;
-                    }
-                }*/
-            }
-
-            private static void OnGameSendPacket(GamePacketEventArgs args)
-            {
-                /*if (args.PacketData[0] == 154) //135no 100no 183no 34no 101 133 56yesss? 127 41yess
-                {
-                    var spell = Packet.C2S.Cast.Decoded(args.PacketData);
-                    if (spell.Slot == Yasuo.E.Slot)
-                    {
-                        Console.WriteLine("--- DAhs started Packets---");
-                        Yasuo.lastDash.from = Yasuo.Player.Position;
-                        Yasuo.isDashigPro = true;
-                        Yasuo.castFrom = Yasuo.Player.Position;
-                        Yasuo.startDash = Game.Time;
-                    }
-                }*/
-            }
-
-
-
+        
             private static void OnDeleteMissile(Skillshot skillshot, MissileClient missile)
             {
                 if (skillshot.SpellData.SpellName == "VelkozQ")

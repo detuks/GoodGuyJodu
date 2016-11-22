@@ -40,7 +40,6 @@ namespace YasuoSharpV2
 
         public void castIgnite(Obj_AI_Hero target)
         {
-            SmoothMouse.addMouseEvent(target.Position);
             if (ignite != SpellSlot.Unknown && sumBook.CanUseSpell(ignite) == SpellState.Ready)
                 sumBook.CastSpell(ignite, target);
         }
@@ -63,7 +62,6 @@ namespace YasuoSharpV2
             var itemId = (int)item;
             if (Items.CanUseItem(itemId))
             {
-                SmoothMouse.addMouseEvent(target);
                 player.Spellbook.CastSpell(getInvSlot(itemId).SpellSlot, target);
             }
 
@@ -74,7 +72,6 @@ namespace YasuoSharpV2
             var itemId = (int)item;
             if (Items.CanUseItem(itemId))
             {
-                SmoothMouse.addMouseEvent(target.Position);
                 Items.UseItem(itemId, target);
             }
         }
