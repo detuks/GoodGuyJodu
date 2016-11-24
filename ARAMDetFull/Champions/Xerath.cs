@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -61,6 +61,23 @@ namespace ARAMDetFull.Champions
             Obj_AI_Hero.OnProcessSpellCast += Obj_AI_Hero_OnProcessSpellCast;
             DeathWalker.BeforeAttack += OrbwalkingOnBeforeAttack;
             Obj_AI_Hero.OnIssueOrder += Obj_AI_Hero_OnIssueOrder;
+
+            ARAMSimulator.champBuild = new Build
+            {
+                coreItems = new List<ConditionalItem>
+                        {
+                            new ConditionalItem(ItemId.Morellonomicon),
+                            new ConditionalItem(ItemId.Sorcerers_Shoes),
+                            new ConditionalItem(ItemId.Ludens_Echo),
+                            new ConditionalItem(ItemId.Rabadons_Deathcap),
+                            new ConditionalItem(ItemId.Rylais_Crystal_Scepter),
+                            new ConditionalItem(ItemId.Void_Staff,ItemId.Liandrys_Torment,ItemCondition.ENEMY_AP),
+                        },
+                startingItems = new List<ItemId>
+                        {
+                            ItemId.Giants_Belt
+                        }
+            };
         }
 
         private void OrbwalkingOnBeforeAttack(DeathWalker.BeforeAttackEventArgs args)
