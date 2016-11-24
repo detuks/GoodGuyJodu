@@ -23,9 +23,9 @@ namespace ARAMDetFull.Champions
                     new ConditionalItem(ItemId.Statikk_Shiv),
                     new ConditionalItem(ItemId.Mercurys_Treads),
                     new ConditionalItem(ItemId.Infinity_Edge),
-                    new ConditionalItem(ItemId.Phantom_Dancer),
+                    new ConditionalItem(ItemId.Maw_of_Malmortius),
+                    new ConditionalItem(ItemId.Frozen_Mallet,ItemId.Banshees_Veil,ItemCondition.ENEMY_LOSING),
                     new ConditionalItem(ItemId.Warmogs_Armor),
-                    new ConditionalItem(ItemId.Ravenous_Hydra_Melee_Only,ItemId.Banshees_Veil,ItemCondition.ENEMY_LOSING),
                 },
                 startingItems = new List<ItemId>
                 {
