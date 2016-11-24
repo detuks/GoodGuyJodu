@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,11 +20,11 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                 {
+                    new ConditionalItem(ItemId.Mercurys_Treads, ItemId.Ninja_Tabi, ItemCondition.ENEMY_AP),
                     new ConditionalItem(ItemId.Ravenous_Hydra_Melee_Only),
                     new ConditionalItem(ItemId.The_Black_Cleaver),
-                    new ConditionalItem(ItemId.Mercurys_Treads, ItemId.Ninja_Tabi, ItemCondition.ENEMY_AP),
                     new ConditionalItem(ItemId.The_Bloodthirster),
-                    new ConditionalItem(ItemId.Guardian_Angel),
+                    new ConditionalItem(ItemId.Spirit_Visage, (ItemId)3742, ItemCondition.ENEMY_AP),
                     new ConditionalItem((ItemId)3812),
                 },
                 startingItems = new List<ItemId>
