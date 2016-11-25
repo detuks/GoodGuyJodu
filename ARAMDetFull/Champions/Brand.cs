@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,8 +24,8 @@ namespace ARAMDetFull.Champions
                 {
                     new ConditionalItem(ItemId.Morellonomicon),
                     new ConditionalItem(ItemId.Sorcerers_Shoes),
-                    new ConditionalItem(ItemId.Rylais_Crystal_Scepter),
                     new ConditionalItem(ItemId.Liandrys_Torment),
+                    new ConditionalItem(ItemId.Rylais_Crystal_Scepter),
                     new ConditionalItem(ItemId.Rabadons_Deathcap),
                     new ConditionalItem(ItemId.Void_Staff),
                 },
