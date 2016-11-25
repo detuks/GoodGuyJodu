@@ -158,7 +158,7 @@ namespace ARAMDetFull.Champions
 
         public override void useSpells()
         {
-            var tar = ARAMTargetSelector.getBestTarget(getRivenReach()+430);
+            var tar = ARAMTargetSelector.getBestTarget(getRivenReach());
             doCombo(tar);
         }
 
@@ -175,7 +175,7 @@ namespace ARAMDetFull.Champions
 
         public float getRivenReach()
         {
-            int Qtimes = getQJumpCount();
+            int Qtimes = Math.Min(getQJumpCount(),1);
             return player.AttackRange + Qtimes*200 + (E.IsReady() ? 390 : 0);
         }
 
@@ -254,9 +254,7 @@ namespace ARAMDetFull.Champions
         {
             if (!E.IsReady())
                 return;
-
-
-
+            
             float trueAARange = player.AttackRange + target.BoundingRadius;
             float trueERange = target.BoundingRadius + E.Range;
 
@@ -269,11 +267,12 @@ namespace ARAMDetFull.Champions
             {
                 player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
                 E.Cast(path.Count() > 1 ? path[1] : target.ServerPosition);
+                Aggresivity.addAgresiveMove(new AgresiveMove(80,3000));
             }
             if ((dist > trueAARange && dist < trueERange) || rushDown)
             {
-
                 E.Cast(path.Count() > 1 ? path[1] : target.ServerPosition);
+                Aggresivity.addAgresiveMove(new AgresiveMove(80, 3000));
             }
         }
 
