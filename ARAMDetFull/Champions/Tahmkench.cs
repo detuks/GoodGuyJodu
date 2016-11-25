@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,12 +32,12 @@ namespace ARAMDetFull.Champions
             {
                 coreItems = new List<ConditionalItem>
                         {
-                            new ConditionalItem(ItemId.Sunfire_Cape),
+                            new ConditionalItem(ItemId.Face_of_the_Mountain),
                             new ConditionalItem(ItemId.Mercurys_Treads,ItemId.Ninja_Tabi,ItemCondition.ENEMY_AP),
-                            new ConditionalItem((ItemId)3748),
-                            new ConditionalItem(ItemId.Frozen_Heart),
-                            new ConditionalItem((ItemId)3742),
-                            new ConditionalItem(ItemId.Banshees_Veil),
+                            new ConditionalItem(ItemId.Locket_of_the_Iron_Solari),
+                            new ConditionalItem(ItemId.Sunfire_Cape),
+                            new ConditionalItem(ItemId.Spirit_Visage),
+                            new ConditionalItem(ItemId.Warmogs_Armor),
                         },
                 startingItems = new List<ItemId>
                         {
