@@ -89,14 +89,14 @@ namespace ARAMDetFull.Champions
         {
             if (sender.IsMe)
             {
-                if (args.SData.Name == "XerathLocusOfPower2")
+                if (args.SData.Name.Equals("XerathLocusOfPower2", StringComparison.InvariantCultureIgnoreCase))
                 {
                     RCharge.CastT = 0;
                     RCharge.Index = 0;
                     RCharge.Position = new Vector3();
                     RCharge.TapKeyPressed = false;
                 }
-                else if (args.SData.Name == "xerathlocuspulse")
+                else if (args.SData.Name.Equals("XerathLocusPulse", StringComparison.InvariantCultureIgnoreCase))
                 {
                     RCharge.CastT = Utils.TickCount;
                     RCharge.Index++;
@@ -157,7 +157,7 @@ namespace ARAMDetFull.Champions
             Q = new Spell(SpellSlot.Q, 1550);
             W = new Spell(SpellSlot.W, 1000);
             E = new Spell(SpellSlot.E, 1150);
-            R = new Spell(SpellSlot.R, 675);
+            R = new Spell(SpellSlot.R, 3000);
 
             Q.SetSkillshot(0.6f, 100f, float.MaxValue, false, SkillshotType.SkillshotLine);
             W.SetSkillshot(0.7f, 125f, float.MaxValue, false, SkillshotType.SkillshotCircle);
@@ -165,6 +165,12 @@ namespace ARAMDetFull.Champions
             R.SetSkillshot(0.7f, 120f, float.MaxValue, false, SkillshotType.SkillshotCircle);
 
             Q.SetCharged("XerathArcanopulseChargeUp", "XerathArcanopulseChargeUp", 750, 1550, 1.5f);
+        }
+
+        public override void castingImportantSpell()
+        {
+            DeathWalker.setMovement(false);
+            WhileCastingR();
         }
 
         public override void useSpells()
@@ -184,7 +190,7 @@ namespace ARAMDetFull.Champions
 
                 if (R.IsReady())
                 {
-                    foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(h => h.IsValidTarget() && R.IsInRange(h) && (float)player.GetSpellDamage(h, SpellSlot.R) * 3 > h.Health))
+                    foreach (var enemy in HeroManager.AllHeroes.Where(h => h.IsValidTarget() && R.IsInRange(h) && (float)player.GetSpellDamage(h, SpellSlot.R) * 3 > h.Health))
                     {
                         R.Cast();
                     }
@@ -252,17 +258,16 @@ namespace ARAMDetFull.Champions
 
         private void WhileCastingR()
         {
-
             var rTarget = ARAMTargetSelector.getBestTarget(R.Range);
 
             if (rTarget != null)
             {
                 //Wait at least 0.6f if the target is going to die or if the target is to far away
-                if (rTarget.Health - R.GetDamage(rTarget) < 0)
-                    if (Utils.TickCount - RCharge.CastT <= 700) return;
-
-                if ((RCharge.Index != 0 && rTarget.Distance(RCharge.Position) > 1000))
-                    if (Utils.TickCount - RCharge.CastT <= Math.Min(2500, rTarget.Distance(RCharge.Position) - 1000)) return;
+               // if (rTarget.Health - R.GetDamage(rTarget) < 0)
+               //     if (Utils.TickCount - RCharge.CastT <= 700) return;
+               
+               //f ((RCharge.Index != 0 && rTarget.Distance(RCharge.Position) > 1000))
+               //   if (Utils.TickCount - RCharge.CastT <= Math.Min(2500, rTarget.Distance(RCharge.Position) - 1000)) return;
 
                 R.Cast(rTarget, true);
             }

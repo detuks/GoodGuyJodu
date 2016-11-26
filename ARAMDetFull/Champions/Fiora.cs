@@ -12,9 +12,11 @@ namespace ARAMDetFull.Champions
     class Fiora : Champion
     {
 
+        public static float QSkillshotRange = 400;
+        public static float QCircleRadius = 350;
+
         public Fiora()
         {
-            DeathWalker.AfterAttack += ExecuteAfterAttack;
 
             ARAMSimulator.champBuild = new Build
             {
@@ -37,86 +39,64 @@ namespace ARAMDetFull.Champions
 
         public override void useQ(Obj_AI_Base target)
         {
-            if (Q.CanCast(target))
-            {
-                Q.Cast();
-            }
+            if (!Q.IsReady() || target == null)
+                return;
+            if (safeGap(target))
+                Q.Cast(target);
         }
 
         public override void useW(Obj_AI_Base target)
         {
-
+            if (!W.IsReady() || target == null)
+                return;
+            W.Cast(target);
         }
 
         public override void useE(Obj_AI_Base target)
         {
-            if (E.CanCast(target) && (Q.IsReady() || R.IsReady()))
-            {
-                if ((MapControl.balanceAroundPoint(player.Position.To2D(), 700) >= -1 || (MapControl.fightIsOn() != null && MapControl.fightIsOn().NetworkId == target.NetworkId)))
-
-                    E.Cast(target.ServerPosition);
-            }
+            if (!E.IsReady() || target == null)
+                return;
+            E.Cast();
+            Aggresivity.addAgresiveMove(new AgresiveMove(100, 1000));
         }
 
         public override void useR(Obj_AI_Base target)
         {
             if (R.CanCast(target) && !Q.IsKillable(target))
             {
-                CastR(target);
+                R.CastOnUnit(target);
+                Aggresivity.addAgresiveMove(new AgresiveMove(100,8000));
             }
-
 
         }
 
         public override void setUpSpells()
         {
             //Initialize our Spells
-            Q = new Spell(SpellSlot.Q, 425);
-            W = new Spell(SpellSlot.W);
-            E = new Spell(SpellSlot.E, 540);
-            R = new Spell(SpellSlot.R, 460);
+            Q = new Spell(SpellSlot.Q, QSkillshotRange + QCircleRadius);
+            Q.SetSkillshot(.25f, 100, 500, false, SkillshotType.SkillshotLine);
+
+            W = new Spell(SpellSlot.W, 750);
+            W.SetSkillshot(0.5f, 70, 3200, false, SkillshotType.SkillshotLine);
+
+            E = new Spell(SpellSlot.E);
+            E.SetTargetted(0f, 0f);
+
+            R = new Spell(SpellSlot.R, 500);
+            R.SetTargetted(.066f, 500);
         }
 
         public override void useSpells()
         {
-            var tar = ARAMTargetSelector.getBestTarget(E.Range);
+            var tar = ARAMTargetSelector.getBestTarget(W.Range);
+            if (tar != null) useW(tar);
+            tar = ARAMTargetSelector.getBestTarget(Q.Range);
             if (tar != null) useQ(tar);
+            tar = ARAMTargetSelector.getBestTarget(350);
             if (tar != null) useE(tar);
+            tar = ARAMTargetSelector.getBestTarget(R.Range);
             if (tar != null) useR(tar);
         }
-
-        //Afterattack
-        public void ExecuteAfterAttack(AttackableUnit unit, AttackableUnit target)
-        {
-            if (!unit.IsMe || !(target is Obj_AI_Hero))
-                return;
-            W.Cast();
-        }
-
-        private void CastR(Obj_AI_Base target)
-        {
-            if (!R.IsReady())
-                return;
-
-            foreach (var hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValidTarget(R.Range)))
-            {
-                if (player.GetSpellDamage(target, SpellSlot.R) - 50 > hero.Health)
-                {
-                    R.Cast(target);
-                }
-
-                else if (player.GetSpellDamage(target, SpellSlot.R) - 50 < hero.Health)
-                {
-                    foreach (var buff in hero.Buffs.Where(buff => buff.Name == "dariushemo"))
-                    {
-                        if (player.GetSpellDamage(target, SpellSlot.R, 1) * (1 + buff.Count / 5) - 50 > target.Health)
-                        {
-                            R.CastOnUnit(target, true);
-                        }
-                    }
-                }
-            }
-        }
-
+        
     }
 }

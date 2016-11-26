@@ -52,5 +52,7 @@ namespace ARAMDetFull.Champions
         public virtual void alwaysCheck() { }
 
         public virtual void kiteBack(Vector2 pos) { }
+
+        public virtual void castingImportantSpell() { }
     }
 }

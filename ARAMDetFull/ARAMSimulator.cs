@@ -897,6 +897,7 @@ namespace ARAMDetFull
             setRambo();
             if (player.IsDead || (player.IsChannelingImportantSpell() && player.ChampionName != "Varus"))
             {
+                champ?.castingImportantSpell();
                 return;
             }
 

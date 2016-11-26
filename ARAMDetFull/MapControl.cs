@@ -100,8 +100,9 @@ namespace ARAMDetFull
                     var spell = hero.Spellbook.GetSpell(cSpell.Slot);
                     if ((spell.CooldownExpires - Game.Time) > 2.5f || spell.State == SpellState.NotLearned || spell.ManaCost>hero.Mana)
                         continue;
-                    var range = (spell.SData.CastRange < 1000) ? spell.SData.CastRange : 1000;
-                    if (spell.SData.CastRange > range)
+                    var realrange = (cSpell.Range > 1234234) ? 0 : cSpell.Range+cSpell.Radius;
+                    var range = (realrange < 1000) ? realrange : 1000;
+                    if (reach > range)
                         reach = range;
                 }
 
