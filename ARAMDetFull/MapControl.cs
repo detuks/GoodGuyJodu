@@ -32,9 +32,7 @@ namespace ARAMDetFull
             public Obj_AI_Hero hero = null;
 
             public float reach = 0;
-
-            public float dangerReach = 0;
-
+            
             public int activeDangers = 0;
 
             public int lastAttackedUnitId = -1;
@@ -89,7 +87,6 @@ namespace ARAMDetFull
 
             public float getReach()
             {
-                dangerReach = 0;
                 reach = hero.AttackRange;
                 activeDangers = 0;
                 var takeInCOunt = new List<SpellTags> { SpellTags.Dash, SpellTags.Blink, SpellTags.Teleport,SpellTags.Damage,SpellTags.CrowdControl };
@@ -100,7 +97,8 @@ namespace ARAMDetFull
                     var spell = hero.Spellbook.GetSpell(cSpell.Slot);
                     if ((spell.CooldownExpires - Game.Time) > 2.5f || spell.State == SpellState.NotLearned || spell.ManaCost>hero.Mana)
                         continue;
-                    var range = (spell.SData.CastRange < 1000) ? spell.SData.CastRange : 1000;
+                    var realrange = (cSpell.Range > 1234234) ? 0 : cSpell.Range + cSpell.Radius;
+                    var range = (realrange < 1000) ? realrange : 1000;
                     if (reach > range)
                         reach = range;
                 }
